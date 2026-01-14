@@ -1,7 +1,43 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (session?.user) {
+      const role = session.user.role;
+      if (role === 'TEACHER' || role === 'SCHOOL_ADMIN' || role === 'PLATFORM_ADMIN') {
+        router.push('/teacher/dashboard');
+      } else {
+        router.push('/student/today');
+      }
+    }
+  }, [session, router]);
+
+  const handleGoogleSignIn = () => {
+    signIn('google', { callbackUrl: '/student/today' });
+  };
+
+  // Show loading while checking session
+  if (status === 'loading') {
+    return (
+      <div className="relative flex h-auto min-h-screen w-full flex-col text-white overflow-x-hidden">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#061518] via-[#101f22] to-[#0b282e]" />
+        <div className="flex flex-1 justify-center items-center">
+          <div className="animate-pulse text-[#92c0c9]">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col text-white overflow-x-hidden">
       {/* Background gradient */}
@@ -21,8 +57,8 @@ export default function LoginPage() {
 
             <div className="w-full space-y-4">
               {/* Google Sign In */}
-              <Link
-                href="/student/today"
+              <button
+                onClick={handleGoogleSignIn}
                 className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors text-[#101f22] gap-3 text-base font-bold"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +68,7 @@ export default function LoginPage() {
                   <path d="M12.27 6.67C13.71 6.67 14.86 7.14 15.77 8.02L19.23 4.71C17.5 3.09 15.11 2 12.27 2C8.01 2 4.34 4.86 2.68 7.82L6.64 10.72C7.45 8.35 9.68 6.67 12.27 6.67Z" fill="#EA4335" />
                 </svg>
                 <span>Continue with Google</span>
-              </Link>
+              </button>
 
               {/* Demo Links */}
               <div className="flex flex-col gap-2 pt-4 border-t border-white/10">

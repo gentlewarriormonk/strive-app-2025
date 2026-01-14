@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 import { currentTeacher, groups } from '@/lib/mockData';
 import { Button } from '@/components/ui/Button';
+import { User } from '@/types/models';
 
 export default function TeacherLayout({
   children,
@@ -12,12 +15,37 @@ export default function TeacherLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Only redirect if we're sure there's no session (not while loading)
+    if (status === 'unauthenticated') {
+      // For demo mode, allow access without auth
+      // Remove this check to enforce authentication
+    }
+  }, [status, router]);
+
+  // Build user object from session or fall back to mock for demo
+  const teacher: User = session?.user
+    ? {
+        id: session.user.id,
+        name: session.user.name || 'User',
+        email: session.user.email || '',
+        avatarUrl: session.user.image || undefined,
+        role: (session.user.role as User['role']) || 'TEACHER',
+        schoolId: session.user.schoolId,
+        xp: session.user.xp || 0,
+        level: session.user.level || 1,
+        createdAt: new Date(),
+      }
+    : currentTeacher;
 
   // Get current group from pathname if on groups page
   const currentGroupId = pathname.match(/\/teacher\/groups\/([^/]+)/)?.[1];
   const currentGroup = groups.find((g) => g.id === currentGroupId);
 
-  // Teacher's groups
+  // Teacher's groups (using mock data for now, would be fetched from DB in production)
   const teacherGroups = groups.filter((g) => g.teacherId === currentTeacher.id);
 
   return (
@@ -101,11 +129,11 @@ export default function TeacherLayout({
             </Button>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-[#192f33]">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold">
-                {currentTeacher.name.charAt(0)}
+                {teacher.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{currentTeacher.name}</p>
-                <p className="text-[#92c0c9] text-xs">Level {currentTeacher.level}</p>
+                <p className="text-white text-sm font-medium truncate">{teacher.name}</p>
+                <p className="text-[#92c0c9] text-xs">Level {teacher.level}</p>
               </div>
             </div>
           </div>
@@ -127,7 +155,7 @@ export default function TeacherLayout({
               />
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-sm font-bold">
-              {currentTeacher.name.charAt(0)}
+              {teacher.name.charAt(0)}
             </div>
           </div>
           {/* Mobile Navigation */}
