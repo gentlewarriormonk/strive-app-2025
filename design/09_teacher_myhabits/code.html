@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Habits - Strive</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#101f22",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<div class="flex h-full min-h-screen flex-1">
+<!-- SideNavBar -->
+<nav class="flex h-full min-h-screen w-64 flex-col justify-between bg-[#111f22] p-4 border-r border-white/10">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Strive logo with circular gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCn7DUaq8hIAq4FMkPmxdpF-TwRAnqkRTITe-SazqGOA7KkjR1mQN3YlusUQoCpCuCsNnYCbbdX0IRWJKInIGqmSkFLxuL3DTjmvo4vZmlAf4EmEepkqWuzUiPUAzTG4mfLCQzRRhr19qdMhrd6tlYoiWsc05lNAGd0LJqeJjGGSCe-qaIDE7NNP1UxrDxgmo9chLbDlkawt1LJg_CtU0AUCQ6Mcb1Ll4L8ss_gIb-KWzpZZeSoaanP8qPCqCWl8VIpnwJBTDXy9ien");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-medium leading-normal">Strive</h1>
+<p class="text-white/60 text-sm font-normal leading-normal">Teacher Dashboard</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+<p class="text-sm font-medium leading-normal">My Groups</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+<p class="text-sm font-medium leading-normal">My Habits</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">book</span>
+<p class="text-sm font-medium leading-normal">Resources</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<p class="text-sm font-medium leading-normal">Help</p>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 flex-col p-4 sm:p-6 lg:p-8">
+<div class="mx-auto max-w-7xl">
+<!-- PageHeading -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em]">My Habits</h1>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-background-dark text-sm font-bold leading-normal tracking-wide shadow-lg hover:bg-opacity-90 transition-all">
+<span class="material-symbols-outlined mr-2 text-xl">add</span>
+<span class="truncate">Add habit</span>
+</button>
+</div>
+<!-- Table -->
+<div class="@container">
+<div class="overflow-hidden rounded-xl border border-white/20 bg-[#16272b]">
+<div class="overflow-x-auto">
+<table class="min-w-full">
+<thead class="bg-white/5">
+<tr>
+<th class="table-col-habit px-4 py-3 text-left text-white text-sm font-medium leading-normal w-2/6">Habit</th>
+<th class="table-col-category px-4 py-3 text-left text-white text-sm font-medium leading-normal w-1/6">Category</th>
+<th class="table-col-schedule px-4 py-3 text-left text-white text-sm font-medium leading-normal w-1/6">Schedule</th>
+<th class="table-col-streak px-4 py-3 text-left text-white text-sm font-medium leading-normal w-1/6">Streak</th>
+<th class="table-col-shared px-4 py-3 text-left text-white text-sm font-medium leading-normal w-1/6">Shared With</th>
+<th class="table-col-actions px-4 py-3 text-left text-white w-12 text-sm font-medium leading-normal"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/20">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="table-col-habit h-[72px] px-4 py-2 text-white text-sm font-normal leading-normal">Mindful Minute</td>
+<td class="table-col-category h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Mindfulness</td>
+<td class="table-col-schedule h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Daily</td>
+<td class="table-col-streak h-[72px] px-4 py-2 text-primary font-bold text-sm leading-normal">🔥 14 days</td>
+<td class="table-col-shared h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex flex-wrap gap-2">
+<span class="truncate rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">Grade 7 Advisory</span>
+<span class="truncate rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">Oak House</span>
+</div>
+</td>
+<td class="table-col-actions h-[72px] px-4 py-2">
+<button class="flex items-center justify-center size-8 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors" data-alt="Edit habit button">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="table-col-habit h-[72px] px-4 py-2 text-white text-sm font-normal leading-normal">Drink 8 glasses of water</td>
+<td class="table-col-category h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Nutrition</td>
+<td class="table-col-schedule h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Daily</td>
+<td class="table-col-streak h-[72px] px-4 py-2 text-primary font-bold text-sm leading-normal">🔥 32 days</td>
+<td class="table-col-shared h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex flex-wrap gap-2">
+<span class="truncate rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">Oak House</span>
+</div>
+</td>
+<td class="table-col-actions h-[72px] px-4 py-2">
+<button class="flex items-center justify-center size-8 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors" data-alt="Edit habit button">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="table-col-habit h-[72px] px-4 py-2 text-white text-sm font-normal leading-normal">30 min walk</td>
+<td class="table-col-category h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Physical Activity</td>
+<td class="table-col-schedule h-[72px] px-4 py-2 text-white/70 text-sm font-normal leading-normal">Mon, Wed, Fri</td>
+<td class="table-col-streak h-[72px] px-4 py-2 text-primary font-bold text-sm leading-normal">🔥 6 days</td>
+<td class="table-col-shared h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex flex-wrap gap-2">
+<span class="truncate rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">Grade 7 Advisory</span>
+</div>
+</td>
+<td class="table-col-actions h-[72px] px-4 py-2">
+<button class="flex items-center justify-center size-8 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors" data-alt="Edit habit button">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<style>
+                          @container(max-width: 900px) {
+                            .table-col-shared { display: none; }
+                          }
+                          @container(max-width: 768px) {
+                            .table-col-schedule, .table-col-streak { display: none; }
+                          }
+                          @container(max-width: 640px) {
+                            .table-col-category { display: none; }
+                          }
+                        </style>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strive - Group Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#101f22",
+              "surface-dark": "#1a2c2f",
+              "border-dark": "#325e67",
+              "text-primary-dark": "#e0e0e0",
+              "text-secondary-dark": "#92c0c9",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background-dark font-display text-text-primary-dark">
+<div class="relative flex min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="flex flex-col w-64 bg-background-dark p-4 border-r border-border-dark/50 shrink-0">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Strive logo with abstract shapes" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBXp_OU4AKxj2oCdolN6tNgnX6zTr-VGCnfGTIytwcskGWMernWHW9PYPt9o7s-5fUoLa2fhEIkLCUcUeSx0m3UF2PvcSE0Uj1yFleijTubGXeN-NHo7I6vKQuw9qEqDgjcwXLfnKlGhc3lxpRyeA5upYg4THPJHMkF8ma2V1Vwb6QWMyeIl1NvdYHAkeMjZ2edXc4D6wkNqawH9FFjWgtAZluqxr0dB3RI6cBwgmP8uwWOWFunQA96eAC3QeKevKHaMMj3dQDZ1rg");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-medium leading-normal">Strive</h1>
+<p class="text-text-secondary-dark text-sm font-normal leading-normal">Teacher Dashboard</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-white" href="#">
+<span class="material-symbols-outlined text-2xl">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-dark text-white" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">groups</span>
+<p class="text-sm font-medium leading-normal">Groups</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white" href="#">
+<span class="material-symbols-outlined text-2xl">emoji_events</span>
+<p class="text-sm font-medium leading-normal">Challenges</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white" href="#">
+<span class="material-symbols-outlined text-2xl">book</span>
+<p class="text-sm font-medium leading-normal">Resources</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</nav>
+</div>
+<div class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-white" href="#">
+<span class="material-symbols-outlined text-2xl">help</span>
+<p class="text-sm font-medium leading-normal">Help</p>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+<div class="max-w-7xl mx-auto">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 mb-4">
+<a class="text-text-secondary-dark text-base font-medium leading-normal hover:text-primary" href="#">Groups</a>
+<span class="text-text-secondary-dark text-base font-medium leading-normal">/</span>
+<span class="text-white text-base font-medium leading-normal">Grade 10 - Homeroom B</span>
+</div>
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+<div class="flex flex-col gap-2">
+<p class="text-white text-4xl font-black leading-tight tracking-[-0.033em]">Grade 10 - Homeroom B</p>
+<p class="text-text-secondary-dark text-base font-normal leading-normal">Focusing on building consistent sleep and study habits this semester.</p>
+</div>
+<button class="bg-primary text-background-dark text-sm font-bold py-2.5 px-5 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+                        Create Challenge
+                    </button>
+</div>
+<!-- Aggregate Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<!-- Category Tile: Sleep -->
+<div class="bg-surface-dark p-5 rounded-xl flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary text-2xl">dark_mode</span>
+</div>
+<h3 class="text-white font-bold">Sleep</h3>
+</div>
+<p class="text-3xl font-black text-white">75%</p>
+<p class="text-text-secondary-dark text-sm -mt-2">Avg. Completion</p>
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<!-- Category Tile: Movement -->
+<div class="bg-surface-dark p-5 rounded-xl flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-[#4caf50]/20 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#4caf50] text-2xl">directions_run</span>
+</div>
+<h3 class="text-white font-bold">Movement</h3>
+</div>
+<p class="text-3xl font-black text-white">62%</p>
+<p class="text-text-secondary-dark text-sm -mt-2">Avg. Completion</p>
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-[#4caf50] h-2 rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<!-- Category Tile: Focus -->
+<div class="bg-surface-dark p-5 rounded-xl flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-[#ff9800]/20 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#ff9800] text-2xl">psychology</span>
+</div>
+<h3 class="text-white font-bold">Focus</h3>
+</div>
+<p class="text-3xl font-black text-white">88%</p>
+<p class="text-text-secondary-dark text-sm -mt-2">Avg. Completion</p>
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-[#ff9800] h-2 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- Category Tile: Nutrition -->
+<div class="bg-surface-dark p-5 rounded-xl flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-[#9c27b0]/20 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#9c27b0] text-2xl">restaurant</span>
+</div>
+<h3 class="text-white font-bold">Nutrition</h3>
+</div>
+<p class="text-3xl font-black text-white">54%</p>
+<p class="text-text-secondary-dark text-sm -mt-2">Avg. Completion</p>
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-[#9c27b0] h-2 rounded-full" style="width: 54%"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+<!-- Leaderboard Section -->
+<div class="lg:col-span-3">
+<h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">Leaderboard</h2>
+<div class="bg-surface-dark rounded-xl overflow-hidden">
+<div class="border-b border-border-dark px-4">
+<div class="flex gap-8">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary text-white pb-[13px] pt-4" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Top XP</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-text-secondary-dark pb-[13px] pt-4 hover:border-b-border-dark hover:text-white transition-colors" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Longest Streak</p>
+</a>
+</div>
+</div>
+<!-- Leaderboard Table/List -->
+<div class="p-4">
+<ul class="space-y-2">
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-border-dark/50">
+<div class="flex items-center gap-4">
+<span class="font-bold text-lg text-primary w-6 text-center">1</span>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="avatar of student Olivia Chen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDWrCVyyx6qmbeJs7VNc-aIkw1el7oRdAPWLHNQ1xgVDIxSBHXwkKRDUrEYPgODLwELnsAsmtbxPcb9mfurjamDsJ9RRelEAulFSOJuYxrbs-HCQENnVAtatLr9z9Vb_VXNrFFh2pZd6nSkpJRJukkWOE68nBsjDh6ONm8jxWkJIrSfdyLdsETSJJFzJAz4MwugWTUwK-8nqyDiQ0dhQu4o1OP7jZikq--yLsxmbRGQeiTaNZbZ2Hyk65KPKm2LsstUjhdeOYP361f5");'></div>
+<p class="font-medium text-white">Olivia Chen</p>
+</div>
+<p class="font-bold text-lg text-primary">1,250 XP</p>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-border-dark/50">
+<div class="flex items-center gap-4">
+<span class="font-bold text-text-secondary-dark text-lg w-6 text-center">2</span>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="avatar of student Ben Carter" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAtqgmb2beXdqehc1u0_r9aUSBAjQzOsTKHQizPpdmxt7lRKMRtYpz1Vy7jBjDLEfEtQn0WZkpzbojYPbyxp6kG3e0HP8sjQuRaauBjiD6O4a_PmR9LFkmKoM6CGxpJ3GqMYMRcpCmcVWEPGdHazH_QRK-9d0D0BN-KV2UAjsXRx_GAkngg8qSPCx0yf--YM7uCEbmstRHkV__hQ07gvX51QiFOLLL0YBzyis8EvtBTX2rXw1n9RPaQpQlnHz3tqUgfTi6eGTakziop");'></div>
+<p class="font-medium text-white">Ben Carter</p>
+</div>
+<p class="font-medium text-white">1,180 XP</p>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-border-dark/50">
+<div class="flex items-center gap-4">
+<span class="font-bold text-text-secondary-dark text-lg w-6 text-center">3</span>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="avatar of student Aisha Khan" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8LRyOD12DD3KaIe0j-mFsZnsrSI9fTLA688W_VkR2_bV285AvtamD4ZijXhPJpwEMSXeWcS5MOXphM3qKGPbzBoEN6AveKttr42S-aIdeO509cvxo1KxNaBclUGU1V0biUZcugskBZq8G4wV2CidCqkZ-k38FdHQCJVlXW6Kg1iEzc_fv4yKsnHzo2YDBTzR-fEeNmyMs-d7aSHppk2pGt7v0vqkclThaeFjSjpYdII8hC5upAOsyPzPXazvHkJ_qogA0yX6zVa-i");'></div>
+<p class="font-medium text-white">Aisha Khan</p>
+</div>
+<p class="font-medium text-white">1,125 XP</p>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-border-dark/50">
+<div class="flex items-center gap-4">
+<span class="font-bold text-text-secondary-dark text-lg w-6 text-center">4</span>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="avatar of student Leo Rodriguez" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBmzaozVXIWlDGYVQFE4t1Hca5FxJEkaKDureXPNsiABzmf8ddQjz7JOFUwBZG_cNYDNtyhNmTqfAwDy1PkSE4roRinkuHCzAAsooBjTOgUMPfQW_7IEhDja1_prO8pJ8CZxeRsebocOKSGDCQrBKMPZEsDas3uaun5t-g3AFyGSBriRZFdJpAF0Gp_Y_9hyheE6_U_qJeeSkqZbnC9jAFsoiLCXsevKNKebzqocseq9vk4VoB-jFTuhvn2P27dkSDqnFMi7vackXMe");'></div>
+<p class="font-medium text-white">Leo Rodriguez</p>
+</div>
+<p class="font-medium text-white">1,050 XP</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Active Challenges Section -->
+<div class="lg:col-span-2">
+<h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">Active Group Challenges</h2>
+<div class="space-y-4">
+<!-- Challenge Card 1 -->
+<div class="bg-surface-dark p-5 rounded-xl">
+<p class="font-bold text-white mb-3">Mindful Morning Routine</p>
+<div class="w-full bg-border-dark rounded-full h-2 mb-3">
+<div class="bg-primary h-2 rounded-full" style="width: 80%"></div>
+</div>
+<div class="flex justify-between text-sm text-text-secondary-dark">
+<span>Ends in 3 days</span>
+<span>18/20 participating</span>
+</div>
+</div>
+<!-- Challenge Card 2 -->
+<div class="bg-surface-dark p-5 rounded-xl">
+<p class="font-bold text-white mb-3">30-Minute Daily Walk</p>
+<div class="w-full bg-border-dark rounded-full h-2 mb-3">
+<div class="bg-[#4caf50] h-2 rounded-full" style="width: 45%"></div>
+</div>
+<div class="flex justify-between text-sm text-text-secondary-dark">
+<span>Ends in 12 days</span>
+<span>15/20 participating</span>
+</div>
+</div>
+<!-- Empty State Example -->
+<!--
+                            <div class="bg-surface-dark p-8 rounded-xl text-center border-2 border-dashed border-border-dark">
+                                <span class="material-symbols-outlined text-4xl text-text-secondary-dark">emoji_events</span>
+                                <p class="mt-2 font-bold text-white">No active challenges yet</p>
+                                <p class="text-sm text-text-secondary-dark">Create one to get started!</p>
+                            </div>
+                            -->
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

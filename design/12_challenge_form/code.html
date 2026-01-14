@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strive - Create Challenge</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400,700&amp;FILL=0..1" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3A86FF",
+              "background-light": "#f6f8f8",
+              "background-dark": "#1A1A1D",
+              "surface-dark": "#2C2C30",
+              "border-dark": "#4A4A4D"
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "1rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    vertical-align: middle
+    }
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBZXFGaJ54pZrrr8zfUmAQ-sSucGdBXRhUsUy10WG2xNth7UiXrT81kRM1Qa0iw5AcmZd6P6EPeXx35m8w47GYBhVXOoWqV7VIQL1NaFXzEILCF8iKzR7ojmyA7KqHZZKGp4Ti35kgu_7i8FBu6rGr-KwiuHUOqLbL1UFPXtbKjqcOCKC62wAflPIIh_reAUOopQDxRIqzrMF3fvzpFj6cUMVC6foJcobFLimgVa_jEyaIWLZbSwzFi1sGzhRBWJ_Yjx9n97iT1Tmeu);
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem
+    }</style>
+</head>
+<body class="bg-background-dark font-display text-[#F5F5F5]">
+<div class="relative flex min-h-screen w-full items-center justify-center p-4 sm:p-6 lg:p-8" style="background-image: radial-gradient(circle at top right, rgba(58, 134, 255, 0.1), transparent 40%);">
+<div class="w-full max-w-3xl rounded-xl bg-surface-dark border border-[#404043] shadow-2xl">
+<!-- Header -->
+<div class="flex items-center justify-between p-6 border-b border-border-dark">
+<h1 class="text-2xl font-bold text-white">Create a New Challenge</h1>
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-surface-dark/50 text-[#A9A9A9] hover:bg-[#404043] transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Form Content -->
+<div class="p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
+<!-- Challenge Details -->
+<div class="space-y-6">
+<div class="flex flex-col md:flex-row gap-6">
+<label class="flex flex-col w-full">
+<p class="text-base font-medium leading-normal pb-2 text-[#F5F5F5]">Challenge Name</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary border border-border-dark bg-background-dark h-12 px-4 text-base font-normal leading-normal" placeholder="e.g., Mindful Mornings" value=""/>
+</label>
+</div>
+<label class="flex flex-col w-full">
+<p class="text-base font-medium leading-normal pb-2 text-[#F5F5F5]">Description (Optional)</p>
+<textarea class="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary border border-border-dark bg-background-dark min-h-28 p-4 text-base font-normal leading-normal" placeholder="Enter a brief description of the challenge"></textarea>
+</label>
+<div class="flex flex-col md:flex-row gap-6">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-white text-base font-medium leading-normal pb-2">Target Group</p>
+<select class="form-select flex w-full min-w-0 flex-1 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary border border-border-dark bg-background-dark h-12 px-4 text-base font-normal leading-normal">
+<option disabled="" selected="" value="">Select a group</option>
+<option value="g10-eng">Grade 10 - English</option>
+<option value="g11-math">Grade 11 - Math</option>
+<option value="all-students">All Students</option>
+</select>
+</label>
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-white text-base font-medium leading-normal pb-2">Category (Optional)</p>
+<select class="form-select flex w-full min-w-0 flex-1 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary border border-border-dark bg-background-dark h-12 px-4 text-base font-normal leading-normal">
+<option disabled="" selected="" value="">Select a category</option>
+<option value="mindfulness">Mindfulness</option>
+<option value="physical-activity">Physical Activity</option>
+<option value="study-habits">Study Habits</option>
+</select>
+</label>
+</div>
+</div>
+<!-- Timeline -->
+<div class="space-y-6">
+<p class="text-lg font-bold text-white">Timeline</p>
+<div class="flex flex-col md:flex-row gap-6">
+<label class="flex flex-col w-full md:w-1/2 relative">
+<p class="text-base font-medium text-[#F5F5F5] pb-2">Start Date</p>
+<input class="form-input flex w-full h-12 px-4 rounded-lg bg-background-dark border border-border-dark text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary" style="color-scheme: dark;" type="date"/>
+</label>
+<label class="flex flex-col w-full md:w-1/2 relative">
+<p class="text-base font-medium text-[#F5F5F5] pb-2">End Date</p>
+<input class="form-input flex w-full h-12 px-4 rounded-lg bg-background-dark border border-border-dark text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary" style="color-scheme: dark;" type="date"/>
+</label>
+</div>
+</div>
+<!-- Goal -->
+<div class="space-y-6">
+<p class="text-lg font-bold text-white">How to Complete</p>
+<div>
+<p class="text-base font-medium text-[#F5F5F5] pb-2">Metric Type</p>
+<div class="grid grid-cols-2 gap-4">
+<button class="text-center p-4 rounded-lg border-2 border-primary bg-primary/20 text-white font-semibold">Weekly Completions</button>
+<button class="text-center p-4 rounded-lg border-2 border-border-dark bg-background-dark text-[#A9A9A9] hover:border-[#666]">Daily Streak</button>
+</div>
+</div>
+<div class="flex items-end gap-4 p-4 rounded-lg bg-background-dark border border-border-dark">
+<label class="flex flex-col flex-1">
+<p class="text-base font-medium text-[#F5F5F5] pb-2">Target Value</p>
+<input class="form-input flex w-full h-12 px-4 rounded-lg bg-surface-dark border border-border-dark text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary" placeholder="5" type="number"/>
+</label>
+<span class="text-[#A9A9A9] pb-3 text-base">times per week</span>
+</div>
+</div>
+<!-- Rewards -->
+<div class="space-y-6">
+<p class="text-lg font-bold text-white">Rewards for Completion</p>
+<div class="flex flex-col md:flex-row gap-6">
+<label class="flex flex-col w-full md:w-1/2">
+<p class="text-base font-medium text-[#F5F5F5] pb-2">XP Gained</p>
+<input class="form-input flex w-full h-12 px-4 rounded-lg bg-background-dark border border-border-dark text-white placeholder:text-[#A9A9A9] focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g., 100" type="number"/>
+</label>
+<label class="flex flex-col w-full md:w-1/2">
+<p class="text-base font-medium text-[#F5F5F5] pb-2">Badge Awarded</p>
+<select class="form-select flex w-full h-12 px-4 rounded-lg bg-background-dark border border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-primary">
+<option disabled="" selected="" value="">Select a badge</option>
+<option>Mindfulness Master</option>
+<option>Streak Starter</option>
+<option>Zen Achiever</option>
+</select>
+</label>
+</div>
+</div>
+<!-- Notifications -->
+<div class="flex items-center space-x-3">
+<input checked="" class="h-5 w-5 rounded border-border-dark bg-background-dark text-primary focus:ring-primary focus:ring-offset-surface-dark" id="notify" type="checkbox"/>
+<label class="text-base font-medium text-[#F5F5F5]" for="notify">Notify students in this group upon creation</label>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 p-6 border-t border-border-dark">
+<button class="w-full sm:w-auto flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-transparent text-[#A9A9A9] text-base font-medium hover:bg-[#404043] transition-colors">
+<span class="truncate">Cancel</span>
+</button>
+<button class="w-full sm:w-auto flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-primary/90 transition-colors">
+<span class="truncate">Create Challenge</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

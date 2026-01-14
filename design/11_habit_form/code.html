@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strive - Habit Form</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>/* Custom styles for select arrow and date picker icon */
+select.form-input {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBZXFGaJ54pZrrr8zfUmAQ-sSucGdBXRhUsUy10WG2xNth7UiXrT81kRM1Qa0iw5AcmZd6P6EPeXx35m8w47GYBhVXOoWqV7VIQL1NaFXzEILCF8iKzR7ojmyA7KqHZZKGp4Ti35kgu_7i8FBu6rGr-KwiuHUOqLbL1UFPXtbKjqcOCKC62wAflPIIh_reAUOopQDxRIqzrMF3fvzpFj6cUMVC6foJcobFLimgVa_jEyaIWLZbSwzFi1sGzhRBWJ_Yjx9n97iT1Tmeu);
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none
+    }
+.date-input-container {
+    position: relative
+    }
+.date-input-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translatey(-50%);
+    pointer-events: none;
+    color: #92c0c9
+    }</style>
+</head>
+<body class="bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center bg-background-dark/80 backdrop-blur-sm p-4">
+<!-- This div simulates the background content being overlaid -->
+<div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&amp;w=2070&amp;auto=format&amp;fit=crop')] bg-cover bg-center opacity-10"></div>
+<!-- Side Panel -->
+<div class="relative flex h-full w-full max-w-lg flex-col overflow-hidden rounded-xl bg-[#111f22] border border-[#325e67]/50 shadow-2xl">
+<div class="flex flex-col h-full">
+<!-- Header -->
+<div class="flex justify-between items-center gap-2 px-6 py-4 border-b border-[#325e67]/50">
+<div class="flex min-w-0 flex-col gap-1">
+<h1 class="text-white text-xl font-bold leading-tight">Create a New Habit</h1>
+<p class="text-[#92c0c9] text-sm font-normal leading-normal truncate">Fill in the details to start tracking a new habit.</p>
+</div>
+<button class="p-2 text-white/70 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<!-- Form Content -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<!-- Habit Name -->
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Habit Name</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#325e67] bg-[#192f33] focus:border-primary h-12 placeholder:text-[#92c0c9] px-4 text-base font-normal leading-normal" placeholder="e.g., Drink 8 glasses of water" value=""/>
+</label>
+<!-- Description -->
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Description (Optional)</p>
+<textarea class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#325e67] bg-[#192f33] focus:border-primary min-h-28 placeholder:text-[#92c0c9] p-4 text-base font-normal leading-normal" placeholder="Add more details about your habit"></textarea>
+</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Category -->
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Category</p>
+<select class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#325e67] bg-[#192f33] focus:border-primary h-12 placeholder:text-[#92c0c9] px-4 text-base font-normal leading-normal">
+<option class="text-[#92c0c9]" disabled="" selected="" value="">Select a category</option>
+<option value="health">Health</option>
+<option value="study">Study</option>
+<option value="mindfulness">Mindfulness</option>
+<option value="fitness">Fitness</option>
+</select>
+</label>
+<!-- Start Date -->
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Start Date</p>
+<div class="date-input-container">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#325e67] bg-[#192f33] focus:border-primary h-12 placeholder:text-[#92c0c9] px-4 text-base font-normal leading-normal" onblur="(this.type='text')" onfocus="(this.type='date')" placeholder="Select a date" type="text"/>
+<span class="material-symbols-outlined date-input-icon text-xl">calendar_today</span>
+</div>
+</label>
+</div>
+<!-- Schedule -->
+<fieldset class="w-full">
+<legend class="text-white text-base font-medium leading-normal pb-3">Schedule</legend>
+<div class="grid grid-cols-3 gap-2 rounded-lg bg-[#192f33] p-1">
+<label class="relative">
+<input checked="" class="peer sr-only" name="schedule" type="radio" value="daily"/>
+<div class="cursor-pointer rounded-md text-center py-2 px-3 text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-medium transition-all">Daily</div>
+</label>
+<label class="relative">
+<input class="peer sr-only" name="schedule" type="radio" value="weekly"/>
+<div class="cursor-pointer rounded-md text-center py-2 px-3 text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-medium transition-all">Weekly</div>
+</label>
+<label class="relative">
+<input class="peer sr-only" name="schedule" type="radio" value="specific"/>
+<div class="cursor-pointer rounded-md text-center py-2 px-3 text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-medium transition-all">Specific Days</div>
+</label>
+</div>
+<div class="mt-4 flex justify-between gap-1">
+<label class="relative" for="day-sun">
+<input class="peer sr-only" id="day-sun" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">S</div>
+</label>
+<label class="relative" for="day-mon">
+<input class="peer sr-only" id="day-mon" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">M</div>
+</label>
+<label class="relative" for="day-tue">
+<input class="peer sr-only" id="day-tue" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">T</div>
+</label>
+<label class="relative" for="day-wed">
+<input class="peer sr-only" id="day-wed" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">W</div>
+</label>
+<label class="relative" for="day-thu">
+<input class="peer sr-only" id="day-thu" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">T</div>
+</label>
+<label class="relative" for="day-fri">
+<input class="peer sr-only" id="day-fri" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">F</div>
+</label>
+<label class="relative" for="day-sat">
+<input class="peer sr-only" id="day-sat" type="checkbox"/>
+<div class="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full text-[#92c0c9] peer-checked:bg-primary/20 peer-checked:text-primary font-bold transition-all">S</div>
+</label>
+</div>
+</fieldset>
+<!-- Visibility -->
+<fieldset class="w-full">
+<legend class="text-white text-base font-medium leading-normal pb-3">Visibility</legend>
+<div class="space-y-3">
+<label class="flex items-start gap-4 p-4 rounded-lg bg-[#192f33] border border-transparent has-[:checked]:border-primary/50 has-[:checked]:bg-primary/10 transition-all cursor-pointer">
+<input checked="" class="form-radio mt-1 bg-transparent border-[#92c0c9] text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent" name="visibility" type="radio" value="public"/>
+<div>
+<p class="font-medium text-white">Public to group</p>
+<p class="text-sm text-[#92c0c9]">Visible to everyone in your group, including teachers.</p>
+</div>
+</label>
+<label class="flex items-start gap-4 p-4 rounded-lg bg-[#192f33] border border-transparent has-[:checked]:border-primary/50 has-[:checked]:bg-primary/10 transition-all cursor-pointer">
+<input class="form-radio mt-1 bg-transparent border-[#92c0c9] text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent" name="visibility" type="radio" value="anonymous"/>
+<div>
+<p class="font-medium text-white">Anonymised only</p>
+<p class="text-sm text-[#92c0c9]">Your progress contributes to group stats anonymously.</p>
+</div>
+</label>
+<label class="flex items-start gap-4 p-4 rounded-lg bg-[#192f33] border border-transparent has-[:checked]:border-primary/50 has-[:checked]:bg-primary/10 transition-all cursor-pointer">
+<input class="form-radio mt-1 bg-transparent border-[#92c0c9] text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent" name="visibility" type="radio" value="private"/>
+<div>
+<p class="font-medium text-white">Private to peers</p>
+<p class="text-sm text-[#92c0c9]">Only you and your teacher can see your progress.</p>
+</div>
+</label>
+</div>
+</fieldset>
+</div>
+<!-- Footer / Actions -->
+<div class="px-6 py-4 border-t border-[#325e67]/50 mt-auto">
+<div class="flex flex-col sm:flex-row-reverse gap-3">
+<button class="flex items-center justify-center w-full sm:w-auto px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:bg-primary/90 transition-colors">Add Habit</button>
+<button class="flex items-center justify-center w-full sm:w-auto px-6 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors">Cancel</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

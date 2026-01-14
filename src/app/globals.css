@@ -1,26 +1,326 @@
 @import "tailwindcss";
 
+/* Strive Dark Theme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core brand colors */
+  --color-primary: #13c8ec;
+  --color-primary-dark: #0ea5c7;
+  --color-accent: #F5A623;
+  
+  /* Background colors */
+  --color-bg-dark: #101f22;
+  --color-bg-darker: #0d191b;
+  --color-bg-card: #192f33;
+  --color-bg-card-hover: #1a3a3f;
+  --color-bg-elevated: #111f22;
+  --color-bg-input: #192f33;
+  
+  /* Border colors */
+  --color-border: #325e67;
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  
+  /* Text colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e7f1f3;
+  --color-text-muted: #92c0c9;
+  --color-text-subtle: #6b8a92;
+  
+  /* Semantic colors */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --shadow-primary: 0 0 20px rgba(19, 200, 236, 0.3);
 }
 
+/* Tailwind theme inline configuration */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Custom colors */
+  --color-strive-primary: var(--color-primary);
+  --color-strive-primary-dark: var(--color-primary-dark);
+  --color-strive-accent: var(--color-accent);
+  --color-strive-bg: var(--color-bg-dark);
+  --color-strive-bg-darker: var(--color-bg-darker);
+  --color-strive-bg-card: var(--color-bg-card);
+  --color-strive-bg-elevated: var(--color-bg-elevated);
+  --color-strive-border: var(--color-border);
+  --color-strive-text: var(--color-text-primary);
+  --color-strive-text-muted: var(--color-text-muted);
+  
+  /* Fonts */
+  --font-display: "Lexend", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Material Symbols configuration */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  font-size: 24px;
+}
+
+.material-symbols-outlined.fill {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Custom checkbox for habit completion */
+.habit-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  background: transparent;
+}
+
+.habit-checkbox:checked {
+  background: rgba(19, 200, 236, 0.2);
+  border-color: rgba(19, 200, 236, 0.5);
+  transform: scale(1.05);
+}
+
+.habit-checkbox:checked::after {
+  content: 'check';
+  font-family: 'Material Symbols Outlined';
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  transition: all 0.2s ease-in-out;
+  transform: scale(1);
+}
+
+.habit-checkbox::after {
+  content: '';
+  transform: scale(0);
+}
+
+.habit-checkbox:hover {
+  border-color: var(--color-primary);
+}
+
+.habit-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(19, 200, 236, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(19, 200, 236, 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button styles */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-bg-dark);
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Form inputs */
+.input-field {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--color-text-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.input-field::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(19, 200, 236, 0.2);
+}
+
+/* Progress bar */
+.progress-bar {
+  background: var(--color-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  background: var(--color-primary);
+  border-radius: 9999px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Nav pill buttons */
+.nav-pill {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-pill:hover {
+  color: var(--color-text-primary);
+}
+
+.nav-pill.active {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(19, 200, 236, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(19, 200, 236, 0.5);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Backdrop blur support */
+@supports (backdrop-filter: blur(12px)) {
+  .glass {
+    background: rgba(17, 31, 34, 0.8);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .glass {
+    background: rgba(17, 31, 34, 0.95);
+  }
+}
+
+/* Focus visible styles */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(19, 200, 236, 0.3);
+  color: var(--color-text-primary);
+}
+
+
+
+
+

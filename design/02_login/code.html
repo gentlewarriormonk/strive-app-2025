@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Strive</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white group/design-root overflow-x-hidden">
+<div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#061518] via-[#101f22] to-[#0b282e]"></div>
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 flex flex-1 justify-center items-center py-5">
+<div class="layout-content-container flex flex-col w-full max-w-sm flex-1">
+<div class="flex flex-col items-center gap-8 rounded-2xl bg-[#132c31]/50 p-8 shadow-2xl backdrop-blur-xl border border-white/10">
+<img alt="Strive logo" class="w-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHuC__Gows0e5rMe8-2rUWMYof12Q_aTOsLwku7oHyO9ijrjSzOhpQIf_dinmctPqe4BHKl3NA1rqRXCTehYSyePxco-enOJx_xvO8Z8xrZjAYIpdAAI9tXLdioe-k71jzjyoGJy_2jq99h1wd2fSY1503msVTKCsciNqVhxGLFxzl4-7Kus8sAEWFAFHQ9juxEhJ9Pmyi0xVtvAGSnWLOCQOeZvOtrM4hK0oH2LRmx1Fvv20hBeiKHtfvudlDABSKHe09edZZtS1x"/>
+<div class="w-full">
+<button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white hover:bg-gray-200 active:bg-gray-300 transition-colors text-background-dark gap-3 text-base font-bold leading-normal tracking-[0.015em]">
+<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25C22.56 11.42 22.49 10.62 22.36 9.85H12.27V14.4H18.1C17.84 16.02 17.03 17.39 15.72 18.28V21.09H19.6C21.56 19.23 22.56 16.03 22.56 12.25Z" fill="#1d2939"></path>
+<path d="M12.27 23C15.11 23 17.5 22.14 19.16 20.73L15.72 18.28C14.77 18.93 13.62 19.33 12.27 19.33C9.68 19.33 7.45 17.65 6.64 15.28H2.68V18.18C4.34 21.14 8.01 23 12.27 23Z" fill="#1d2939"></path>
+<path d="M6.64 15.28C6.39 14.56 6.25 13.79 6.25 13C6.25 12.21 6.39 11.44 6.64 10.72V7.82H2.68C1.86 9.4 1.43 11.14 1.43 13C1.43 14.86 1.86 16.6 2.68 18.18L6.64 15.28Z" fill="#1d2939"></path>
+<path d="M12.27 6.67C13.71 6.67 14.86 7.14 15.77 8.02L19.23 4.71C17.5 3.09 15.11 2 12.27 2C8.01 2 4.34 4.86 2.68 7.82L6.64 10.72C7.45 8.35 9.68 6.67 12.27 6.67Z" fill="#1d2939"></path>
+</svg>
+<span class="truncate">Continue with Google</span>
+</button>
+</div>
+</div>
+<p class="text-gray-400 hover:text-white transition-colors text-sm font-normal leading-normal text-center pt-6"><a href="#">‹ Back to Home</a></p>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

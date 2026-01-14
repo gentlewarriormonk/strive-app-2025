@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strive - Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+    .habit-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 9999px;
+      border: 2px solid;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease-in-out;
+    }
+    .habit-checkbox:checked {
+      transform: scale(1.1);
+    }
+    .habit-checkbox:checked::after {
+      content: 'check';
+      font-family: 'Material Symbols Outlined';
+      font-size: 1.25rem;
+      font-weight: 700;
+      transition: all 0.2s ease-in-out;
+      transform: scale(1);
+    }
+    .habit-checkbox::after {
+        content: '';
+        transform: scale(0);
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#13c8ec",
+            "background-light": "#f6f8f8",
+            "background-dark": "#101f22",
+            "accent": "#F5A623",
+            "text-light": "#0d191b",
+            "text-dark": "#e7f1f3",
+            "text-muted-light": "#4c8d9a",
+            "text-muted-dark": "#aab8c2",
+            "card-light": "#ffffff",
+            "card-dark": "#1a2c2f",
+            "border-light": "#e7f1f3",
+            "border-dark": "#2c3e50"
+          },
+          fontFamily: {
+            "display": ["Lexend", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display bg-background-dark text-text-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<header class="sticky top-0 z-10 w-full bg-card-dark/80 backdrop-blur-sm border-b border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4">
+<img alt="Strive logo" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXnt1t4rLDf92uqMy6DxYHqc54XX10OXnZu-p55NdzajYpJVM0jvMWLQ8EHZ7_P-AQVk0A2slYk0rp5MnBknzLv5HRL6oADwPeSsJBoKI0zJ55DJ8yp9I2BBzl4zyTY9yJC6r2PoEIMgexG-O6_gh52gCZF3QpOMov1emeBI_5BUCQhY91Ge9OHLFXYCPlET9VNfZK-WyEg_CRUTC7O69JZ7-LM-jEku2jNcfdPozwDGGNmFEcqLiuhb9H8gXZ1OrvZPRW0Eh4OoXt"/>
+<h2 class="text-xl font-bold tracking-tighter">Strive</h2>
+</div>
+<nav class="hidden md:flex items-center gap-2 bg-background-dark p-1 rounded-full">
+<a class="text-sm font-semibold py-2 px-5 rounded-full bg-card-dark shadow-sm" href="#">Today</a>
+<a class="text-sm font-medium py-2 px-5 rounded-full text-text-muted-dark hover:text-text-dark transition-colors" href="#">Progress</a>
+<a class="text-sm font-medium py-2 px-5 rounded-full text-text-muted-dark hover:text-text-dark transition-colors" href="#">Group</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar of Alex" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDUfiRdMpjXd3Drbt8eAhWYQVmNJb43qTt6MCm6ibjKxQ2BVdoQJesRJeSO-MeVuaG0oL8rDH7LSoVNORTLc9NSUg-TM2CNEGtCHMiKwGWhZYN6jk3t2WIJAdxwhS7rlp70ssjQ0B_1jRhJgKBvvaVfH6qT_5duQlLzkRBMIR9-Xn68NH8N-_28CysPChAXMjsd1OXyDo8RcTrKb-rSrPA5nWIFcvfllFpFihE28JTt5w9QP4dglSaL8WzJEQNCPaPasR879UasnSo9");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col gap-8">
+<div class="flex flex-wrap justify-between items-start gap-3">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-4xl font-black leading-tight tracking-[-0.033em]">Hello, Alex!</p>
+<p class="text-base font-normal leading-normal text-text-muted-dark">Let's strive today. You're doing great!</p>
+</div>
+<nav class="md:hidden flex items-center gap-2 bg-background-dark p-1 rounded-full w-full justify-center">
+<a class="text-sm font-semibold py-2 px-5 rounded-full bg-card-dark shadow-sm flex-1 text-center" href="#">Today</a>
+<a class="text-sm font-medium py-2 px-5 rounded-full text-text-muted-dark hover:text-text-dark transition-colors flex-1 text-center" href="#">Progress</a>
+<a class="text-sm font-medium py-2 px-5 rounded-full text-text-muted-dark hover:text-text-dark transition-colors flex-1 text-center" href="#">Group</a>
+</nav>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 flex flex-col gap-6">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<h2 class="text-2xl font-bold leading-tight tracking-[-0.015em]">Today's Habits</h2>
+<a class="w-full sm:w-auto hidden sm:flex items-center justify-center gap-2 text-sm font-semibold px-4 py-2.5 bg-gradient-to-br from-primary to-blue-500 text-white rounded-lg shadow-lg hover:shadow-primary/40 transition-shadow" href="#">
+<span class="material-symbols-outlined !text-xl">add_circle</span>
+<span>New Habit</span>
+</a>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-card-dark rounded-xl shadow-sm p-4 flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-full bg-blue-900/40">
+<span class="material-symbols-outlined text-blue-300">nights_stay</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-medium leading-normal">Get 8 hours of sleep</p>
+<div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted-dark mt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base text-accent">local_fire_department</span>
+<span>5-day streak</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base">donut_small</span>
+<span>4/7 this week</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="habit-checkbox border-border-dark text-primary checked:bg-primary/20 checked:text-primary checked:border-primary/50 focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">edit</span></button>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">more_vert</span></button>
+</div>
+</div>
+<div class="bg-card-dark rounded-xl shadow-sm p-4 flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-full bg-green-900/40">
+<span class="material-symbols-outlined text-green-300">directions_run</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-medium leading-normal">30 minutes of physical activity</p>
+<div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted-dark mt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base text-accent">local_fire_department</span>
+<span>14-day streak</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base">donut_small</span>
+<span>100% this month</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input checked="" class="habit-checkbox border-border-dark text-primary checked:bg-primary/20 checked:text-primary checked:border-primary/50 focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">edit</span></button>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">more_vert</span></button>
+</div>
+</div>
+<div class="bg-card-dark rounded-xl shadow-sm p-4 flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-full bg-purple-900/40">
+<span class="material-symbols-outlined text-purple-300">auto_stories</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-medium leading-normal">Read for 20 minutes</p>
+<div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted-dark mt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base text-accent">local_fire_department</span>
+<span>2-day streak</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base">donut_small</span>
+<span>6/7 this week</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="habit-checkbox border-border-dark text-primary checked:bg-primary/20 checked:text-primary checked:border-primary/50 focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">edit</span></button>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">more_vert</span></button>
+</div>
+</div>
+<div class="bg-card-dark rounded-xl shadow-sm p-4 flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-full bg-teal-900/40">
+<span class="material-symbols-outlined text-teal-300">water_drop</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-medium leading-normal">Drink 8 glasses of water</p>
+<div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted-dark mt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base text-accent">local_fire_department</span>
+<span>21-day streak</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined !text-base">donut_small</span>
+<span>95% this month</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input checked="" class="habit-checkbox border-border-dark text-primary checked:bg-primary/20 checked:text-primary checked:border-primary/50 focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">edit</span></button>
+<button class="size-8 flex items-center justify-center rounded-full text-text-muted-dark hover:bg-white/10 hover:text-text-dark transition-colors"><span class="material-symbols-outlined !text-lg">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<aside class="flex flex-col gap-8">
+<div class="bg-card-dark rounded-xl shadow-sm p-6 flex flex-col gap-4">
+<h3 class="text-lg font-semibold">Overall Summary</h3>
+<div class="bg-background-dark p-4 rounded-lg flex items-center justify-between">
+<p class="font-medium">Consistency this month</p>
+<p class="text-2xl font-bold bg-gradient-to-br from-primary to-blue-500 text-transparent bg-clip-text">78%</p>
+</div>
+<p class="text-sm text-text-muted-dark">You're doing great! Keep up the momentum to build lasting habits.</p>
+</div>
+<div class="bg-card-dark rounded-xl shadow-sm p-6 flex flex-col gap-4">
+<h3 class="text-lg font-semibold">Active Challenges</h3>
+<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-2">
+<p class="font-medium">Mindful Mornings</p>
+<div class="flex items-center gap-2">
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-accent h-2 rounded-full" style="width: 60%"></div>
+</div>
+<span class="text-xs font-mono text-text-muted-dark">3/5</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-medium">5-Day Movement Streak</p>
+<div class="flex items-center gap-2">
+<div class="w-full bg-border-dark rounded-full h-2">
+<div class="bg-accent h-2 rounded-full" style="width: 80%"></div>
+</div>
+<span class="text-xs font-mono text-text-muted-dark">4/5</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-2 text-sm font-semibold py-2 px-4 rounded-lg bg-primary/30 text-primary hover:bg-primary/40 transition-colors">
+                View All Challenges
+              </button>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<a class="sm:hidden fixed bottom-6 right-6 flex items-center justify-center gap-2 text-sm font-semibold px-4 h-14 bg-gradient-to-br from-primary to-blue-500 text-white rounded-full shadow-lg hover:shadow-primary/40 transition-shadow z-20" href="#">
+<span class="material-symbols-outlined !text-2xl">add</span>
+</a>
+</div>
+
+</body></html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strive - Grade 7 Advisory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#101f22",
+              "accent-start": "#13c8ec",
+              "accent-end": "#3183ff",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-dark group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[1280px] w-full flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-6 py-4">
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-3 text-white" href="#">
+<img alt="Strive Logo" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1WAlK0ShOBGBbHVPTamI52Y8VjlhciBB721w02xRjtxAdHMoMrzgXNs9mW1KqX3BKAJ0k8llXT0Nf0bDm6W5RPsnHur_3UFhMKPqygmMpQyB9uVJdKQspMfMTgHw3_ihel51Wjw6mmkhd3Rv7vkjVvij__z4YY1rkGv2RqvgXJAjcyMUpp5T85ekdYbhcJpOrNnM3pP4wyPbmRiGmYmeNRcJZKZ-g9KbKBsxOGQwnA1G3hkYCYscDbFob8UlN9N7wFlAgELzcbdHd"/>
+<h2 class="text-xl font-bold leading-tight tracking-[-0.015em] bg-gradient-to-r from-accent-start to-accent-end text-transparent bg-clip-text">Strive</h2>
+</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-300 hover:text-primary text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold leading-normal" href="#">Groups</a>
+<a class="text-slate-300 hover:text-primary text-sm font-medium leading-normal" href="#">Habits</a>
+<a class="text-slate-300 hover:text-primary text-sm font-medium leading-normal" href="#">Profile</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-4">
+<label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 flex border-none bg-white/5 items-center justify-center pl-3 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-white/5 h-full placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-white/5 text-slate-300 hover:bg-white/10 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAotKIjzJuHfPv2z4qIlh7IuAYo90NHeajY4O7VxM6fjlWYJ7kW-d3G503Its1LdlPmVI-9qS8qf7uk1xO5uoGl-a6-aeVDt0nS2v0_FIhgJFe_q8YdHiuf2dyXkiHec7dYYkN_g6xrfe-XV8OFFGXetdYvqsagYo0bEpDwh6oYEkbAks58hMXvcUReA8pgD3KL4JZWP3zBnB8UEydwnDEdfyatBl98XXBuR6cnKsbAooSVSqWhs4Epc-aWnSkOHQ0paNdyAlNLjo-M");'></div>
+</div>
+</header>
+<main class="flex flex-col gap-8 p-4 sm:p-6 md:p-8">
+<div class="flex flex-wrap justify-between gap-4">
+<div class="flex min-w-72 flex-col gap-4">
+<div class="flex flex-col gap-2">
+<p class="text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Grade 7 Advisory</p>
+<p class="text-slate-400 text-base font-normal leading-normal">Ms. Davison's homeroom group for the 2023-2024 school year.</p>
+</div>
+<p class="text-slate-500 text-sm font-normal leading-normal max-w-2xl">You can see only the habits your classmates and teacher choose to share with this group.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-primary/40 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Ms. Davison's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrEvdfbMa09NhMlFJxrnVycpTuZERJB0imeV2md3V_oFxZeOyETz1qFYax1seArC1Cljl06jpC1iDbJ4AuJS04W4pbO77NZVxe-ljpKmOsp0b-AAASI-EvRqTvtY07zdhBpTFbYgEHJ9KEZPNq6qE6_iBGkZRCmfv5uv9HP0X8_FVtzD5QPiO05TR-5Zx8Mn8KgolLQAFuPpAsJa8o7LXWRcatf9043nsRlS12UO_IUYMFtRAUAStLVPut_mdP2lxgmwRtLmO5uK3d");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Ms. Davison</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Teacher</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 15</p>
+<p class="text-xs text-slate-400">1800 / 2000 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 90%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-yellow-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-yellow-400">local_fire_department</span>
+<p class="text-sm font-medium text-yellow-300">Best Streak: 25 days</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Alex Johnson's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA8jwqiUWksnzsstu8aHEtoubWMkW1tIvnzBrJOZdRv_h1FBK3QGZdXlj64Umq_9cNxkn4qIhvj8_NWD1PnHgWkm591qH5LP_TqM-s4YdjWBSqDf90t-UGduJDF_7tUY6gbSgY0rBgqTkdRU1GDkGx7hs6oapz7LizNgMblSOEVmOEmaj5I9I2uXeFgSxS3ojSglewLAWLB5iaMJHpKeHrrl-D4In03Nm82Mo2AJE9wrFWr2bAC8U1r6YAa4lV3g398BKPMUm9-ANIC");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Alex Johnson</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 8</p>
+<p class="text-xs text-slate-400">1250 / 2000 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 62.5%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-green-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-green-400">spa</span>
+<p class="text-sm font-medium text-green-300">Consistent in 'Mindfulness'</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Brenda Chen's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCEXs8KebZmCM2LpqLnDGMNBnVMqqcVYT1YSLjdysaRYwltwecEFjdgoeZSPQaCm7ND-2v9jvBX2x__r6unj_kwlpqneMdgR_dLBWfFPwmRIBPCUgrFF9r-4fVQOYzX69G_qUi2jrekYmsSQe0m2PRY5ko4gq4OzB7fYVuSlZJT1NWrXQD8Q4AiI4fSibLQKTQe3hVxekU_vrDz56an02SmZR_fNpR6txf1uXO2qbFbOn-k6AquJPVYhyD5f-CENZHrM6enSho76i5S");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Brenda Chen</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 9</p>
+<p class="text-xs text-slate-400">450 / 2100 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 21.4%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-yellow-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-yellow-400">local_fire_department</span>
+<p class="text-sm font-medium text-yellow-300">Best Streak: 15 days</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Carlos Diaz's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDsR5DMrjIFVcU2UyPU0ea35IOZ2f3r2Ym7YsBUmL4w34G08NPWmEvomFugo6ucVb_apjC5SoDabNPCPaotRAp-QjOrGQJ3qk6vda_4_pzWI1Vo_PEpTjHd72L-3W2wHIOjoF6iHfx-Y5XoZbT73_oYmVdxEtGivH5jwPEtp7iRTH_1LH4O7nPFwBCMjIkMGojSXGVk9y6lUR9fBXo0rjo4rlZyHMzpzaiInyV5vmCud-IwjwBBPWvnGT1tPeg8n0GMEioL12iZEHQn");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Carlos Diaz</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 8</p>
+<p class="text-xs text-slate-400">1950 / 2000 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 97.5%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-blue-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-blue-400">bedtime</span>
+<p class="text-sm font-medium text-blue-300">Consistent in 'Sleep'</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Diana Smith's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBB_0nZLN5zYn0evSr__YxxJi33DGNmSQnPGTHcgFat3ij_2YbG28QXYRg9YqDMn7BRZiRq58CgF2wTmED5qTUvi-qzcP8YupwjOsZ7f4sPX5obOVl3_g815Z1fKSAusx66surIsJWn4wJ3sfxujN_J9FI0RXe7iVKIOHiD75qKgDZlIEVemnc6y8uApxtsZqvmWT0KNQjgXShpMjgwoPzibU_EOS8CDhPmsC7J0k-EwTuJwqxBMpuAbAuS-d0WgcasOcd5-oaQCKLJ");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Diana Smith</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 7</p>
+<p class="text-xs text-slate-400">800 / 1800 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 44.4%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-red-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-red-400">directions_run</span>
+<p class="text-sm font-medium text-red-300">Consistent in 'Exercise'</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Ethan Williams' profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDn21-kLNLuMRUN4yEinrF3D8wZ2cEUEdvFocGffkPYGPl18fVWwF6aoMFYxEOfE17IxgzaOESOdi3hxPciloXbD9U0c99iNHv1TbxPyBQqX8p1DddQHvufFzNJ6ZAKMNC4Y_b_8QET2yNAUIGZqPJ2goRslrOn5EN8VNjpYcS6P9QCqdejtFQuUvbSC5FYkvBCLwzsHM3pnhu4vml-a5vvPN1MJxCVnx3mn1zpWTcDXSwTK3W1H4mJF_yTC97laclqHDWahvzdwgBm");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Ethan Williams</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 9</p>
+<p class="text-xs text-slate-400">100 / 2100 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 4.7%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-yellow-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-yellow-400">local_fire_department</span>
+<p class="text-sm font-medium text-yellow-300">Best Streak: 11 days</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Fiona Garcia's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBrWYTcgsYzWwZA6Lpf6ne_D0I5TWoIPgh7vTnOCXlXsx3zFCNfLmYcIW5QRnKY9DbMdcetkWWeAXPwApsJIR-PvkwZo0eaI40yL3Z4g-Rxml-xPox6jlmFp67k7DR8nqQjNtc5LpWu1TenfnAeqAFrI6DyZB3SvVfo1C1wMn9feoGHaN2dD-DfhMTS8ewsbwmJSrFmma8Af66Ed7OHkcMQsxtE-pRt9RcG8GtaQWNAPDWsx2zOd-__uNp6d4oxUpU_H_hsuR8oZEly");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">Fiona Garcia</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 8</p>
+<p class="text-xs text-slate-400">1100 / 2000 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 55%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-green-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-green-400">spa</span>
+<p class="text-sm font-medium text-green-300">Consistent in 'Mindfulness'</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl bg-slate-900/50 p-5 border border-white/10 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50" href="06_Student_PublicProfile.html">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="George Lee's profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAeoY3aXzai9wvkJ0ZE-C9gklkteWK4EKfrf2aJV8HkP-LD7SsuDH-JO3MicL0TIC0IzF77-CVrIfMWs7NGnkjDTUc9P3SsxIsBeMfkJq6CvySaG3v1kAlS_xQ7anc41_SQm3MzoII-pY8dmSViDCAQzn83zGNcLY6IaAb6MvKrnjj3avoxIHt8pjTJpf_zRld9g79D5KJLhU7T4R5k8KRmZZXa0deLsVlslHpTqRqL0bfZHcbcfbZDm_fVTJgXrg_TilS74sFKjNMy");'></div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-bold leading-normal">George Lee</p>
+<p class="text-slate-400 text-sm font-normal leading-normal">Student</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<p class="text-sm font-semibold text-primary">Level 7</p>
+<p class="text-xs text-slate-400">1750 / 1800 XP</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 97.2%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-yellow-400/20 p-3 mt-auto">
+<span class="material-symbols-outlined text-yellow-400">local_fire_department</span>
+<p class="text-sm font-medium text-yellow-300">Best Streak: 9 days</p>
+</div>
+</a>
+</div>
+</main>
+<footer class="flex flex-col gap-8 px-5 py-10 text-center mt-12 border-t border-white/10">
+<div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+<a class="text-slate-400 hover:text-primary text-sm font-medium leading-normal" href="#">About</a>
+<a class="text-slate-400 hover:text-primary text-sm font-medium leading-normal" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-primary text-sm font-medium leading-normal" href="#">Terms of Service</a>
+<a class="text-slate-400 hover:text-primary text-sm font-medium leading-normal" href="#">Contact</a>
+</div>
+<p class="text-slate-500 text-sm font-normal leading-normal">© 2024 Strive. All rights reserved.</p>
+</footer>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

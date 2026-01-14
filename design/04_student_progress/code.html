@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Progress - Strive</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#101f22",
+              "primary-gradient-start": "#13c8ec",
+              "primary-gradient-end": "#0077c2",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-dark text-white">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="flex flex-1 justify-center py-5 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
+<div class="layout-content-container flex flex-col w-full max-w-6xl flex-1">
+<div class="flex flex-wrap items-center justify-between gap-4 px-4 pt-4 pb-2">
+<div class="flex items-center gap-4">
+<a class="block" href="#">
+<img alt="Strive logo" class="h-12 w-12" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8N0hRT3nw5FRWO7b1msClugaLO3PER-c0IH-psD_vQz097c-3N8nBqbZbsC3eflN2PBZq9XFqgWiOSGspwkR3MlqMg1uH25xnXG80doPyo5RY5GL5UF6vVhV5OkYZ1JYqIvaCfuXZTPbPwO4jPciGo5A97QIrqMC5GdnTrLSPpZR-YBKd4bpcOvXX1v8zh6mnbg9I_lOew4xdLrfs7hqWd-Jov6-oHv8t1tH-3fBtcAzrwu-DdpnDSSuWjE3GPAwq3wFeSIEA1f-F"/>
+</a>
+<h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em]">Student Progress</h1>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 px-4 py-6">
+<div class="flex flex-col w-full sm:w-auto">
+<label class="text-sm font-medium text-gray-400 mb-2" for="time-range">Time Range</label>
+<div class="flex h-10 w-full sm:w-auto items-center justify-center rounded-lg bg-[#234248] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-background-dark has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-white text-[#92c0c9] text-sm font-medium leading-normal">
+<span class="truncate">Last 7 Days</span>
+<input class="invisible w-0" name="date-range-picker" type="radio" value="Last 7 Days"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-background-dark has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-white text-[#92c0c9] text-sm font-medium leading-normal">
+<span class="truncate">Last 28 Days</span>
+<input checked="" class="invisible w-0" name="date-range-picker" type="radio" value="Last 28 Days"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col w-full sm:w-auto sm:max-w-xs">
+<label class="text-sm font-medium text-gray-400 mb-2" for="category-filter">Category</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-lg border-0 bg-[#234248] py-2 pl-3 pr-10 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary" id="category-filter">
+<option>All Categories</option>
+<option>Sleep</option>
+<option>Movement</option>
+<option>Focus &amp; Study</option>
+<option>Mindfulness &amp; Emotion</option>
+<option>Social &amp; Connection</option>
+<option>Nutrition &amp; Hydration</option>
+<option>Digital Hygiene</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="material-symbols-outlined text-gray-400">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Habit Progress</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
+<div class="flex flex-col items-stretch justify-start rounded-xl bg-[#192f33] p-4">
+<div class="flex flex-col items-stretch justify-center gap-1">
+<p class="text-[#92c0c9] text-sm font-medium leading-normal">Focus &amp; Study</p>
+<a class="text-white text-lg font-bold leading-tight tracking-[-0.015em] hover:text-primary transition-colors" href="#">Read for 30 mins</a>
+</div>
+<div class="w-full h-20 mt-4 mb-2 flex items-end gap-1">
+<div class="w-full h-[60%] bg-primary/20 rounded-t-sm"></div>
+<div class="w-full h-[80%] bg-primary/20 rounded-t-sm"></div>
+<div class="w-full h-[30%] bg-primary/20 rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-[90%] bg-primary rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+</div>
+<div class="flex items-end gap-4 justify-start mt-2">
+<div class="flex flex-col">
+<p class="text-[#92c0c9] text-xs font-normal leading-normal">Current Streak</p>
+<p class="text-white text-base font-bold leading-normal">5 days</p>
+</div>
+<div class="flex flex-col">
+<p class="text-[#92c0c9] text-xs font-normal leading-normal">Completion</p>
+<p class="text-white text-base font-bold leading-normal">85%</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-stretch justify-start rounded-xl bg-[#192f33] p-4">
+<div class="flex flex-col items-stretch justify-center gap-1">
+<p class="text-[#92c0c9] text-sm font-medium leading-normal">Nutrition &amp; Hydration</p>
+<a class="text-white text-lg font-bold leading-tight tracking-[-0.015em] hover:text-primary transition-colors" href="#">Drink 8 Glasses of Water</a>
+</div>
+<div class="w-full h-20 mt-4 mb-2 flex items-end gap-1">
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-[40%] bg-primary/20 rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-full bg-primary rounded-t-sm"></div>
+<div class="w-full h-[95%] bg-primary rounded-t-sm"></div>
+</div>
+<div class="flex items-end gap-4 justify-start mt-2">
+<div class="flex flex-col">
+<p class="text-[#92c0c9] text-xs font-normal leading-normal">Current Streak</p>
+<p class="text-white text-base font-bold leading-normal">12 days</p>
+</div>
+<div class="flex flex-col">
+<p class="text-[#92c0c9] text-xs font-normal leading-normal">Completion</p>
+<p class="text-white text-base font-bold leading-normal">92%</p>
+</div>
+</div>
+</div>
+</div>
+<h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-8">Category Summary</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">bed</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Sleep</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 78%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 9 days</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">fitness_center</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Movement</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 65%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 6 days</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">menu_book</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Focus &amp; Study</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 85%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 5 days</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">self_improvement</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Mindfulness</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 95%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 20 days</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">groups</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Social</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 70%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 4 days</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">water_drop</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-base font-bold leading-tight">Hydration</p>
+<p class="text-[#92c0c9] text-sm">Avg. Completion: 92%</p>
+<p class="text-[#92c0c9] text-sm">Longest Streak: 12 days</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>
