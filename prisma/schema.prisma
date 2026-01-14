@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// NextAuth Models
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// Application Models
+// ============================================
+
+enum UserRole {
+  STUDENT
+  TEACHER
+  SCHOOL_ADMIN
+  PLATFORM_ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // App-specific fields
+  role          UserRole  @default(STUDENT)
+  schoolId      String?
+  xp            Int       @default(0)
+  level         Int       @default(1)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  school                School?                  @relation(fields: [schoolId], references: [id])
+  accounts              Account[]
+  sessions              Session[]
+  habits                Habit[]
+  habitCompletions      HabitCompletion[]
+  groupMemberships      GroupMembership[]
+  teacherGroups         Group[]                  @relation("TeacherGroups")
+  createdChallenges     Challenge[]              @relation("CreatedChallenges")
+  challengeParticipations ChallengeParticipation[]
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users  User[]
+  groups Group[]
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  schoolId    String
+  teacherId   String
+  joinCode    String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  school      School            @relation(fields: [schoolId], references: [id])
+  teacher     User              @relation("TeacherGroups", fields: [teacherId], references: [id])
+  memberships GroupMembership[]
+  challenges  Challenge[]
+}
+
+model GroupMembership {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+enum HabitCategory {
+  Sleep
+  Movement
+  FocusStudy        @map("Focus & Study")
+  MindfulnessEmotion @map("Mindfulness & Emotion")
+  SocialConnection  @map("Social & Connection")
+  NutritionHydration @map("Nutrition & Hydration")
+  DigitalHygiene    @map("Digital Hygiene")
+  Other
+}
+
+enum HabitVisibility {
+  PUBLIC_TO_CLASS
+  ANONYMISED_ONLY
+  PRIVATE_TO_PEERS
+}
+
+enum ScheduleFrequency {
+  DAILY
+  WEEKLY
+  SPECIFIC_DAYS
+}
+
+model Habit {
+  id                String            @id @default(cuid())
+  userId            String
+  name              String
+  description       String?
+  category          HabitCategory
+  visibility        HabitVisibility   @default(PUBLIC_TO_CLASS)
+  scheduleFrequency ScheduleFrequency @default(DAILY)
+  scheduleDays      Int[]             // 0 = Sunday, 1 = Monday, etc.
+  timesPerWeek      Int?              // For WEEKLY frequency
+  startDate         DateTime          @default(now())
+  endDate           DateTime?
+  isActive          Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions HabitCompletion[]
+}
+
+model HabitCompletion {
+  id        String   @id @default(cuid())
+  habitId   String
+  userId    String
+  date      DateTime @db.Date  // The date of completion (day only)
+  createdAt DateTime @default(now())
+
+  // Relations
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])  // Only one completion per habit per day
+}
+
+enum ChallengeTargetType {
+  COMPLETIONS_PER_WEEK
+  STREAK_DAYS
+}
+
+model Challenge {
+  id              String              @id @default(cuid())
+  name            String
+  description     String?
+  groupId         String
+  createdByUserId String
+  targetCategory  HabitCategory?
+  targetType      ChallengeTargetType
+  targetValue     Int
+  startDate       DateTime
+  endDate         DateTime
+  rewardXp        Int                 @default(50)
+  badgeName       String?
+  isActive        Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  group          Group                    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdBy      User                     @relation("CreatedChallenges", fields: [createdByUserId], references: [id])
+  participations ChallengeParticipation[]
+}
+
+model ChallengeParticipation {
+  id          String    @id @default(cuid())
+  challengeId String
+  userId      String
+  progress    Int       @default(0)
+  isCompleted Boolean   @default(false)
+  completedAt DateTime?
+  joinedAt    DateTime  @default(now())
+
+  // Relations
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+}
