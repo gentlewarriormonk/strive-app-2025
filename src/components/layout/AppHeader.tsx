@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { User } from '@/types/models';
 
 interface AppHeaderProps {
@@ -12,6 +14,19 @@ interface AppHeaderProps {
 
 export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
   const pathname = usePathname();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   
   const studentNavItems = [
     { key: 'today', label: 'Today', href: '/student/today' },
@@ -70,17 +85,39 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
             >
               <span className="material-symbols-outlined">notifications</span>
             </button>
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col items-end">
-                <span className="text-sm font-medium text-white">{user.name}</span>
-                <span className="text-xs text-[#92c0c9]">Level {user.level}</span>
-              </div>
-              <div
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold"
-                title={user.name}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
               >
-                {user.name.charAt(0)}
-              </div>
+                <div className="hidden sm:flex flex-col items-end">
+                  <span className="text-sm font-medium text-white">{user.name}</span>
+                  <span className="text-xs text-[#92c0c9]">Level {user.level}</span>
+                </div>
+                <div
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold"
+                  title={user.name}
+                >
+                  {user.name.charAt(0)}
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#192f33] border border-[#325e67] rounded-lg shadow-lg py-1 z-50">
+                  <div className="px-4 py-2 border-b border-[#325e67]">
+                    <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                    <p className="text-xs text-[#92c0c9] truncate">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
+                  >
+                    <span className="material-symbols-outlined !text-lg">logout</span>
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
