@@ -1,14 +1,17 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
-import { currentTeacher, groups } from '@/lib/mockData';
+import { currentTeacher } from '@/lib/mockData';
 import { Button } from '@/components/ui/Button';
 import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
-import { User } from '@/types/models';
+import { GroupForm } from '@/components/groups/GroupForm';
+import { User, Group } from '@/types/models';
+
+type GroupWithCount = Group & { memberCount: number };
 
 export default function TeacherLayout({
   children,
@@ -19,13 +22,54 @@ export default function TeacherLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  // State for groups
+  const [teacherGroups, setTeacherGroups] = useState<GroupWithCount[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(true);
+  const [showGroupForm, setShowGroupForm] = useState(false);
+
+  // Fetch groups from API
   useEffect(() => {
-    // Only redirect if we're sure there's no session (not while loading)
-    if (status === 'unauthenticated') {
-      // For demo mode, allow access without auth
-      // Remove this check to enforce authentication
+    async function fetchGroups() {
+      try {
+        const response = await fetch('/api/groups');
+        if (response.ok) {
+          const groups = await response.json();
+          setTeacherGroups(groups.map((g: GroupWithCount & { createdAt: string }) => ({
+            ...g,
+            createdAt: new Date(g.createdAt),
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch groups:', error);
+      } finally {
+        setIsLoadingGroups(false);
+      }
     }
-  }, [status, router]);
+    if (status === 'authenticated') {
+      fetchGroups();
+    }
+  }, [status]);
+
+  // Handle creating a new group
+  const handleCreateGroup = useCallback(async (data: { name: string; description: string }) => {
+    const response = await fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create group');
+    }
+
+    const newGroup = await response.json();
+    setTeacherGroups(prev => [{
+      ...newGroup,
+      createdAt: new Date(newGroup.createdAt),
+      memberCount: 0,
+    }, ...prev]);
+  }, []);
 
   // Build user object from session or fall back to mock for demo
   const teacher: User = session?.user
@@ -44,10 +88,6 @@ export default function TeacherLayout({
 
   // Get current group from pathname if on groups page
   const currentGroupId = pathname.match(/\/teacher\/groups\/([^/]+)/)?.[1];
-  const currentGroup = groups.find((g) => g.id === currentGroupId);
-
-  // Teacher's groups (using mock data for now, would be fetched from DB in production)
-  const teacherGroups = groups.filter((g) => g.teacherId === currentTeacher.id);
 
   return (
     <OnboardingCheck>
@@ -97,37 +137,42 @@ export default function TeacherLayout({
             {/* Groups Section */}
             <div className="mt-6">
               <p className="text-xs font-medium text-[#92c0c9] uppercase tracking-wider mb-2 px-3">
-                My Groups
+                My Classes
               </p>
               <div className="flex flex-col gap-1">
-                {teacherGroups.map((group) => {
-                  const isActive = pathname.includes(`/teacher/groups/${group.id}`) || 
-                    (pathname === '/teacher/dashboard' && group.id === 'group-1');
-                  return (
-                    <Link
-                      key={group.id}
-                      href={`/teacher/groups/${group.id}`}
-                      className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
-                        isActive
-                          ? 'bg-[#234248] text-white'
-                          : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
-                      }`}
-                    >
-                      <span className={`material-symbols-outlined ${isActive ? 'fill' : ''}`}>
-                        group
-                      </span>
-                      <span className="text-sm font-medium">{group.name}</span>
-                    </Link>
-                  );
-                })}
+                {isLoadingGroups ? (
+                  <div className="px-3 py-2 text-[#92c0c9] text-sm">Loading...</div>
+                ) : teacherGroups.length === 0 ? (
+                  <div className="px-3 py-2 text-[#92c0c9] text-sm">No classes yet</div>
+                ) : (
+                  teacherGroups.map((group) => {
+                    const isActive = pathname.includes(`/teacher/groups/${group.id}`);
+                    return (
+                      <Link
+                        key={group.id}
+                        href={`/teacher/groups/${group.id}`}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                          isActive
+                            ? 'bg-[#234248] text-white'
+                            : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
+                        }`}
+                      >
+                        <span className={`material-symbols-outlined ${isActive ? 'fill' : ''}`}>
+                          group
+                        </span>
+                        <span className="text-sm font-medium">{group.name}</span>
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
 
           {/* Bottom Actions */}
           <div className="flex flex-col gap-3">
-            <Button icon="add" fullWidth>
-              New group
+            <Button icon="add" fullWidth onClick={() => setShowGroupForm(true)}>
+              New Class
             </Button>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-[#192f33]">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold">
@@ -201,6 +246,14 @@ export default function TeacherLayout({
         {children}
       </main>
     </div>
+
+    {/* Group Form Modal */}
+    {showGroupForm && (
+      <GroupForm
+        onClose={() => setShowGroupForm(false)}
+        onSubmit={handleCreateGroup}
+      />
+    )}
     </OnboardingCheck>
   );
 }
