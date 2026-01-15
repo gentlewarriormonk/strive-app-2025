@@ -2,18 +2,17 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { HabitCategory, HabitVisibility, ScheduleFrequency } from '@prisma/client';
 
-// Map display category names to Prisma enum values
-const categoryMap: Record<string, HabitCategory> = {
-  'Sleep': HabitCategory.Sleep,
-  'Movement': HabitCategory.Movement,
-  'Focus & Study': HabitCategory.FocusStudy,
-  'Mindfulness & Emotion': HabitCategory.MindfulnessEmotion,
-  'Social & Connection': HabitCategory.SocialConnection,
-  'Nutrition & Hydration': HabitCategory.NutritionHydration,
-  'Digital Hygiene': HabitCategory.DigitalHygiene,
-  'Other': HabitCategory.Other,
+// Map display category names to Prisma enum values (as strings)
+const categoryMap: Record<string, string> = {
+  'Sleep': 'Sleep',
+  'Movement': 'Movement',
+  'Focus & Study': 'FocusStudy',
+  'Mindfulness & Emotion': 'MindfulnessEmotion',
+  'Social & Connection': 'SocialConnection',
+  'Nutrition & Hydration': 'NutritionHydration',
+  'Digital Hygiene': 'DigitalHygiene',
+  'Other': 'Other',
 };
 
 export async function POST(request: Request) {
@@ -31,10 +30,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name and category are required' }, { status: 400 });
     }
 
-    // Map category string to enum
+    // Map category string to enum value
     const categoryEnum = categoryMap[category];
     if (!categoryEnum) {
-      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+      return NextResponse.json({ error: `Invalid category: ${category}` }, { status: 400 });
     }
 
     const habit = await prisma.habit.create({
@@ -42,9 +41,9 @@ export async function POST(request: Request) {
         userId: session.user.id,
         name,
         description: description || null,
-        category: categoryEnum,
-        visibility: visibility as HabitVisibility || HabitVisibility.PUBLIC_TO_CLASS,
-        scheduleFrequency: scheduleFrequency as ScheduleFrequency || ScheduleFrequency.DAILY,
+        category: categoryEnum as any,
+        visibility: visibility || 'PUBLIC_TO_CLASS',
+        scheduleFrequency: scheduleFrequency || 'DAILY',
         scheduleDays: scheduleDays || [],
         startDate: startDate ? new Date(startDate) : new Date(),
         isActive: true,
