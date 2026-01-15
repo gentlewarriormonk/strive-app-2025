@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { currentStudent } from '@/lib/mockData';
 import { AppHeader } from '@/components/layout/AppHeader';
+import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
 import { User } from '@/types/models';
 
 export default function StudentLayout({
@@ -39,10 +40,12 @@ export default function StudentLayout({
     : currentStudent;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-[#101f22] overflow-x-hidden">
-      <AppHeader user={user} showStudentNav />
-      {children}
-    </div>
+    <OnboardingCheck>
+      <div className="relative flex min-h-screen w-full flex-col bg-[#101f22] overflow-x-hidden">
+        <AppHeader user={user} showStudentNav />
+        {children}
+      </div>
+    </OnboardingCheck>
   );
 }
 

@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { currentTeacher, groups } from '@/lib/mockData';
 import { Button } from '@/components/ui/Button';
+import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
 import { User } from '@/types/models';
 
 export default function TeacherLayout({
@@ -49,9 +50,10 @@ export default function TeacherLayout({
   const teacherGroups = groups.filter((g) => g.teacherId === currentTeacher.id);
 
   return (
-    <div className="relative flex min-h-screen w-full bg-[#101f22]">
-      {/* Side Navigation */}
-      <aside className="hidden md:flex w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
+    <OnboardingCheck>
+      <div className="relative flex min-h-screen w-full bg-[#101f22]">
+        {/* Side Navigation */}
+        <aside className="hidden md:flex w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
         <div className="flex h-full flex-col justify-between p-4">
           <div className="flex flex-col gap-4">
             {/* Logo and Title */}
@@ -199,6 +201,7 @@ export default function TeacherLayout({
         {children}
       </main>
     </div>
+    </OnboardingCheck>
   );
 }
 
