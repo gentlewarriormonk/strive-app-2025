@@ -103,11 +103,15 @@ export default function StudentTodayPage() {
   // Loading state for habits
   const [isLoadingHabits, setIsLoadingHabits] = useState(true);
 
-  // Local state for habits (starts empty, loaded from API)
-  const [localHabits, setLocalHabits] = useState<Habit[]>([]);
+  // Extended habit type with stats from API
+  type HabitWithStats = Habit & {
+    isCompletedToday: boolean;
+    currentStreak: number;
+    completionsThisWeek: number;
+  };
 
-  // Local state for completions
-  const [localCompletions, setLocalCompletions] = useState<Map<string, boolean>>(new Map());
+  // Local state for habits (starts empty, loaded from API)
+  const [localHabits, setLocalHabits] = useState<HabitWithStats[]>([]);
 
   // Fetch habits from API on mount
   useEffect(() => {
@@ -117,7 +121,7 @@ export default function StudentTodayPage() {
         if (response.ok) {
           const habits = await response.json();
           // Convert date strings to Date objects
-          setLocalHabits(habits.map((h: Habit & { startDate: string; createdAt: string }) => ({
+          setLocalHabits(habits.map((h: HabitWithStats & { startDate: string; createdAt: string }) => ({
             ...h,
             startDate: new Date(h.startDate),
             createdAt: new Date(h.createdAt),
@@ -135,50 +139,23 @@ export default function StudentTodayPage() {
   const activeChallenges = getActiveChallenges('group-1');
   const participations = getUserChallengeParticipation(currentStudent.id);
 
-  // Calculate stats (simplified for now - completions will be loaded from API later)
-  const calculateStats = useCallback((habitId: string): HabitStats => {
-    const habit = localHabits.find(h => h.id === habitId);
-    if (!habit) {
-      return {
-        habitId,
-        totalDays: 0,
-        completedDays: 0,
-        completionRate: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        completionsThisWeek: 0,
-        completionsThisMonth: 0,
-      };
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayTime = today.getTime();
-
-    const totalDays = Math.max(1, Math.ceil((todayTime - habit.startDate.getTime()) / (1000 * 60 * 60 * 24)));
-    const isCompletedToday = localCompletions.get(habitId) ?? false;
-
-    // For now, stats are simplified until we load completions from DB
-    return {
-      habitId,
-      totalDays,
-      completedDays: isCompletedToday ? 1 : 0,
-      completionRate: 0,
-      currentStreak: isCompletedToday ? 1 : 0,
-      longestStreak: isCompletedToday ? 1 : 0,
-      completionsThisWeek: isCompletedToday ? 1 : 0,
-      completionsThisMonth: isCompletedToday ? 1 : 0,
-    };
-  }, [localHabits, localCompletions]);
-
-  // Habits with computed stats
+  // Habits with computed stats from API
   const habitsWithStats = useMemo(() => {
     return localHabits.map(habit => ({
       habit,
-      stats: calculateStats(habit.id),
-      isCompletedToday: localCompletions.get(habit.id) ?? false,
+      stats: {
+        habitId: habit.id,
+        totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
+        completedDays: 0,
+        completionRate: 0,
+        currentStreak: habit.currentStreak,
+        longestStreak: habit.currentStreak,
+        completionsThisWeek: habit.completionsThisWeek,
+        completionsThisMonth: 0,
+      } as HabitStats,
+      isCompletedToday: habit.isCompletedToday,
     }));
-  }, [localHabits, localCompletions, calculateStats]);
+  }, [localHabits]);
 
   // Calculate overall stats
   const { avgCompletion, completedToday, totalHabits } = useMemo(() => {
@@ -190,14 +167,59 @@ export default function StudentTodayPage() {
     return { avgCompletion: avgComp, completedToday: completed, totalHabits: habitsWithStats.length };
   }, [habitsWithStats]);
 
-  // Toggle habit completion
-  const toggleHabitCompletion = useCallback((habitId: string) => {
-    setLocalCompletions(prev => {
-      const newMap = new Map(prev);
-      newMap.set(habitId, !prev.get(habitId));
-      return newMap;
-    });
-  }, []);
+  // Toggle habit completion via API
+  const toggleHabitCompletion = useCallback(async (habitId: string) => {
+    const habit = localHabits.find(h => h.id === habitId);
+    if (!habit) return;
+
+    const isCurrentlyCompleted = habit.isCompletedToday;
+
+    // Optimistic update
+    setLocalHabits(prev => prev.map(h =>
+      h.id === habitId
+        ? {
+            ...h,
+            isCompletedToday: !isCurrentlyCompleted,
+            currentStreak: !isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+            completionsThisWeek: !isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+          }
+        : h
+    ));
+
+    try {
+      const response = await fetch(`/api/habits/${habitId}/complete`, {
+        method: isCurrentlyCompleted ? 'DELETE' : 'POST',
+      });
+
+      if (!response.ok) {
+        // Revert on error
+        setLocalHabits(prev => prev.map(h =>
+          h.id === habitId
+            ? {
+                ...h,
+                isCompletedToday: isCurrentlyCompleted,
+                currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+                completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+              }
+            : h
+        ));
+        console.error('Failed to toggle completion');
+      }
+    } catch (error) {
+      // Revert on error
+      setLocalHabits(prev => prev.map(h =>
+        h.id === habitId
+          ? {
+              ...h,
+              isCompletedToday: isCurrentlyCompleted,
+              currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+              completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+            }
+          : h
+      ));
+      console.error('Failed to toggle completion:', error);
+    }
+  }, [localHabits]);
 
   // Add new habit via API
   const handleAddHabit = useCallback(async (data: HabitFormData) => {
@@ -218,6 +240,9 @@ export default function StudentTodayPage() {
       ...newHabit,
       startDate: new Date(newHabit.startDate),
       createdAt: new Date(newHabit.createdAt),
+      isCompletedToday: false,
+      currentStreak: 0,
+      completionsThisWeek: 0,
     }]);
   }, []);
 

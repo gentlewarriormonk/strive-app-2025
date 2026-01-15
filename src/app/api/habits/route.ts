@@ -65,17 +65,72 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get today's date (start of day)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Get habits with their completions
     const habits = await prisma.habit.findMany({
       where: {
         userId: session.user.id,
         isActive: true,
+      },
+      include: {
+        completions: {
+          orderBy: { date: 'desc' },
+          take: 60, // Get last 60 completions for streak calculation
+        },
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return NextResponse.json(habits);
+    // Calculate stats for each habit
+    const habitsWithStats = habits.map(habit => {
+      const completionDates = habit.completions.map(c => {
+        const d = new Date(c.date);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      });
+
+      // Check if completed today
+      const isCompletedToday = completionDates.includes(today.getTime());
+
+      // Calculate current streak
+      let currentStreak = 0;
+      const checkDate = new Date(today);
+
+      while (true) {
+        const checkTime = checkDate.getTime();
+        if (completionDates.includes(checkTime)) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else if (checkTime === today.getTime()) {
+          // Today not completed yet, check from yesterday
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+
+      // Calculate completions this week
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      const completionsThisWeek = completionDates.filter(t => t >= startOfWeek.getTime()).length;
+
+      // Remove completions from response to reduce payload
+      const { completions, ...habitData } = habit;
+
+      return {
+        ...habitData,
+        isCompletedToday,
+        currentStreak,
+        completionsThisWeek,
+      };
+    });
+
+    return NextResponse.json(habitsWithStats);
   } catch (error) {
     console.error('Error fetching habits:', error);
     return NextResponse.json({ error: 'Failed to fetch habits' }, { status: 500 });
