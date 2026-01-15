@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
@@ -9,13 +10,12 @@ import { ChallengeCard } from '@/components/challenges/ChallengeCard';
 import {
   currentStudent,
   getUserHabits,
-  getHabitStats,
   getActiveChallenges,
   getUserChallengeParticipation,
   habitCompletions,
   TODAY,
 } from '@/lib/mockData';
-import { Habit, HabitStats, CATEGORY_CONFIG, HabitCompletion } from '@/types/models';
+import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
 
 // Interactive Habit Row component with local state
 function InteractiveHabitRow({
@@ -93,9 +93,15 @@ function InteractiveHabitRow({
 }
 
 export default function StudentTodayPage() {
+  const { data: session } = useSession();
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<string | null>(null);
   const challengesRef = useRef<HTMLDivElement>(null);
+
+  // Get user info from session (with fallbacks to mock data for habits)
+  const userName = session?.user?.name || currentStudent.name;
+  const userLevel = session?.user?.level ?? currentStudent.level;
+  const userXp = session?.user?.xp ?? currentStudent.xp;
 
   // Local state for habits (starts with mock data)
   const [localHabits, setLocalHabits] = useState<Habit[]>(() => getUserHabits(currentStudent.id));
@@ -282,7 +288,7 @@ export default function StudentTodayPage() {
         <div className="flex flex-wrap justify-between items-start gap-3">
           <div className="flex min-w-72 flex-col gap-2">
             <h1 className="text-4xl font-black leading-tight tracking-tight text-white">
-              Hello, {currentStudent.name.split(' ')[0]}!
+              Hello, {userName.split(' ')[0]}!
             </h1>
             <p className="text-base text-[#92c0c9]">
               Let&apos;s strive today. You&apos;re doing great!
@@ -392,11 +398,11 @@ export default function StudentTodayPage() {
             <SectionCard title="Your Progress">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-xl font-bold">
-                  {currentStudent.level}
+                  {userLevel}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">Level {currentStudent.level}</p>
-                  <p className="text-sm text-[#92c0c9]">{currentStudent.xp} XP</p>
+                  <p className="text-white font-medium">Level {userLevel}</p>
+                  <p className="text-sm text-[#92c0c9]">{userXp} XP</p>
                   <div className="w-full bg-[#325e67] rounded-full h-2 mt-2">
                     <div
                       className="bg-[#13c8ec] h-2 rounded-full"
