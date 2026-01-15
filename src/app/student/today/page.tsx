@@ -7,12 +7,21 @@ import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { ChallengeCard } from '@/components/challenges/ChallengeCard';
+import { JoinClassForm } from '@/components/groups/JoinClassForm';
 import {
   currentStudent,
   getActiveChallenges,
   getUserChallengeParticipation,
 } from '@/lib/mockData';
 import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
+
+interface JoinedGroup {
+  id: string;
+  name: string;
+  teacherName: string;
+  memberCount: number;
+  joinedAt: string;
+}
 
 // Interactive Habit Row component with local state
 function InteractiveHabitRow({
@@ -103,6 +112,11 @@ export default function StudentTodayPage() {
   // Loading state for habits
   const [isLoadingHabits, setIsLoadingHabits] = useState(true);
 
+  // Join class state
+  const [showJoinForm, setShowJoinForm] = useState(false);
+  const [joinedGroups, setJoinedGroups] = useState<JoinedGroup[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(true);
+
   // Extended habit type with stats from API
   type HabitWithStats = Habit & {
     isCompletedToday: boolean;
@@ -134,6 +148,33 @@ export default function StudentTodayPage() {
       }
     }
     fetchHabits();
+  }, []);
+
+  // Fetch joined groups on mount
+  useEffect(() => {
+    async function fetchJoinedGroups() {
+      try {
+        const response = await fetch('/api/groups/joined');
+        if (response.ok) {
+          const groups = await response.json();
+          setJoinedGroups(groups);
+        }
+      } catch (error) {
+        console.error('Failed to fetch joined groups:', error);
+      } finally {
+        setIsLoadingGroups(false);
+      }
+    }
+    fetchJoinedGroups();
+  }, []);
+
+  // Handle successful join
+  const handleJoinSuccess = useCallback((group: { id: string; name: string; teacherName: string }) => {
+    setJoinedGroups(prev => [{
+      ...group,
+      memberCount: 0,
+      joinedAt: new Date().toISOString(),
+    }, ...prev]);
   }, []);
 
   const activeChallenges = getActiveChallenges('group-1');
@@ -379,6 +420,41 @@ export default function StudentTodayPage() {
               </SectionCard>
             </div>
 
+            {/* My Classes */}
+            <SectionCard title="My Classes">
+              {isLoadingGroups ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin w-6 h-6 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto" />
+                </div>
+              ) : joinedGroups.length > 0 ? (
+                <div className="space-y-2 mb-4">
+                  {joinedGroups.map((group) => (
+                    <div
+                      key={group.id}
+                      className="p-3 bg-[#101f22] rounded-lg hover:bg-[#182a2e] transition-colors"
+                    >
+                      <p className="text-white font-medium text-sm truncate">{group.name}</p>
+                      <p className="text-[#92c0c9] text-xs truncate">
+                        {group.teacherName}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[#92c0c9] text-sm mb-4">
+                  You haven&apos;t joined any classes yet.
+                </p>
+              )}
+              <Button
+                variant="secondary"
+                fullWidth
+                icon="group_add"
+                onClick={() => setShowJoinForm(true)}
+              >
+                Join a Class
+              </Button>
+            </SectionCard>
+
             {/* XP Progress */}
             <SectionCard title="Your Progress">
               <div className="flex items-center gap-4">
@@ -439,6 +515,14 @@ export default function StudentTodayPage() {
               : undefined
           }
           onSubmit={handleEditHabit}
+        />
+      )}
+
+      {/* Join Class Modal */}
+      {showJoinForm && (
+        <JoinClassForm
+          onClose={() => setShowJoinForm(false)}
+          onSuccess={handleJoinSuccess}
         />
       )}
     </PageShell>
