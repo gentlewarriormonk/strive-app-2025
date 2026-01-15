@@ -31,14 +31,17 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
   const studentNavItems = [
     { key: 'today', label: 'Today', href: '/student/today' },
     { key: 'progress', label: 'Progress', href: '/student/progress' },
-    { key: 'group', label: 'Group', href: '/student/group' },
+    { key: 'class', label: 'Class', href: '/student/group' },
   ];
+
+  // Show teacher dashboard link for teachers
+  const isTeacher = user.role === 'TEACHER';
 
   // Determine active tab from pathname
   const getActiveTab = () => {
     if (pathname.startsWith('/student/today')) return 'today';
     if (pathname.startsWith('/student/progress')) return 'progress';
-    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'group';
+    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'class';
     return null;
   };
   
@@ -109,6 +112,16 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
                     <p className="text-sm font-medium text-white truncate">{user.name}</p>
                     <p className="text-xs text-[#92c0c9] truncate">{user.email}</p>
                   </div>
+                  {isTeacher && (
+                    <Link
+                      href="/teacher/dashboard"
+                      className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <span className="material-symbols-outlined !text-lg">school</span>
+                      My Classes
+                    </Link>
+                  )}
                   <button
                     onClick={() => signOut({ callbackUrl: '/login' })}
                     className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"

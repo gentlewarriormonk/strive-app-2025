@@ -33,7 +33,7 @@ const screenPreviews = [
   },
   {
     id: 'groupView',
-    label: 'Group view',
+    label: 'Class view',
     description: 'See which students are thriving and who needs support.',
     imageSrc: previewScreens.groupView,
   },

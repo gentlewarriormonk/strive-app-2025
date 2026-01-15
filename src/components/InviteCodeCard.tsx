@@ -35,7 +35,7 @@ export function InviteCodeCard({ code, groupName }: InviteCodeCardProps) {
       <div className="flex flex-col gap-1 mb-4">
         <p className="text-white text-base font-bold">Invite students</p>
         <p className="text-[#92c0c9] text-sm">
-          Share this code with your students to let them join the group.
+          Share this code with your students to let them join the class.
         </p>
       </div>
       <div className="flex flex-col items-start gap-4 sm:flex-row">
