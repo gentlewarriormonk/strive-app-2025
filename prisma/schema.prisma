@@ -66,10 +66,11 @@ model User {
   image         String?
 
   // App-specific fields
-  role          UserRole  @default(STUDENT)
-  schoolId      String?
-  xp            Int       @default(0)
-  level         Int       @default(1)
+  role               UserRole  @default(STUDENT)
+  completedOnboarding Boolean  @default(false)
+  schoolId           String?
+  xp                 Int       @default(0)
+  level              Int       @default(1)
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

@@ -20,7 +20,10 @@ export async function POST(request: Request) {
 
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
-      data: { role },
+      data: {
+        role,
+        completedOnboarding: true,
+      },
     });
 
     return NextResponse.json({
@@ -43,18 +46,14 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: {
-        groupMemberships: true,
-      },
     });
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // User needs onboarding if they're a STUDENT with no group memberships
-    // (new users default to STUDENT role)
-    const needsOnboarding = user.role === 'STUDENT' && user.groupMemberships.length === 0;
+    // User needs onboarding if they haven't completed it yet
+    const needsOnboarding = !user.completedOnboarding;
 
     return NextResponse.json({
       role: user.role,
