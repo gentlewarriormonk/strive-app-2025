@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { currentTeacher } from '@/lib/mockData';
 import { Button } from '@/components/ui/Button';
 import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
@@ -26,6 +26,10 @@ export default function TeacherLayout({
   const [teacherGroups, setTeacherGroups] = useState<GroupWithCount[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
   const [showGroupForm, setShowGroupForm] = useState(false);
+
+  // State for user menu dropdown
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Fetch groups from API
   useEffect(() => {
@@ -49,6 +53,17 @@ export default function TeacherLayout({
       fetchGroups();
     }
   }, [status]);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Handle creating a new group
   const handleCreateGroup = useCallback(async (data: { name: string; description: string }) => {
@@ -174,14 +189,39 @@ export default function TeacherLayout({
             <Button icon="add" fullWidth onClick={() => setShowGroupForm(true)}>
               New Class
             </Button>
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#192f33]">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold">
-                {teacher.name.charAt(0)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{teacher.name}</p>
-                <p className="text-[#92c0c9] text-xs">Level {teacher.level}</p>
-              </div>
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="w-full flex items-center gap-3 p-3 rounded-lg bg-[#192f33] hover:bg-[#234248] transition-colors"
+              >
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold">
+                  {teacher.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-white text-sm font-medium truncate">{teacher.name}</p>
+                  <p className="text-[#92c0c9] text-xs">Level {teacher.level}</p>
+                </div>
+                <span className="material-symbols-outlined text-[#92c0c9]">
+                  {showUserMenu ? 'expand_less' : 'expand_more'}
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-[#192f33] border border-[#325e67] rounded-lg shadow-lg py-1 z-50">
+                  <div className="px-4 py-2 border-b border-[#325e67]">
+                    <p className="text-sm font-medium text-white truncate">{teacher.name}</p>
+                    <p className="text-xs text-[#92c0c9] truncate">{teacher.email}</p>
+                  </div>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
+                  >
+                    <span className="material-symbols-outlined !text-lg">logout</span>
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -201,8 +241,30 @@ export default function TeacherLayout({
                 className="h-8 w-auto object-contain"
               />
             </div>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-sm font-bold">
-              {teacher.name.charAt(0)}
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="w-8 h-8 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-sm font-bold"
+              >
+                {teacher.name.charAt(0)}
+              </button>
+
+              {/* Mobile Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#192f33] border border-[#325e67] rounded-lg shadow-lg py-1 z-50">
+                  <div className="px-4 py-2 border-b border-[#325e67]">
+                    <p className="text-sm font-medium text-white truncate">{teacher.name}</p>
+                    <p className="text-xs text-[#92c0c9] truncate">{teacher.email}</p>
+                  </div>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
+                  >
+                    <span className="material-symbols-outlined !text-lg">logout</span>
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           {/* Mobile Navigation */}
