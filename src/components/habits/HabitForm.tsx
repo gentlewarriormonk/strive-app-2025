@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import { HabitCategory, ScheduleFrequency, HabitVisibility } from '@/types/models';
 import { Button } from '@/components/ui/Button';
-import { TODAY } from '@/lib/mockData';
 
 interface HabitFormProps {
   onClose: () => void;
-  onSubmit?: (data: HabitFormData) => void;
+  onSubmit?: (data: HabitFormData) => void | Promise<void>;
   initialData?: Partial<HabitFormData>;
 }
 
@@ -35,9 +34,8 @@ const CATEGORIES: { value: HabitCategory; label: string }[] = [
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export function HabitForm({ onClose, onSubmit, initialData }: HabitFormProps) {
-  // Use consistent date reference to avoid hydration mismatch
-  const todayStr = TODAY.toISOString().split('T')[0];
-  
+  const todayStr = new Date().toISOString().split('T')[0];
+
   const [formData, setFormData] = useState<HabitFormData>({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -47,11 +45,22 @@ export function HabitForm({ onClose, onSubmit, initialData }: HabitFormProps) {
     visibility: initialData?.visibility || 'PUBLIC_TO_CLASS',
     startDate: initialData?.startDate || todayStr,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.(formData);
-    onClose();
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit?.(formData);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save habit');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleDay = (dayIndex: number) => {
@@ -213,11 +222,14 @@ export function HabitForm({ onClose, onSubmit, initialData }: HabitFormProps) {
 
           {/* Footer */}
           <div className="px-6 py-4 border-t border-[#325e67]/50">
+            {error && (
+              <p className="text-red-400 text-sm mb-3">{error}</p>
+            )}
             <div className="flex flex-col sm:flex-row-reverse gap-3">
-              <Button type="submit" variant="primary" fullWidth className="sm:w-auto">
-                {initialData ? 'Save Changes' : 'Add Habit'}
+              <Button type="submit" variant="primary" fullWidth className="sm:w-auto" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : initialData ? 'Save Changes' : 'Add Habit'}
               </Button>
-              <Button type="button" variant="ghost" onClick={onClose} fullWidth className="sm:w-auto">
+              <Button type="button" variant="ghost" onClick={onClose} fullWidth className="sm:w-auto" disabled={isSubmitting}>
                 Cancel
               </Button>
             </div>

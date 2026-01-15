@@ -248,22 +248,26 @@ export default function StudentTodayPage() {
     });
   }, []);
 
-  // Add new habit
-  const handleAddHabit = useCallback((data: HabitFormData) => {
-    const newHabit: Habit = {
-      id: `habit-new-${Date.now()}`,
-      userId: currentStudent.id,
-      name: data.name,
-      description: data.description,
-      category: data.category,
-      visibility: data.visibility,
-      scheduleFrequency: data.scheduleFrequency,
-      scheduleDays: data.scheduleDays,
-      startDate: new Date(data.startDate),
-      isActive: true,
-      createdAt: new Date(),
-    };
-    setLocalHabits(prev => [...prev, newHabit]);
+  // Add new habit via API
+  const handleAddHabit = useCallback(async (data: HabitFormData) => {
+    const response = await fetch('/api/habits', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create habit');
+    }
+
+    const newHabit = await response.json();
+    // Add to local state with the response from the server
+    setLocalHabits(prev => [...prev, {
+      ...newHabit,
+      startDate: new Date(newHabit.startDate),
+      createdAt: new Date(newHabit.createdAt),
+    }]);
   }, []);
 
   // Edit habit

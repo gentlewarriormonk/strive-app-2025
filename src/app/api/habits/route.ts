@@ -1,0 +1,84 @@
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { HabitCategory, HabitVisibility, ScheduleFrequency } from '@prisma/client';
+
+// Map display category names to Prisma enum values
+const categoryMap: Record<string, HabitCategory> = {
+  'Sleep': HabitCategory.Sleep,
+  'Movement': HabitCategory.Movement,
+  'Focus & Study': HabitCategory.FocusStudy,
+  'Mindfulness & Emotion': HabitCategory.MindfulnessEmotion,
+  'Social & Connection': HabitCategory.SocialConnection,
+  'Nutrition & Hydration': HabitCategory.NutritionHydration,
+  'Digital Hygiene': HabitCategory.DigitalHygiene,
+  'Other': HabitCategory.Other,
+};
+
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { name, description, category, visibility, scheduleFrequency, scheduleDays, startDate } = body;
+
+    if (!name || !category) {
+      return NextResponse.json({ error: 'Name and category are required' }, { status: 400 });
+    }
+
+    // Map category string to enum
+    const categoryEnum = categoryMap[category];
+    if (!categoryEnum) {
+      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+    }
+
+    const habit = await prisma.habit.create({
+      data: {
+        userId: session.user.id,
+        name,
+        description: description || null,
+        category: categoryEnum,
+        visibility: visibility as HabitVisibility || HabitVisibility.PUBLIC_TO_CLASS,
+        scheduleFrequency: scheduleFrequency as ScheduleFrequency || ScheduleFrequency.DAILY,
+        scheduleDays: scheduleDays || [],
+        startDate: startDate ? new Date(startDate) : new Date(),
+        isActive: true,
+      },
+    });
+
+    return NextResponse.json(habit, { status: 201 });
+  } catch (error) {
+    console.error('Error creating habit:', error);
+    return NextResponse.json({ error: 'Failed to create habit' }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const habits = await prisma.habit.findMany({
+      where: {
+        userId: session.user.id,
+        isActive: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return NextResponse.json(habits);
+  } catch (error) {
+    console.error('Error fetching habits:', error);
+    return NextResponse.json({ error: 'Failed to fetch habits' }, { status: 500 });
+  }
+}
