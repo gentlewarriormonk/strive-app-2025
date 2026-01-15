@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
@@ -9,11 +9,8 @@ import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { ChallengeCard } from '@/components/challenges/ChallengeCard';
 import {
   currentStudent,
-  getUserHabits,
   getActiveChallenges,
   getUserChallengeParticipation,
-  habitCompletions,
-  TODAY,
 } from '@/lib/mockData';
 import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
 
@@ -103,29 +100,42 @@ export default function StudentTodayPage() {
   const userLevel = session?.user?.level ?? currentStudent.level;
   const userXp = session?.user?.xp ?? currentStudent.xp;
 
-  // Local state for habits (starts with mock data)
-  const [localHabits, setLocalHabits] = useState<Habit[]>(() => getUserHabits(currentStudent.id));
-  
-  // Local state for completions (layer on top of mock data)
-  const [localCompletions, setLocalCompletions] = useState<Map<string, boolean>>(() => {
-    const map = new Map<string, boolean>();
-    
-    // Initialize from mock completions using consistent TODAY reference
-    habitCompletions.forEach(c => {
-      const cDate = new Date(c.date);
-      cDate.setHours(0, 0, 0, 0);
-      if (cDate.getTime() === TODAY.getTime()) {
-        map.set(c.habitId, true);
+  // Loading state for habits
+  const [isLoadingHabits, setIsLoadingHabits] = useState(true);
+
+  // Local state for habits (starts empty, loaded from API)
+  const [localHabits, setLocalHabits] = useState<Habit[]>([]);
+
+  // Local state for completions
+  const [localCompletions, setLocalCompletions] = useState<Map<string, boolean>>(new Map());
+
+  // Fetch habits from API on mount
+  useEffect(() => {
+    async function fetchHabits() {
+      try {
+        const response = await fetch('/api/habits');
+        if (response.ok) {
+          const habits = await response.json();
+          // Convert date strings to Date objects
+          setLocalHabits(habits.map((h: Habit & { startDate: string; createdAt: string }) => ({
+            ...h,
+            startDate: new Date(h.startDate),
+            createdAt: new Date(h.createdAt),
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch habits:', error);
+      } finally {
+        setIsLoadingHabits(false);
       }
-    });
-    
-    return map;
-  });
+    }
+    fetchHabits();
+  }, []);
 
   const activeChallenges = getActiveChallenges('group-1');
   const participations = getUserChallengeParticipation(currentStudent.id);
 
-  // Calculate stats with local completions overlay
+  // Calculate stats (simplified for now - completions will be loaded from API later)
   const calculateStats = useCallback((habitId: string): HabitStats => {
     const habit = localHabits.find(h => h.id === habitId);
     if (!habit) {
@@ -141,82 +151,23 @@ export default function StudentTodayPage() {
       };
     }
 
-    // Use consistent TODAY reference
-    const todayTime = TODAY.getTime();
-    
-    const startOfWeek = new Date(TODAY);
-    startOfWeek.setDate(TODAY.getDate() - TODAY.getDay());
-    
-    const startOfMonth = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
 
-    // Get mock completions for this habit
-    const mockCompletions = habitCompletions
-      .filter(c => c.habitId === habitId)
-      .map(c => {
-        const d = new Date(c.date);
-        d.setHours(0, 0, 0, 0);
-        return d.getTime();
-      });
-
-    // Add/remove today based on local state
+    const totalDays = Math.max(1, Math.ceil((todayTime - habit.startDate.getTime()) / (1000 * 60 * 60 * 24)));
     const isCompletedToday = localCompletions.get(habitId) ?? false;
-    
-    let allCompletionTimes = [...new Set(mockCompletions)];
-    if (isCompletedToday && !allCompletionTimes.includes(todayTime)) {
-      allCompletionTimes.push(todayTime);
-    } else if (!isCompletedToday) {
-      allCompletionTimes = allCompletionTimes.filter(t => t !== todayTime);
-    }
-    allCompletionTimes.sort((a, b) => a - b);
 
-    const totalDays = Math.ceil((todayTime - habit.startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const completedDays = allCompletionTimes.length;
-    const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
-
-    // Calculate current streak
-    let currentStreak = 0;
-    const checkDate = new Date(TODAY);
-    while (true) {
-      const hasCompletion = allCompletionTimes.includes(checkDate.getTime());
-      if (hasCompletion) {
-        currentStreak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else if (checkDate.getTime() === todayTime) {
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-
-    // Calculate longest streak
-    let longestStreak = currentStreak;
-    let tempStreak = 0;
-    for (let i = 0; i < allCompletionTimes.length; i++) {
-      if (i === 0) {
-        tempStreak = 1;
-      } else {
-        const diff = (allCompletionTimes[i] - allCompletionTimes[i - 1]) / (1000 * 60 * 60 * 24);
-        if (diff === 1) {
-          tempStreak++;
-        } else {
-          tempStreak = 1;
-        }
-      }
-      longestStreak = Math.max(longestStreak, tempStreak);
-    }
-
-    const completionsThisWeek = allCompletionTimes.filter(t => t >= startOfWeek.getTime()).length;
-    const completionsThisMonth = allCompletionTimes.filter(t => t >= startOfMonth.getTime()).length;
-
+    // For now, stats are simplified until we load completions from DB
     return {
       habitId,
       totalDays,
-      completedDays,
-      completionRate,
-      currentStreak,
-      longestStreak,
-      completionsThisWeek,
-      completionsThisMonth,
+      completedDays: isCompletedToday ? 1 : 0,
+      completionRate: 0,
+      currentStreak: isCompletedToday ? 1 : 0,
+      longestStreak: isCompletedToday ? 1 : 0,
+      completionsThisWeek: isCompletedToday ? 1 : 0,
+      completionsThisMonth: isCompletedToday ? 1 : 0,
     };
   }, [localHabits, localCompletions]);
 
@@ -315,18 +266,23 @@ export default function StudentTodayPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-              {habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
-                <InteractiveHabitRow
-                  key={habit.id}
-                  habit={habit}
-                  stats={stats}
-                  isCompletedToday={isCompletedToday}
-                  onToggleComplete={() => toggleHabitCompletion(habit.id)}
-                  onEdit={() => setEditingHabit(habit.id)}
-                />
-              ))}
-
-              {habitsWithStats.length === 0 && (
+              {isLoadingHabits ? (
+                <div className="bg-[#192f33] rounded-xl p-8 text-center">
+                  <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
+                  <p className="text-[#92c0c9]">Loading your habits...</p>
+                </div>
+              ) : habitsWithStats.length > 0 ? (
+                habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
+                  <InteractiveHabitRow
+                    key={habit.id}
+                    habit={habit}
+                    stats={stats}
+                    isCompletedToday={isCompletedToday}
+                    onToggleComplete={() => toggleHabitCompletion(habit.id)}
+                    onEdit={() => setEditingHabit(habit.id)}
+                  />
+                ))
+              ) : (
                 <div className="bg-[#192f33] rounded-xl p-8 text-center">
                   <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">
                     add_task
