@@ -1,18 +1,12 @@
 'use client';
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
-import { ChallengeCard } from '@/components/challenges/ChallengeCard';
 import { JoinClassForm } from '@/components/groups/JoinClassForm';
-import {
-  currentStudent,
-  getActiveChallenges,
-  getUserChallengeParticipation,
-} from '@/lib/mockData';
 import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
 
 interface JoinedGroup {
@@ -102,12 +96,11 @@ export default function StudentTodayPage() {
   const { data: session } = useSession();
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<string | null>(null);
-  const challengesRef = useRef<HTMLDivElement>(null);
 
-  // Get user info from session (with fallbacks to mock data for habits)
-  const userName = session?.user?.name || currentStudent.name;
-  const userLevel = session?.user?.level ?? currentStudent.level;
-  const userXp = session?.user?.xp ?? currentStudent.xp;
+  // Get user info from session
+  const userName = session?.user?.name || 'Student';
+  const userLevel = session?.user?.level ?? 1;
+  const userXp = session?.user?.xp ?? 0;
 
   // Loading state for habits
   const [isLoadingHabits, setIsLoadingHabits] = useState(true);
@@ -176,9 +169,6 @@ export default function StudentTodayPage() {
       joinedAt: new Date().toISOString(),
     }, ...prev]);
   }, []);
-
-  const activeChallenges = getActiveChallenges('group-1');
-  const participations = getUserChallengeParticipation(currentStudent.id);
 
   // Habits with computed stats from API
   const habitsWithStats = useMemo(() => {
@@ -297,11 +287,6 @@ export default function StudentTodayPage() {
     ));
   }, [editingHabit]);
 
-  // Scroll to challenges
-  const scrollToChallenges = useCallback(() => {
-    challengesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
-
   return (
     <PageShell>
       <div className="flex flex-col gap-8">
@@ -387,38 +372,6 @@ export default function StudentTodayPage() {
                   : "Keep up the momentum to build lasting habits."}
               </p>
             </SectionCard>
-
-            {/* Active Challenges */}
-            <div ref={challengesRef} className="scroll-mt-20">
-              <SectionCard title="Active Challenges">
-                <div className="flex flex-col gap-5">
-                  {activeChallenges.map((challenge) => {
-                    const participation = participations.find(
-                      (p) => p.challengeId === challenge.id
-                    );
-                    return (
-                      <ChallengeCard
-                        key={challenge.id}
-                        challenge={challenge}
-                        participation={participation}
-                        compact
-                      />
-                    );
-                  })}
-                  {activeChallenges.length === 0 && (
-                    <p className="text-[#92c0c9] text-sm">No active challenges right now.</p>
-                  )}
-                </div>
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  className="mt-4"
-                  onClick={scrollToChallenges}
-                >
-                  View All Challenges
-                </Button>
-              </SectionCard>
-            </div>
 
             {/* My Classes */}
             <SectionCard title="My Classes">

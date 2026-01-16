@@ -1,16 +1,11 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { CategorySummaryCard } from '@/components/CategorySummaryCard';
-import {
-  currentTeacher,
-  getUserHabits,
-  habitCompletions,
-  TODAY,
-} from '@/lib/mockData';
 import { Habit, HabitCategory, CATEGORY_CONFIG, HabitStats } from '@/types/models';
 
 // Interactive Habit Row for teacher with completion toggle
@@ -55,8 +50,8 @@ function TeacherHabitRow({
             <span>{stats.completionsThisWeek}/7 this week</span>
           </div>
           <span className={`px-2 py-0.5 rounded-full text-xs ${
-            habit.visibility === 'PUBLIC_TO_CLASS' 
-              ? 'bg-green-500/20 text-green-400' 
+            habit.visibility === 'PUBLIC_TO_CLASS'
+              ? 'bg-green-500/20 text-green-400'
               : 'bg-gray-500/20 text-gray-400'
           }`}>
             {habit.visibility === 'PUBLIC_TO_CLASS' ? 'Shared' : 'Private'}
@@ -94,128 +89,65 @@ function TeacherHabitRow({
 }
 
 export default function TeacherHabitsPage() {
+  const { data: session } = useSession();
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<string | null>(null);
-  
-  // Local state for habits
-  const [localHabits, setLocalHabits] = useState<Habit[]>(() => 
-    getUserHabits(currentTeacher.id)
-  );
-  
-  // Local state for completions
-  const [localCompletions, setLocalCompletions] = useState<Map<string, boolean>>(() => {
-    const map = new Map<string, boolean>();
-    
-    habitCompletions.forEach(c => {
-      const cDate = new Date(c.date);
-      cDate.setHours(0, 0, 0, 0);
-      if (cDate.getTime() === TODAY.getTime()) {
-        map.set(c.habitId, true);
-      }
-    });
-    
-    return map;
-  });
+  const [isLoadingHabits, setIsLoadingHabits] = useState(true);
 
-  // Calculate stats with local completions
-  const calculateStats = useCallback((habitId: string): HabitStats => {
-    const habit = localHabits.find(h => h.id === habitId);
-    if (!habit) {
-      return {
-        habitId,
-        totalDays: 0,
-        completedDays: 0,
-        completionRate: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        completionsThisWeek: 0,
-        completionsThisMonth: 0,
-      };
-    }
+  // Get user info from session
+  const userLevel = session?.user?.level ?? 1;
+  const userXp = session?.user?.xp ?? 0;
 
-    // Use consistent TODAY reference
-    const todayTime = TODAY.getTime();
-    
-    const startOfWeek = new Date(TODAY);
-    startOfWeek.setDate(TODAY.getDate() - TODAY.getDay());
-    
-    const startOfMonth = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+  // Extended habit type with stats from API
+  type HabitWithStats = Habit & {
+    isCompletedToday: boolean;
+    currentStreak: number;
+    completionsThisWeek: number;
+  };
 
-    const mockCompletions = habitCompletions
-      .filter(c => c.habitId === habitId)
-      .map(c => {
-        const d = new Date(c.date);
-        d.setHours(0, 0, 0, 0);
-        return d.getTime();
-      });
+  // Local state for habits (starts empty, loaded from API)
+  const [localHabits, setLocalHabits] = useState<HabitWithStats[]>([]);
 
-    const isCompletedToday = localCompletions.get(habitId) ?? false;
-    
-    let allCompletionTimes = [...new Set(mockCompletions)];
-    if (isCompletedToday && !allCompletionTimes.includes(todayTime)) {
-      allCompletionTimes.push(todayTime);
-    } else if (!isCompletedToday) {
-      allCompletionTimes = allCompletionTimes.filter(t => t !== todayTime);
-    }
-    allCompletionTimes.sort((a, b) => a - b);
-
-    const totalDays = Math.ceil((todayTime - habit.startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const completedDays = allCompletionTimes.length;
-    const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
-
-    let currentStreak = 0;
-    const checkDate = new Date(TODAY);
-    while (true) {
-      const hasCompletion = allCompletionTimes.includes(checkDate.getTime());
-      if (hasCompletion) {
-        currentStreak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else if (checkDate.getTime() === todayTime) {
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-
-    let longestStreak = currentStreak;
-    let tempStreak = 0;
-    for (let i = 0; i < allCompletionTimes.length; i++) {
-      if (i === 0) {
-        tempStreak = 1;
-      } else {
-        const diff = (allCompletionTimes[i] - allCompletionTimes[i - 1]) / (1000 * 60 * 60 * 24);
-        if (diff === 1) {
-          tempStreak++;
-        } else {
-          tempStreak = 1;
+  // Fetch habits from API on mount
+  useEffect(() => {
+    async function fetchHabits() {
+      try {
+        const response = await fetch('/api/habits');
+        if (response.ok) {
+          const habits = await response.json();
+          // Convert date strings to Date objects
+          setLocalHabits(habits.map((h: HabitWithStats & { startDate: string; createdAt: string }) => ({
+            ...h,
+            startDate: new Date(h.startDate),
+            createdAt: new Date(h.createdAt),
+          })));
         }
+      } catch (error) {
+        console.error('Failed to fetch habits:', error);
+      } finally {
+        setIsLoadingHabits(false);
       }
-      longestStreak = Math.max(longestStreak, tempStreak);
     }
+    fetchHabits();
+  }, []);
 
-    const completionsThisWeek = allCompletionTimes.filter(t => t >= startOfWeek.getTime()).length;
-    const completionsThisMonth = allCompletionTimes.filter(t => t >= startOfMonth.getTime()).length;
-
-    return {
-      habitId,
-      totalDays,
-      completedDays,
-      completionRate,
-      currentStreak,
-      longestStreak,
-      completionsThisWeek,
-      completionsThisMonth,
-    };
-  }, [localHabits, localCompletions]);
-
-  // Habits with stats
+  // Habits with computed stats from API
   const habitsWithStats = useMemo(() => {
     return localHabits.map(habit => ({
       habit,
-      stats: calculateStats(habit.id),
-      isCompletedToday: localCompletions.get(habit.id) ?? false,
+      stats: {
+        habitId: habit.id,
+        totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
+        completedDays: 0,
+        completionRate: 0,
+        currentStreak: habit.currentStreak,
+        longestStreak: habit.currentStreak,
+        completionsThisWeek: habit.completionsThisWeek,
+        completionsThisMonth: 0,
+      } as HabitStats,
+      isCompletedToday: habit.isCompletedToday,
     }));
-  }, [localHabits, localCompletions, calculateStats]);
+  }, [localHabits]);
 
   // Overall stats
   const { avgCompletion, bestStreak, completedToday, totalHabits } = useMemo(() => {
@@ -254,38 +186,90 @@ export default function TeacherHabitsPage() {
       .filter((s) => s.hasHabits);
   }, [habitsWithStats]);
 
-  // Toggle completion
-  const toggleHabitCompletion = useCallback((habitId: string) => {
-    setLocalCompletions(prev => {
-      const newMap = new Map(prev);
-      newMap.set(habitId, !prev.get(habitId));
-      return newMap;
+  // Toggle habit completion via API
+  const toggleHabitCompletion = useCallback(async (habitId: string) => {
+    const habit = localHabits.find(h => h.id === habitId);
+    if (!habit) return;
+
+    const isCurrentlyCompleted = habit.isCompletedToday;
+
+    // Optimistic update
+    setLocalHabits(prev => prev.map(h =>
+      h.id === habitId
+        ? {
+            ...h,
+            isCompletedToday: !isCurrentlyCompleted,
+            currentStreak: !isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+            completionsThisWeek: !isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+          }
+        : h
+    ));
+
+    try {
+      const response = await fetch(`/api/habits/${habitId}/complete`, {
+        method: isCurrentlyCompleted ? 'DELETE' : 'POST',
+      });
+
+      if (!response.ok) {
+        // Revert on error
+        setLocalHabits(prev => prev.map(h =>
+          h.id === habitId
+            ? {
+                ...h,
+                isCompletedToday: isCurrentlyCompleted,
+                currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+                completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+              }
+            : h
+        ));
+        console.error('Failed to toggle completion');
+      }
+    } catch (error) {
+      // Revert on error
+      setLocalHabits(prev => prev.map(h =>
+        h.id === habitId
+          ? {
+              ...h,
+              isCompletedToday: isCurrentlyCompleted,
+              currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
+              completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+            }
+          : h
+      ));
+      console.error('Failed to toggle completion:', error);
+    }
+  }, [localHabits]);
+
+  // Add new habit via API
+  const handleAddHabit = useCallback(async (data: HabitFormData) => {
+    const response = await fetch('/api/habits', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create habit');
+    }
+
+    const newHabit = await response.json();
+    // Add to local state with the response from the server
+    setLocalHabits(prev => [...prev, {
+      ...newHabit,
+      startDate: new Date(newHabit.startDate),
+      createdAt: new Date(newHabit.createdAt),
+      isCompletedToday: false,
+      currentStreak: 0,
+      completionsThisWeek: 0,
+    }]);
   }, []);
 
-  // Add new habit
-  const handleAddHabit = useCallback((data: HabitFormData) => {
-    const newHabit: Habit = {
-      id: `habit-teacher-${Date.now()}`,
-      userId: currentTeacher.id,
-      name: data.name,
-      description: data.description,
-      category: data.category,
-      visibility: data.visibility,
-      scheduleFrequency: data.scheduleFrequency,
-      scheduleDays: data.scheduleDays,
-      startDate: new Date(data.startDate),
-      isActive: true,
-      createdAt: new Date(),
-    };
-    setLocalHabits(prev => [...prev, newHabit]);
-  }, []);
-
-  // Edit habit
+  // Edit habit (local only for now - could be extended to API)
   const handleEditHabit = useCallback((data: HabitFormData) => {
     if (!editingHabit) return;
-    setLocalHabits(prev => prev.map(h => 
-      h.id === editingHabit 
+    setLocalHabits(prev => prev.map(h =>
+      h.id === editingHabit
         ? { ...h, name: data.name, description: data.description, category: data.category, visibility: data.visibility, scheduleFrequency: data.scheduleFrequency, scheduleDays: data.scheduleDays }
         : h
     ));
@@ -316,18 +300,23 @@ export default function TeacherHabitsPage() {
             </span>
           </div>
           <div className="flex flex-col gap-4">
-            {habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
-              <TeacherHabitRow
-                key={habit.id}
-                habit={habit}
-                stats={stats}
-                isCompletedToday={isCompletedToday}
-                onToggleComplete={() => toggleHabitCompletion(habit.id)}
-                onEdit={() => setEditingHabit(habit.id)}
-              />
-            ))}
-
-            {habitsWithStats.length === 0 && (
+            {isLoadingHabits ? (
+              <div className="bg-[#192f33] rounded-xl p-8 text-center">
+                <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
+                <p className="text-[#92c0c9]">Loading your habits...</p>
+              </div>
+            ) : habitsWithStats.length > 0 ? (
+              habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
+                <TeacherHabitRow
+                  key={habit.id}
+                  habit={habit}
+                  stats={stats}
+                  isCompletedToday={isCompletedToday}
+                  onToggleComplete={() => toggleHabitCompletion(habit.id)}
+                  onEdit={() => setEditingHabit(habit.id)}
+                />
+              ))
+            ) : (
               <div className="bg-[#192f33] rounded-xl p-8 text-center">
                 <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">
                   self_improvement
@@ -370,11 +359,30 @@ export default function TeacherHabitsPage() {
               <div className="bg-[#101f22] p-4 rounded-lg flex items-center justify-between">
                 <div>
                   <p className="text-[#92c0c9] text-xs">Level</p>
-                  <p className="text-2xl font-bold text-white">{currentTeacher.level}</p>
+                  <p className="text-2xl font-bold text-white">{userLevel}</p>
                 </div>
                 <span className="material-symbols-outlined text-3xl text-white/30">
                   military_tech
                 </span>
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* XP Progress */}
+          <SectionCard title="XP Progress">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-lg font-bold">
+                {userLevel}
+              </div>
+              <div className="flex-1">
+                <p className="text-white font-medium">Level {userLevel}</p>
+                <p className="text-sm text-[#92c0c9]">{userXp} XP</p>
+                <div className="w-full bg-[#325e67] rounded-full h-2 mt-2">
+                  <div
+                    className="bg-[#13c8ec] h-2 rounded-full"
+                    style={{ width: '62%' }}
+                  />
+                </div>
               </div>
             </div>
           </SectionCard>
@@ -386,7 +394,7 @@ export default function TeacherHabitsPage() {
               <div>
                 <p className="text-white font-medium mb-1">Visible to Students</p>
                 <p className="text-[#92c0c9] text-sm">
-                  Habits marked as &quot;Public to group&quot; will be visible to your students,
+                  Habits marked as &quot;Public to class&quot; will be visible to your students,
                   showing them you&apos;re walking the walk.
                 </p>
               </div>
