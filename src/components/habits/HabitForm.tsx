@@ -191,12 +191,11 @@ export function HabitForm({ onClose, onSubmit, initialData }: HabitFormProps) {
 
             {/* Visibility */}
             <fieldset>
-              <legend className="text-white text-base font-medium mb-3">Visibility</legend>
+              <legend className="text-white text-base font-medium mb-3">Who can see this habit?</legend>
               <div className="space-y-3">
                 {[
-                  { value: 'PUBLIC_TO_CLASS', title: 'Public to group', desc: 'Visible to everyone in your group, including teachers.' },
-                  { value: 'ANONYMISED_ONLY', title: 'Anonymised only', desc: 'Your progress contributes to group stats anonymously.' },
-                  { value: 'PRIVATE_TO_PEERS', title: 'Private to peers', desc: 'Only you and your teacher can see your progress.' },
+                  { value: 'PUBLIC_TO_CLASS', title: 'Visible to class', desc: 'Your teacher and classmates can see this habit.' },
+                  { value: 'PRIVATE_TO_PEERS', title: 'Teacher only', desc: 'Only your teacher can see this habit.' },
                 ].map((opt) => (
                   <label
                     key={opt.value}
@@ -206,7 +205,7 @@ export function HabitForm({ onClose, onSubmit, initialData }: HabitFormProps) {
                       type="radio"
                       name="visibility"
                       value={opt.value}
-                      checked={formData.visibility === opt.value}
+                      checked={formData.visibility === opt.value || (formData.visibility === 'ANONYMISED_ONLY' && opt.value === 'PRIVATE_TO_PEERS')}
                       onChange={() => setFormData({ ...formData, visibility: opt.value as HabitVisibility })}
                       className="mt-1 bg-transparent border-[#92c0c9] text-[#13c8ec] focus:ring-[#13c8ec] focus:ring-offset-0"
                     />

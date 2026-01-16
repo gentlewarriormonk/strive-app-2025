@@ -87,13 +87,6 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
 
           {/* User Menu */}
           <div className="flex items-center gap-4">
-            <button 
-              className="hidden sm:flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#92c0c9]/50 cursor-not-allowed"
-              aria-disabled="true"
-              title="Coming soon"
-            >
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}

@@ -36,13 +36,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Invalid category: ${category}` }, { status: 400 });
     }
 
+    // Map visibility - support both old 3-tier and new 2-tier system
+    // ANONYMISED_ONLY is no longer used, map to PRIVATE_TO_PEERS (teacher only)
+    let visibilityEnum = visibility || 'PUBLIC_TO_CLASS';
+    if (visibilityEnum === 'ANONYMISED_ONLY') {
+      visibilityEnum = 'PRIVATE_TO_PEERS';
+    }
+
     const habit = await prisma.habit.create({
       data: {
         userId: session.user.id,
         name,
         description: description || null,
         category: categoryEnum as any,
-        visibility: visibility || 'PUBLIC_TO_CLASS',
+        visibility: visibilityEnum,
         scheduleFrequency: scheduleFrequency || 'DAILY',
         scheduleDays: scheduleDays || [],
         startDate: startDate ? new Date(startDate) : new Date(),
@@ -53,7 +60,9 @@ export async function POST(request: Request) {
     return NextResponse.json(habit, { status: 201 });
   } catch (error) {
     console.error('Error creating habit:', error);
-    return NextResponse.json({ error: 'Failed to create habit' }, { status: 500 });
+    // Return more specific error message for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create habit';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 

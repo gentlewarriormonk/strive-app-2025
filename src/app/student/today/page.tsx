@@ -7,7 +7,7 @@ import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { JoinClassForm } from '@/components/groups/JoinClassForm';
-import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
+import { Habit, HabitStats, CATEGORY_CONFIG, LEVEL_THRESHOLDS, getXPForNextLevel } from '@/types/models';
 
 interface JoinedGroup {
   id: string;
@@ -417,7 +417,15 @@ export default function StudentTodayPage() {
                   <div className="w-full bg-[#325e67] rounded-full h-2 mt-2">
                     <div
                       className="bg-[#13c8ec] h-2 rounded-full"
-                      style={{ width: '62%' }}
+                      style={{
+                        width: `${(() => {
+                          const nextLevelXp = getXPForNextLevel(userLevel);
+                          const currentLevelXp = userLevel > 1 ? getXPForNextLevel(userLevel - 1) : 0;
+                          return nextLevelXp > currentLevelXp
+                            ? Math.round(((userXp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
+                            : 100;
+                        })()}%`
+                      }}
                     />
                   </div>
                 </div>
