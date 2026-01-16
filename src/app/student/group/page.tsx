@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
+import { Button } from '@/components/ui/Button';
 
 interface GroupMember {
   user: {
@@ -48,6 +49,12 @@ export default function StudentGroupPage() {
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [classStats, setClassStats] = useState<ClassStats | null>(null);
 
+  // Join class form state
+  const [joinCode, setJoinCode] = useState('');
+  const [isJoining, setIsJoining] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [joinSuccess, setJoinSuccess] = useState<string | null>(null);
+
   // Fetch group data
   useEffect(() => {
     async function fetchGroupData() {
@@ -76,6 +83,41 @@ export default function StudentGroupPage() {
     fetchGroupData();
   }, [selectedGroupId]);
 
+  // Handle join class
+  const handleJoinClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setJoinError(null);
+    setJoinSuccess(null);
+    setIsJoining(true);
+
+    try {
+      const response = await fetch('/api/groups/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ joinCode: joinCode.trim().toUpperCase() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to join class');
+      }
+
+      setJoinSuccess(`Successfully joined ${data.group.name}!`);
+      setJoinCode('');
+
+      // Refresh the page data after a short delay
+      setTimeout(() => {
+        setSelectedGroupId(data.group.id);
+        setJoinSuccess(null);
+      }, 1500);
+    } catch (err) {
+      setJoinError(err instanceof Error ? err.message : 'Failed to join class');
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -90,24 +132,73 @@ export default function StudentGroupPage() {
     );
   }
 
-  // No groups state
+  // No groups state - show join form
   if (groups.length === 0) {
     return (
       <PageShell>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center max-w-md">
-            <span className="material-symbols-outlined text-5xl text-[#92c0c9] mb-4">group_off</span>
-            <h2 className="text-2xl font-bold text-white mb-2">No Classes Yet</h2>
+          <div className="text-center max-w-md w-full">
+            <span className="material-symbols-outlined text-5xl text-[#92c0c9] mb-4">group_add</span>
+            <h2 className="text-2xl font-bold text-white mb-2">Join a Class</h2>
             <p className="text-[#92c0c9] mb-6">
-              You haven&apos;t joined any classes yet. Ask your teacher for a join code.
+              Enter the join code your teacher gave you to connect with your class.
             </p>
-            <Link
-              href="/student/today"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#13c8ec] text-white rounded-lg hover:bg-[#13c8ec]/80 transition-colors"
-            >
-              <span className="material-symbols-outlined">arrow_back</span>
-              Back to Today
-            </Link>
+
+            {/* Join Form */}
+            <form onSubmit={handleJoinClass} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  value={joinCode}
+                  onChange={(e) => {
+                    setJoinCode(e.target.value.toUpperCase());
+                    setJoinError(null);
+                  }}
+                  className="input-field w-full text-center text-2xl font-mono tracking-widest uppercase"
+                  placeholder="ABCD1234"
+                  maxLength={8}
+                  required
+                />
+                <p className="text-[#92c0c9] text-xs mt-2">
+                  The code is 8 characters, like &quot;ABCD1234&quot;
+                </p>
+              </div>
+
+              {/* Error Message */}
+              {joinError && (
+                <div className="flex items-center justify-center gap-2 text-red-400 text-sm">
+                  <span className="material-symbols-outlined !text-lg">error</span>
+                  {joinError}
+                </div>
+              )}
+
+              {/* Success Message */}
+              {joinSuccess && (
+                <div className="flex items-center justify-center gap-2 text-green-400 text-sm">
+                  <span className="material-symbols-outlined !text-lg">check_circle</span>
+                  {joinSuccess}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                disabled={isJoining || joinCode.length < 8}
+              >
+                {isJoining ? 'Joining...' : 'Join Class'}
+              </Button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-[#325e67]">
+              <Link
+                href="/student/today"
+                className="inline-flex items-center gap-2 text-[#92c0c9] hover:text-white transition-colors text-sm"
+              >
+                <span className="material-symbols-outlined !text-lg">arrow_back</span>
+                Back to Today
+              </Link>
+            </div>
           </div>
         </div>
       </PageShell>
