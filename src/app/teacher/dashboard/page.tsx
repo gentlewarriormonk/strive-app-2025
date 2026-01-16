@@ -21,6 +21,7 @@ export default function TeacherDashboardPage() {
   const [newClassName, setNewClassName] = useState('');
   const [newClassDescription, setNewClassDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   // Fetch teacher's groups on mount
   useEffect(() => {
@@ -79,6 +80,8 @@ export default function TeacherDashboardPage() {
   const copyJoinCode = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -87,6 +90,8 @@ export default function TeacherDashboardPage() {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
     }
   };
 
@@ -255,10 +260,16 @@ export default function TeacherDashboardPage() {
                           e.stopPropagation();
                           copyJoinCode(group.joinCode);
                         }}
-                        className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                          copiedCode === group.joinCode
+                            ? 'text-green-400 bg-green-400/10'
+                            : 'text-[#92c0c9] hover:bg-white/10 hover:text-white'
+                        }`}
                         aria-label="Copy join code"
                       >
-                        <span className="material-symbols-outlined !text-lg">content_copy</span>
+                        <span className="material-symbols-outlined !text-lg">
+                          {copiedCode === group.joinCode ? 'check' : 'content_copy'}
+                        </span>
                       </button>
                     </div>
                   </div>

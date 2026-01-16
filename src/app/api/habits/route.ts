@@ -2,18 +2,20 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { HabitCategory } from '@prisma/client';
 
-// Map display category names to Prisma enum values
-const categoryMap: Record<string, HabitCategory> = {
-  'Sleep': HabitCategory.Sleep,
-  'Movement': HabitCategory.Movement,
-  'Focus & Study': HabitCategory.FocusStudy,
-  'Mindfulness & Emotion': HabitCategory.MindfulnessEmotion,
-  'Social & Connection': HabitCategory.SocialConnection,
-  'Nutrition & Hydration': HabitCategory.NutritionHydration,
-  'Digital Hygiene': HabitCategory.DigitalHygiene,
-  'Other': HabitCategory.Other,
+// The Prisma schema uses @map directives, so we need to use the Prisma enum names
+// (not the mapped database values). Prisma Client handles the conversion.
+// HabitCategory enum in Prisma: Sleep, Movement, FocusStudy, MindfulnessEmotion,
+// SocialConnection, NutritionHydration, DigitalHygiene, Other
+const categoryMap: Record<string, string> = {
+  'Sleep': 'Sleep',
+  'Movement': 'Movement',
+  'Focus & Study': 'FocusStudy',
+  'Mindfulness & Emotion': 'MindfulnessEmotion',
+  'Social & Connection': 'SocialConnection',
+  'Nutrition & Hydration': 'NutritionHydration',
+  'Digital Hygiene': 'DigitalHygiene',
+  'Other': 'Other',
 };
 
 export async function POST(request: Request) {
@@ -49,7 +51,7 @@ export async function POST(request: Request) {
         userId: session.user.id,
         name,
         description: description || null,
-        category: categoryEnum,
+        category: categoryEnum as any, // Cast to any to allow string enum value
         visibility: visibilityEnum,
         scheduleFrequency: scheduleFrequency || 'DAILY',
         scheduleDays: scheduleDays || [],

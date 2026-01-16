@@ -231,8 +231,8 @@ export default function StudentGroupPage() {
               <p className="text-[#92c0c9] text-base">{selectedGroup.description}</p>
             )}
             <p className="text-slate-500 text-sm max-w-2xl">
-              You can see only the habits your classmates choose to share publicly.
-              Private and anonymised habits are not shown.
+              You can see only habits marked as &quot;Visible to Class&quot;.
+              Teacher-only habits are not shown here.
             </p>
           </div>
         </div>
@@ -360,8 +360,8 @@ export default function StudentGroupPage() {
             <div>
               <p className="text-white font-medium text-sm">Privacy Settings</p>
               <p className="text-[#92c0c9] text-xs mt-1">
-                Only habits marked as &quot;Public to Class&quot; are shown here.
-                Your private and anonymised habits are never visible to classmates.
+                Only habits marked as &quot;Visible to Class&quot; are shown here.
+                Teacher-only habits are never visible to classmates.
                 You can change visibility settings when creating or editing habits.
               </p>
             </div>
