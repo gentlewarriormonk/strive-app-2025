@@ -28,20 +28,26 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   
-  const studentNavItems = [
+  // Role-aware navigation
+  const isTeacher = user.role === 'TEACHER';
+
+  // Nav items - Class/My Classes tab routes and labels differ by role
+  const navItems = [
     { key: 'today', label: 'Today', href: '/student/today' },
     { key: 'progress', label: 'Progress', href: '/student/progress' },
-    { key: 'class', label: 'Class', href: '/student/group' },
+    {
+      key: 'class',
+      label: isTeacher ? 'My Classes' : 'Class',
+      href: isTeacher ? '/teacher/dashboard' : '/student/group'
+    },
   ];
-
-  // Show teacher dashboard link for teachers
-  const isTeacher = user.role === 'TEACHER';
 
   // Determine active tab from pathname
   const getActiveTab = () => {
     if (pathname.startsWith('/student/today')) return 'today';
     if (pathname.startsWith('/student/progress')) return 'progress';
     if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'class';
+    if (pathname.startsWith('/teacher/dashboard') || pathname.startsWith('/teacher/groups')) return 'class';
     return null;
   };
   
@@ -67,7 +73,7 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
           {/* Student Navigation (Desktop) */}
           {showStudentNav && (
             <nav className="hidden md:flex items-center gap-1 bg-[#101f22] p-1 rounded-full">
-              {studentNavItems.map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
@@ -112,16 +118,6 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
                     <p className="text-sm font-medium text-white truncate">{user.name}</p>
                     <p className="text-xs text-[#92c0c9] truncate">{user.email}</p>
                   </div>
-                  {isTeacher && (
-                    <Link
-                      href="/teacher/dashboard"
-                      className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <span className="material-symbols-outlined !text-lg">school</span>
-                      My Classes
-                    </Link>
-                  )}
                   <button
                     onClick={() => signOut({ callbackUrl: '/login' })}
                     className="w-full px-4 py-2 text-left text-sm text-[#92c0c9] hover:bg-[#325e67] hover:text-white flex items-center gap-2 transition-colors"
@@ -139,7 +135,7 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
       {/* Mobile Navigation */}
       {showStudentNav && (
         <nav className="md:hidden flex items-center justify-center gap-1 bg-[#101f22] p-1 mx-4 mb-4 rounded-full">
-          {studentNavItems.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.key}
               href={item.href}
