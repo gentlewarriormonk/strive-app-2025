@@ -11,9 +11,31 @@ const lexend = Lexend({
 
 export const metadata: Metadata = {
   title: "Strive - Build better wellbeing habits together",
-  description: "A wellbeing habit tracker for schools. Help students build sustainable habits, track progress, and foster a positive classroom environment.",
+  description: "A wellbeing habit tracker for schools. Help students build sustainable habits, track progress, and foster accountability.",
   icons: {
     icon: "/strive-logo-primary-on-transparent.png",
+  },
+  openGraph: {
+    title: "Strive - Build better wellbeing habits together",
+    description: "A wellbeing habit tracker for schools. Help students build sustainable habits, track progress, and foster accountability.",
+    url: "https://strive-app-2025.vercel.app",
+    siteName: "Strive",
+    images: [
+      {
+        url: "/strive-full-colour-with-padding.png",
+        width: 800,
+        height: 600,
+        alt: "Strive Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Strive - Build better wellbeing habits together",
+    description: "A wellbeing habit tracker for schools. Help students build sustainable habits, track progress, and foster accountability.",
+    images: ["/strive-full-colour-with-padding.png"],
   },
 };
 
