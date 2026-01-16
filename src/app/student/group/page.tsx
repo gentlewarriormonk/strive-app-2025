@@ -106,7 +106,7 @@ export default function StudentGroupPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#13c8ec] text-white rounded-lg hover:bg-[#13c8ec]/80 transition-colors"
             >
               <span className="material-symbols-outlined">arrow_back</span>
-              Back to Dashboard
+              Back to Today
             </Link>
           </div>
         </div>

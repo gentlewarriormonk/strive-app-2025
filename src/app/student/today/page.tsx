@@ -172,20 +172,25 @@ export default function StudentTodayPage() {
 
   // Habits with computed stats from API
   const habitsWithStats = useMemo(() => {
-    return localHabits.map(habit => ({
-      habit,
-      stats: {
-        habitId: habit.id,
-        totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
-        completedDays: 0,
-        completionRate: 0,
-        currentStreak: habit.currentStreak,
-        longestStreak: habit.currentStreak,
-        completionsThisWeek: habit.completionsThisWeek,
-        completionsThisMonth: 0,
-      } as HabitStats,
-      isCompletedToday: habit.isCompletedToday,
-    }));
+    return localHabits.map(habit => {
+      // Calculate completion rate based on this week's completions (out of 7 days)
+      const completionRate = Math.round((habit.completionsThisWeek / 7) * 100);
+
+      return {
+        habit,
+        stats: {
+          habitId: habit.id,
+          totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
+          completedDays: habit.completionsThisWeek,
+          completionRate,
+          currentStreak: habit.currentStreak,
+          longestStreak: habit.currentStreak,
+          completionsThisWeek: habit.completionsThisWeek,
+          completionsThisMonth: 0,
+        } as HabitStats,
+        isCompletedToday: habit.isCompletedToday,
+      };
+    });
   }, [localHabits]);
 
   // Calculate overall stats
@@ -373,13 +378,9 @@ export default function StudentTodayPage() {
               </p>
             </SectionCard>
 
-            {/* My Classes */}
-            <SectionCard title="My Classes">
-              {isLoadingGroups ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin w-6 h-6 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto" />
-                </div>
-              ) : joinedGroups.length > 0 ? (
+            {/* My Classes - only show if user has joined groups */}
+            {!isLoadingGroups && joinedGroups.length > 0 && (
+              <SectionCard title="My Classes">
                 <div className="space-y-2 mb-4">
                   {joinedGroups.map((group) => (
                     <div
@@ -393,20 +394,16 @@ export default function StudentTodayPage() {
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-[#92c0c9] text-sm mb-4">
-                  You haven&apos;t joined any classes yet.
-                </p>
-              )}
-              <Button
-                variant="secondary"
-                fullWidth
-                icon="group_add"
-                onClick={() => setShowJoinForm(true)}
-              >
-                Join a Class
-              </Button>
-            </SectionCard>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon="group_add"
+                  onClick={() => setShowJoinForm(true)}
+                >
+                  Join Another Class
+                </Button>
+              </SectionCard>
+            )}
 
             {/* XP Progress */}
             <SectionCard title="Your Progress">

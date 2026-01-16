@@ -6,7 +6,7 @@ import { SectionCard } from '@/components/ui/SectionCard';
 import { CategorySummaryCard } from '@/components/CategorySummaryCard';
 import { HabitCategory, CATEGORY_CONFIG } from '@/types/models';
 
-type TimeRange = 7 | 14 | 28;
+const TIME_RANGE = 28; // Default to last 28 days
 
 interface HabitStats {
   totalCompletions: number;
@@ -99,8 +99,6 @@ export default function StudentProgressPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<ProgressData | null>(null);
-  const [timeRange, setTimeRange] = useState<TimeRange>(28);
-  const [selectedCategory, setSelectedCategory] = useState<HabitCategory | 'all'>('all');
 
   useEffect(() => {
     async function fetchProgress() {
@@ -124,51 +122,49 @@ export default function StudentProgressPage() {
     fetchProgress();
   }, []);
 
-  // Filter habits by category and calculate stats for time range
-  const filteredHabitsWithStats = useMemo(() => {
+  // Calculate stats for habits over the time range
+  const habitsWithStats = useMemo(() => {
     if (!progressData) return [];
 
-    return progressData.habits
-      .filter(h => selectedCategory === 'all' || h.category === selectedCategory)
-      .map(habit => {
-        // Filter daily data to time range
-        const rangeData = habit.dailyData.slice(-timeRange);
-        const completedInRange = rangeData.filter(d => d.completed).length;
-        const completionRate = rangeData.length > 0
-          ? Math.round((completedInRange / rangeData.length) * 100)
-          : 0;
+    return progressData.habits.map(habit => {
+      // Filter daily data to time range
+      const rangeData = habit.dailyData.slice(-TIME_RANGE);
+      const completedInRange = rangeData.filter(d => d.completed).length;
+      const completionRate = rangeData.length > 0
+        ? Math.round((completedInRange / rangeData.length) * 100)
+        : 0;
 
-        return {
-          ...habit,
-          rangeData,
-          rangeStats: {
-            completed: completedInRange,
-            total: rangeData.length,
-            completionRate,
-          },
-        };
-      });
-  }, [progressData, timeRange, selectedCategory]);
+      return {
+        ...habit,
+        rangeData,
+        rangeStats: {
+          completed: completedInRange,
+          total: rangeData.length,
+          completionRate,
+        },
+      };
+    });
+  }, [progressData]);
 
   // Calculate overall stats for time range
   const overallRangeStats = useMemo(() => {
-    if (!progressData || filteredHabitsWithStats.length === 0) {
+    if (!progressData || habitsWithStats.length === 0) {
       return { avgCompletion: 0, totalCompletions: 0, bestStreak: 0 };
     }
 
     const avgCompletion = Math.round(
-      filteredHabitsWithStats.reduce((sum, h) => sum + h.rangeStats.completionRate, 0) /
-        filteredHabitsWithStats.length
+      habitsWithStats.reduce((sum, h) => sum + h.rangeStats.completionRate, 0) /
+        habitsWithStats.length
     );
-    const totalCompletions = filteredHabitsWithStats.reduce(
+    const totalCompletions = habitsWithStats.reduce(
       (sum, h) => sum + h.rangeStats.completed, 0
     );
     const bestStreak = Math.max(
-      ...filteredHabitsWithStats.map(h => h.stats.longestStreak)
+      ...habitsWithStats.map(h => h.stats.longestStreak)
     );
 
     return { avgCompletion, totalCompletions, bestStreak };
-  }, [progressData, filteredHabitsWithStats]);
+  }, [progressData, habitsWithStats]);
 
   // Calculate category summaries
   const categorySummaries = useMemo(() => {
@@ -272,7 +268,7 @@ export default function StudentProgressPage() {
     );
   }
 
-  const { user, overallStats, weeklyTrend } = progressData;
+  const { user, overallStats } = progressData;
 
   return (
     <PageShell>
@@ -286,62 +282,48 @@ export default function StudentProgressPage() {
           </div>
         </div>
 
-        {/* XP Progress */}
-        <SectionCard>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#F5A623] text-2xl">military_tech</span>
-                <div>
-                  <p className="text-white font-bold text-lg">Level {user.xpProgress.level}</p>
-                  <p className="text-[#92c0c9] text-sm">{user.xpProgress.currentXp} XP total</p>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* XP & Level */}
+          <SectionCard padding="md" className="md:col-span-1">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-lg font-bold">
+                {user.xpProgress.level}
+              </div>
+              <div className="flex-1">
+                <p className="text-white font-bold">Level {user.xpProgress.level}</p>
+                <p className="text-[#92c0c9] text-xs">{user.xpProgress.currentXp} XP</p>
+                <div className="w-full bg-[#325e67] rounded-full h-1.5 mt-1">
+                  <div
+                    className="bg-[#13c8ec] h-1.5 rounded-full"
+                    style={{ width: `${Math.min(user.xpProgress.progressPercent, 100)}%` }}
+                  />
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-[#13c8ec] font-bold">{user.xpProgress.progressPercent}%</p>
-                <p className="text-[#92c0c9] text-xs">to Level {user.xpProgress.level + 1}</p>
-              </div>
             </div>
-            <div className="w-full bg-[#325e67] rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-[#13c8ec] to-[#3b82f6] h-3 rounded-full transition-all"
-                style={{ width: `${Math.min(user.xpProgress.progressPercent, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-[#92c0c9]">
-              {user.xpProgress.nextLevelXp - user.xpProgress.currentXp > 0
-                ? `${user.xpProgress.nextLevelXp - user.xpProgress.currentXp} XP until Level ${user.xpProgress.level + 1}`
-                : 'Max level reached!'}
-            </p>
-          </div>
-        </SectionCard>
+          </SectionCard>
 
-        {/* Weekly Trend */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          {/* Avg Completion */}
           <SectionCard padding="md">
             <div className="text-center">
-              <p className="text-3xl font-bold text-[#13c8ec]">{weeklyTrend.thisWeek}</p>
-              <p className="text-[#92c0c9] text-sm">This Week</p>
+              <p className="text-3xl font-bold gradient-text">{overallRangeStats.avgCompletion}%</p>
+              <p className="text-[#92c0c9] text-sm">Avg Completion</p>
             </div>
           </SectionCard>
+
+          {/* Best Streak */}
           <SectionCard padding="md">
             <div className="text-center">
-              <p className="text-3xl font-bold text-white">{weeklyTrend.lastWeek}</p>
-              <p className="text-[#92c0c9] text-sm">Last Week</p>
+              <p className="text-3xl font-bold text-[#F5A623]">{overallStats.bestStreak}</p>
+              <p className="text-[#92c0c9] text-sm">Best Streak</p>
             </div>
           </SectionCard>
-          <SectionCard padding="md">
-            <div className="text-center">
-              <p className={`text-3xl font-bold ${weeklyTrend.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {weeklyTrend.change >= 0 ? '+' : ''}{weeklyTrend.change}%
-              </p>
-              <p className="text-[#92c0c9] text-sm">Change</p>
-            </div>
-          </SectionCard>
+
+          {/* All Time Completions */}
           <SectionCard padding="md">
             <div className="text-center">
               <p className="text-3xl font-bold text-white">{overallStats.totalCompletionsAllTime}</p>
-              <p className="text-[#92c0c9] text-sm">All Time</p>
+              <p className="text-[#92c0c9] text-sm">Total Completions</p>
             </div>
           </SectionCard>
         </div>
@@ -398,72 +380,11 @@ export default function StudentProgressPage() {
           </SectionCard>
         </section>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4">
-          {/* Time Range */}
-          <div className="flex flex-col w-full sm:w-auto">
-            <label className="text-sm font-medium text-[#92c0c9] mb-2">Time Range</label>
-            <div className="flex h-10 w-full sm:w-auto items-center justify-center rounded-lg bg-[#234248] p-1">
-              {([7, 14, 28] as const).map((days) => (
-                <button
-                  key={days}
-                  onClick={() => setTimeRange(days)}
-                  className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                    timeRange === days
-                      ? 'bg-[#101f22] text-white shadow-sm'
-                      : 'text-[#92c0c9] hover:text-white'
-                  }`}
-                >
-                  Last {days} Days
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-col w-full sm:w-auto sm:max-w-xs">
-            <label className="text-sm font-medium text-[#92c0c9] mb-2">Category</label>
-            <div className="relative">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value as HabitCategory | 'all')}
-                className="input-field w-full appearance-none pr-10"
-              >
-                <option value="all">All Categories</option>
-                {Object.keys(CATEGORY_CONFIG).map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <span className="material-symbols-outlined text-[#92c0c9]">expand_more</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[#192f33] rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold gradient-text">{overallRangeStats.avgCompletion}%</p>
-            <p className="text-sm text-[#92c0c9] mt-1">Avg. Completion ({timeRange} days)</p>
-          </div>
-          <div className="bg-[#192f33] rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-white">{overallRangeStats.totalCompletions}</p>
-            <p className="text-sm text-[#92c0c9] mt-1">Total Completions</p>
-          </div>
-          <div className="bg-[#192f33] rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-[#F5A623]">{overallRangeStats.bestStreak}</p>
-            <p className="text-sm text-[#92c0c9] mt-1">Best Streak (days)</p>
-          </div>
-        </div>
-
         {/* Habit Progress Cards */}
         <section>
           <h2 className="text-xl font-bold text-white mb-4">Habit Progress</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredHabitsWithStats.map((habit) => {
+            {habitsWithStats.map((habit) => {
               return (
                 <div
                   key={habit.id}
@@ -489,7 +410,7 @@ export default function StudentProgressPage() {
 
                   {/* X-axis labels */}
                   <div className="flex justify-between text-xs text-[#92c0c9] mb-2">
-                    <span>{timeRange}d ago</span>
+                    <span>{TIME_RANGE}d ago</span>
                     <span>Today</span>
                   </div>
 
@@ -518,14 +439,12 @@ export default function StudentProgressPage() {
               );
             })}
 
-            {filteredHabitsWithStats.length === 0 && (
+            {habitsWithStats.length === 0 && (
               <div className="col-span-2 bg-[#192f33] rounded-xl p-8 text-center">
                 <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">trending_up</span>
                 <p className="text-white font-medium mb-2">No Habits Yet</p>
                 <p className="text-[#92c0c9] text-sm">
-                  {selectedCategory === 'all'
-                    ? "Create some habits to start tracking your progress!"
-                    : "No habits found for the selected category."}
+                  Create some habits to start tracking your progress!
                 </p>
               </div>
             )}
