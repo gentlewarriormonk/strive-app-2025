@@ -132,11 +132,11 @@ model GroupMembership {
 enum HabitCategory {
   Sleep
   Movement
-  FocusStudy        @map("Focus & Study")
-  MindfulnessEmotion @map("Mindfulness & Emotion")
-  SocialConnection  @map("Social & Connection")
-  NutritionHydration @map("Nutrition & Hydration")
-  DigitalHygiene    @map("Digital Hygiene")
+  FocusStudy
+  MindfulnessEmotion
+  SocialConnection
+  NutritionHydration
+  DigitalHygiene
   Other
 }
 

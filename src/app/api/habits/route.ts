@@ -3,10 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-// The Prisma schema uses @map directives, so we need to use the Prisma enum names
-// (not the mapped database values). Prisma Client handles the conversion.
-// HabitCategory enum in Prisma: Sleep, Movement, FocusStudy, MindfulnessEmotion,
-// SocialConnection, NutritionHydration, DigitalHygiene, Other
+// Map form display names to database enum values (no spaces in DB)
 const categoryMap: Record<string, string> = {
   'Sleep': 'Sleep',
   'Movement': 'Movement',
