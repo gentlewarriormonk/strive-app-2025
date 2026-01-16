@@ -133,20 +133,25 @@ export default function TeacherHabitsPage() {
 
   // Habits with computed stats from API
   const habitsWithStats = useMemo(() => {
-    return localHabits.map(habit => ({
-      habit,
-      stats: {
-        habitId: habit.id,
-        totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
-        completedDays: 0,
-        completionRate: 0,
-        currentStreak: habit.currentStreak,
-        longestStreak: habit.currentStreak,
-        completionsThisWeek: habit.completionsThisWeek,
-        completionsThisMonth: 0,
-      } as HabitStats,
-      isCompletedToday: habit.isCompletedToday,
-    }));
+    return localHabits.map(habit => {
+      // Calculate completion rate based on this week's completions (out of 7 days)
+      const completionRate = Math.round((habit.completionsThisWeek / 7) * 100);
+
+      return {
+        habit,
+        stats: {
+          habitId: habit.id,
+          totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
+          completedDays: habit.completionsThisWeek,
+          completionRate,
+          currentStreak: habit.currentStreak,
+          longestStreak: habit.currentStreak,
+          completionsThisWeek: habit.completionsThisWeek,
+          completionsThisMonth: 0,
+        } as HabitStats,
+        isCompletedToday: habit.isCompletedToday,
+      };
+    });
   }, [localHabits]);
 
   // Overall stats
@@ -290,23 +295,48 @@ export default function TeacherHabitsPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Habits List */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">Today&apos;s Habits</h2>
-            <span className="text-sm text-[#92c0c9]">
-              {completedToday}/{totalHabits} completed
-            </span>
+      {/* Loading State */}
+      {isLoadingHabits && (
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="text-center">
+            <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
+            <p className="text-[#92c0c9]">Loading your habits...</p>
           </div>
-          <div className="flex flex-col gap-4">
-            {isLoadingHabits ? (
-              <div className="bg-[#192f33] rounded-xl p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
-                <p className="text-[#92c0c9]">Loading your habits...</p>
-              </div>
-            ) : habitsWithStats.length > 0 ? (
-              habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
+        </div>
+      )}
+
+      {/* Empty State - Full Width */}
+      {!isLoadingHabits && habitsWithStats.length === 0 && (
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="text-center max-w-md">
+            <span className="material-symbols-outlined text-5xl text-[#92c0c9] mb-4">
+              self_improvement
+            </span>
+            <h2 className="text-2xl font-bold text-white mb-2">No Habits Yet</h2>
+            <p className="text-[#92c0c9] mb-6">
+              Start tracking your own wellbeing habits to lead by example for your students.
+            </p>
+            <Button onClick={() => setShowHabitForm(true)} icon="add_circle">
+              Create Your First Habit
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content - Only show when there are habits */}
+      {!isLoadingHabits && habitsWithStats.length > 0 && (
+        <>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Habits List */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Today&apos;s Habits</h2>
+              <span className="text-sm text-[#92c0c9]">
+                {completedToday}/{totalHabits} completed
+              </span>
+            </div>
+            <div className="flex flex-col gap-4">
+              {habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
                 <TeacherHabitRow
                   key={habit.id}
                   habit={habit}
@@ -315,23 +345,9 @@ export default function TeacherHabitsPage() {
                   onToggleComplete={() => toggleHabitCompletion(habit.id)}
                   onEdit={() => setEditingHabit(habit.id)}
                 />
-              ))
-            ) : (
-              <div className="bg-[#192f33] rounded-xl p-8 text-center">
-                <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">
-                  self_improvement
-                </span>
-                <p className="text-white font-medium mb-2">No habits yet</p>
-                <p className="text-[#92c0c9] text-sm mb-4">
-                  Start tracking your own wellbeing habits to lead by example.
-                </p>
-                <Button onClick={() => setShowHabitForm(true)} icon="add">
-                  Create Your First Habit
-                </Button>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-        </div>
 
         {/* Sidebar */}
         <aside className="flex flex-col gap-6">
@@ -401,23 +417,25 @@ export default function TeacherHabitsPage() {
             </div>
           </SectionCard>
         </aside>
-      </div>
+        </div>
 
-      {/* Category Breakdown */}
-      {categorySummaries.length > 0 && (
-        <section className="mt-8">
-          <h2 className="text-xl font-bold text-white mb-4">Category Breakdown</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categorySummaries.map((summary) => (
-              <CategorySummaryCard
-                key={summary.category}
-                category={summary.category}
-                avgCompletion={summary.avgCompletion}
-                longestStreak={summary.longestStreak}
-              />
-            ))}
-          </div>
-        </section>
+        {/* Category Breakdown */}
+        {categorySummaries.length > 0 && (
+          <section className="mt-8">
+            <h2 className="text-xl font-bold text-white mb-4">Category Breakdown</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categorySummaries.map((summary) => (
+                <CategorySummaryCard
+                  key={summary.category}
+                  category={summary.category}
+                  avgCompletion={summary.avgCompletion}
+                  longestStreak={summary.longestStreak}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+        </>
       )}
 
       {/* Habit Form Modal - New */}
