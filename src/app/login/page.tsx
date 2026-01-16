@@ -23,7 +23,7 @@ export default function LoginPage() {
   }, [session, router]);
 
   const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl: '/student/today' });
+    signIn('google', { callbackUrl: '/auth/redirect' });
   };
 
   // Show loading while checking session
