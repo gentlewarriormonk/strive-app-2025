@@ -2,53 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 
-const previewScreens = {
-  studentDashboard: "/screens/student-dashboard.png",
-  studentProgress: "/screens/student-progress.png",
-  teacherDashboard: "/screens/teacher-dashboard.png",
-  groupView: "/screens/group-view.png",
-} as const;
-
-const screenPreviews = [
-  {
-    id: 'studentDashboard',
-    label: 'Student dashboard',
-    description: 'Students see today\'s habits and streaks at a glance.',
-    imageSrc: previewScreens.studentDashboard,
-  },
-  {
-    id: 'studentProgress',
-    label: 'Student progress',
-    description: '28-day completion trends and category stats.',
-    imageSrc: previewScreens.studentProgress,
-  },
-  {
-    id: 'teacherDashboard',
-    label: 'Teacher dashboard',
-    description: 'Monitor class wellbeing, challenges and XP.',
-    imageSrc: previewScreens.teacherDashboard,
-  },
-  {
-    id: 'groupView',
-    label: 'Class view',
-    description: 'See which students are thriving and who needs support.',
-    imageSrc: previewScreens.groupView,
-  },
-];
-
 export default function LandingPage() {
-  const [selectedScreenId, setSelectedScreenId] = useState(screenPreviews[0].id);
-  const selectedScreen = screenPreviews.find(s => s.id === selectedScreenId) || screenPreviews[0];
-
-  const scrollToHowItWorks = () => {
-    const element = document.getElementById('how-it-works');
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
   return (
     <div
       className="relative flex min-h-screen w-full flex-col overflow-x-hidden"
@@ -70,7 +33,7 @@ export default function LandingPage() {
                       Build better wellbeing habits together in class.
                     </h1>
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
-                      Empower your students with the tools they need to thrive, track progress, and foster a positive classroom environment.
+                      Help students move from knowing what&apos;s good for them to actually doing it — with evidence-based habit design, social accountability, and progress tracking that motivates without manipulating.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
@@ -80,8 +43,8 @@ export default function LandingPage() {
                     >
                       Sign in with Google
                     </Link>
-                    <button 
-                      onClick={scrollToHowItWorks}
+                    <button
+                      onClick={() => scrollToSection('how-it-works')}
                       className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white/10 text-white text-base font-bold tracking-wide hover:bg-white/20 transition-colors"
                     >
                       See how it works
@@ -100,13 +63,76 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* Features Section */}
-              <section id="teachers" className="flex flex-col gap-6">
+              {/* The Problem Section */}
+              <section className="flex flex-col gap-6 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  Wellbeing education has a gap
+                </h2>
+                <div className="max-w-3xl mx-auto text-center">
+                  <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
+                    We teach students about sleep, exercise, mindfulness, and healthy relationships. But knowing isn&apos;t doing. The gap between understanding what&apos;s good for us and actually doing it consistently — that&apos;s where most wellbeing education falls short.
+                  </p>
+                  <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
+                    Students need more than information. They need systems to turn intentions into actions.
+                  </p>
+                </div>
+              </section>
+
+              {/* The Science Section */}
+              <section className="flex flex-col gap-8 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  Smart Habits, Not Just Smart Goals
+                </h2>
+                <p className="text-[#92c0c9] text-base text-center max-w-2xl mx-auto">
+                  Strive is built on proven behavior change principles:
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">target</span>
+                      <h3 className="text-white text-lg font-bold">Implementation Intentions</h3>
+                    </div>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Not just &quot;I want to exercise&quot; but &quot;I will run for 20 minutes every Monday, Wednesday, Friday after school&quot;
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">sync</span>
+                      <h3 className="text-white text-lg font-bold">Cue-Routine-Reward</h3>
+                    </div>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Design habits that stick by connecting them to existing behaviors
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">groups</span>
+                      <h3 className="text-white text-lg font-bold">Social Accountability</h3>
+                    </div>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      See classmates&apos; progress, celebrate streaks, support each other
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">trending_up</span>
+                      <h3 className="text-white text-lg font-bold">Visual Progress</h3>
+                    </div>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Streaks, XP, and heatmaps make consistency visible and motivating
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Features Section - For Teachers/Students/Schools */}
+              <section className="flex flex-col gap-6 scroll-mt-24">
                 <h2 className="text-white text-2xl font-bold text-center">
                   A toolkit for modern wellbeing education
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-                  <div className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors">
+                  <div id="teachers" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
                       <span className="material-symbols-outlined text-3xl">school</span>
                     </div>
@@ -117,7 +143,7 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
-                  <div id="students" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors">
+                  <div id="students" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
                       <span className="material-symbols-outlined text-3xl">sentiment_satisfied</span>
                     </div>
@@ -128,7 +154,7 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
-                  <div id="schools" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors">
+                  <div id="schools" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
                       <span className="material-symbols-outlined text-3xl">shield</span>
                     </div>
@@ -184,8 +210,8 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* See Strive in Action Section */}
-              <section className="flex flex-col gap-8 px-4">
+              {/* See Strive in Action Section - Placeholder */}
+              <section className="flex flex-col gap-6 px-4">
                 <div className="text-center">
                   <h2 className="text-white text-2xl font-bold">
                     See Strive in action
@@ -194,50 +220,13 @@ export default function LandingPage() {
                     Preview the student and teacher dashboards before you sign in.
                   </p>
                 </div>
-
-                {/* Screen Pills */}
-                <div className="flex flex-wrap justify-center gap-2">
-                  {screenPreviews.map((screen) => (
-                    <button
-                      key={screen.id}
-                      onClick={() => setSelectedScreenId(screen.id)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                        selectedScreenId === screen.id
-                          ? 'bg-[#13c8ec] text-[#101f22] border-2 border-[#13c8ec]'
-                          : 'bg-[#192f33] text-white border-2 border-white/10 hover:border-[#13c8ec]/50'
-                      }`}
-                    >
-                      {screen.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Preview Card */}
-                <div className="flex flex-col gap-4 rounded-xl bg-[#192f33] border border-white/10 p-4 md:p-6">
-                  <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[#101f22]">
-                    {screenPreviews.map((screen) => (
-                      <div
-                        key={screen.id}
-                        className={`absolute inset-0 transition-all duration-300 ease-out ${
-                          selectedScreenId === screen.id
-                            ? 'opacity-100 scale-100 z-10'
-                            : 'opacity-0 scale-95 pointer-events-none z-0'
-                        }`}
-                      >
-                        {screen.imageSrc && (
-                          <Image
-                            src={screen.imageSrc}
-                            alt={screen.label}
-                            fill
-                            className="object-cover object-top"
-                            sizes="(max-width: 768px) 100vw, 1100px"
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-[#92c0c9] text-sm text-center transition-opacity duration-200">
-                    {selectedScreen.description}
+                <div className="flex flex-col items-center justify-center rounded-xl bg-[#192f33] border border-white/10 p-12">
+                  <span className="material-symbols-outlined text-[#92c0c9] text-5xl mb-4">photo_library</span>
+                  <p className="text-[#92c0c9] text-base text-center">
+                    Screenshots coming soon
+                  </p>
+                  <p className="text-[#92c0c9]/60 text-sm text-center mt-2">
+                    Sign in to explore the full experience
                   </p>
                 </div>
               </section>
@@ -270,6 +259,76 @@ export default function LandingPage() {
                 </div>
               </section>
 
+              {/* Motivation Without Manipulation Section */}
+              <section className="flex flex-col gap-6 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  Motivation Without Manipulation
+                </h2>
+                <div className="max-w-3xl mx-auto text-center">
+                  <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
+                    Strive uses XP, streaks, and levels — but never notifications designed to create anxiety, dark patterns to keep you scrolling, or social comparison that breeds shame.
+                  </p>
+                  <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
+                    The goal is building agency and self-efficacy, not app addiction. Students learn to own their progress. The app is a tool, not a crutch.
+                  </p>
+                </div>
+              </section>
+
+              {/* Origin Story Section */}
+              <section className="flex flex-col gap-6 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  Built by a Teacher, for Students
+                </h2>
+                <div className="max-w-3xl mx-auto rounded-xl bg-[#192f33] border border-white/10 p-6 md:p-8">
+                  <p className="text-[#92c0c9] text-base leading-relaxed">
+                    Strive started in a Wellbeing class at REAL School Budapest. Students learned about habit formation — cue-routine-reward loops, implementation intentions, identity-based habits. They set goals and tracked progress in individual Google Sheets.
+                  </p>
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-green-400 text-xl">check_circle</span>
+                        <span className="text-white font-medium">What worked</span>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed pl-7">
+                        Students engaged deeply and many built lasting habits.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-red-400 text-xl">cancel</span>
+                        <span className="text-white font-medium">What didn&apos;t</span>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed pl-7">
+                        Managing 20+ spreadsheets was painful. No social visibility. No data insights. No engagement.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-white/10">
+                    <p className="text-white text-base leading-relaxed italic">
+                      &quot;Strive is the app I wished existed — purpose-built for schools, with the right balance of accountability and privacy.&quot;
+                    </p>
+                    <p className="text-[#13c8ec] text-sm font-medium mt-2">
+                      — Gareth Manning, Teacher & Creator
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Early Stage Disclaimer Section */}
+              <section className="flex flex-col gap-6 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  Early Stage & Experimental
+                </h2>
+                <div className="max-w-3xl mx-auto text-center">
+                  <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
+                    Strive is new. It&apos;s evidence-informed but unproven at scale. We&apos;re piloting with real students and learning as we go.
+                  </p>
+                  <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
+                    If you&apos;re a teacher interested in trying Strive with your class, we&apos;d love your feedback. It will shape what this becomes.
+                  </p>
+                </div>
+              </section>
+
               {/* CTA Section */}
               <section className="flex flex-col items-center gap-6 px-4 py-12 bg-[#192f33]/50 rounded-2xl mx-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
@@ -292,24 +351,24 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-8">
                 <p className="text-[#92c0c9] text-sm">© {new Date().getFullYear()} Strive. All rights reserved.</p>
                 <div className="flex items-center gap-6">
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-[#92c0c9] text-sm cursor-default opacity-60"
                     aria-disabled="true"
                     onClick={(e) => e.preventDefault()}
                   >
                     Privacy Policy
                   </a>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-[#92c0c9] text-sm cursor-default opacity-60"
                     aria-disabled="true"
                     onClick={(e) => e.preventDefault()}
                   >
                     Terms of Service
                   </a>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-[#92c0c9] text-sm cursor-default opacity-60"
                     aria-disabled="true"
                     onClick={(e) => e.preventDefault()}
