@@ -30,7 +30,7 @@ export function JoinClassForm({ onClose, onSuccess }: JoinClassFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to join class');
+        throw new Error(data.error || 'Failed to join group');
       }
 
       setSuccessMessage(`Successfully joined ${data.group.name}!`);
@@ -41,7 +41,7 @@ export function JoinClassForm({ onClose, onSuccess }: JoinClassFormProps) {
         onClose();
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to join class');
+      setError(err instanceof Error ? err.message : 'Failed to join group');
     } finally {
       setIsSubmitting(false);
     }
@@ -53,9 +53,9 @@ export function JoinClassForm({ onClose, onSuccess }: JoinClassFormProps) {
         {/* Header */}
         <div className="flex justify-between items-center gap-2 px-6 py-4 border-b border-[#325e67]/50">
           <div>
-            <h2 className="text-xl font-bold text-white">Join a Class</h2>
+            <h2 className="text-xl font-bold text-white">Join a Group</h2>
             <p className="text-sm text-[#92c0c9]">
-              Enter the code your teacher gave you
+              Enter the code to join a group
             </p>
           </div>
           <button
@@ -83,7 +83,7 @@ export function JoinClassForm({ onClose, onSuccess }: JoinClassFormProps) {
               />
             </label>
             <p className="text-[#92c0c9] text-xs mt-2 text-center">
-              Ask your teacher for the 8-character join code
+              Enter the 8-character join code
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export function JoinClassForm({ onClose, onSuccess }: JoinClassFormProps) {
                 className="sm:w-auto"
                 disabled={isSubmitting || joinCode.length < 8}
               >
-                {isSubmitting ? 'Joining...' : 'Join Class'}
+                {isSubmitting ? 'Joining...' : 'Join Group'}
               </Button>
               <Button
                 type="button"

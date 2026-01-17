@@ -76,3 +76,54 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch group' }, { status: 500 });
   }
 }
+
+// PATCH - Update a group (name, description)
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id: groupId } = await params;
+    const body = await request.json();
+    const { name, description } = body;
+
+    // Verify group exists and user is the teacher
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+      select: { teacherId: true },
+    });
+
+    if (!group) {
+      return NextResponse.json({ error: 'Group not found' }, { status: 404 });
+    }
+
+    if (group.teacherId !== session.user.id) {
+      return NextResponse.json({ error: 'Not authorized to update this group' }, { status: 403 });
+    }
+
+    // Validate name
+    if (name !== undefined && (!name || name.trim().length === 0)) {
+      return NextResponse.json({ error: 'Group name cannot be empty' }, { status: 400 });
+    }
+
+    // Update the group
+    const updatedGroup = await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        ...(name !== undefined && { name: name.trim() }),
+        ...(description !== undefined && { description: description?.trim() || null }),
+      },
+    });
+
+    return NextResponse.json(updatedGroup);
+  } catch (error) {
+    console.error('Error updating group:', error);
+    return NextResponse.json({ error: 'Failed to update group' }, { status: 500 });
+  }
+}

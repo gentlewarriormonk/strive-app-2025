@@ -24,16 +24,16 @@ export function PublicHeader() {
       <div className="hidden md:flex flex-1 items-center justify-end gap-8">
         <nav className="flex items-center gap-9">
           <Link
-            href="#teachers"
+            href="#individuals"
             className="text-white/80 hover:text-white transition-colors text-sm font-medium"
           >
-            For Teachers
+            For Individuals
           </Link>
           <Link
-            href="#students"
+            href="#groups"
             className="text-white/80 hover:text-white transition-colors text-sm font-medium"
           >
-            For Students
+            For Groups
           </Link>
           <Link
             href="#schools"
@@ -66,18 +66,18 @@ export function PublicHeader() {
         <div className="absolute top-16 left-0 right-0 bg-[#111f22] border-b border-white/10 md:hidden z-50 animate-fade-in">
           <nav className="flex flex-col p-4 gap-4">
             <Link
-              href="#teachers"
+              href="#individuals"
               className="text-white/80 hover:text-white transition-colors text-sm font-medium py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              For Teachers
+              For Individuals
             </Link>
             <Link
-              href="#students"
+              href="#groups"
               className="text-white/80 hover:text-white transition-colors text-sm font-medium py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              For Students
+              For Groups
             </Link>
             <Link
               href="#schools"

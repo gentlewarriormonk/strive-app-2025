@@ -23,7 +23,7 @@ export function GroupForm({ onClose, onSubmit }: GroupFormProps) {
       await onSubmit({ name, description });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create class');
+      setError(err instanceof Error ? err.message : 'Failed to create group');
     } finally {
       setIsSubmitting(false);
     }
@@ -35,9 +35,9 @@ export function GroupForm({ onClose, onSubmit }: GroupFormProps) {
         {/* Header */}
         <div className="flex justify-between items-center gap-2 px-6 py-4 border-b border-[#325e67]/50">
           <div>
-            <h2 className="text-xl font-bold text-white">Create a New Class</h2>
+            <h2 className="text-xl font-bold text-white">Create a New Group</h2>
             <p className="text-sm text-[#92c0c9]">
-              Set up a class for your students to join
+              Set up a group for members to join
             </p>
           </div>
           <button
@@ -51,15 +51,15 @@ export function GroupForm({ onClose, onSubmit }: GroupFormProps) {
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-5">
-            {/* Class Name */}
+            {/* Group Name */}
             <label className="block">
-              <span className="text-white text-base font-medium">Class Name</span>
+              <span className="text-white text-base font-medium">Group Name</span>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="input-field w-full mt-2"
-                placeholder="e.g., Grade 7 Advisory"
+                placeholder="e.g., Morning Wellness Group"
                 required
               />
             </label>
@@ -71,7 +71,7 @@ export function GroupForm({ onClose, onSubmit }: GroupFormProps) {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="input-field w-full mt-2 min-h-[80px] resize-none"
-                placeholder="A brief description of this class"
+                placeholder="A brief description of this group"
               />
             </label>
           </div>
@@ -83,7 +83,7 @@ export function GroupForm({ onClose, onSubmit }: GroupFormProps) {
             )}
             <div className="flex flex-col sm:flex-row-reverse gap-3">
               <Button type="submit" variant="primary" fullWidth className="sm:w-auto" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating...' : 'Create Class'}
+                {isSubmitting ? 'Creating...' : 'Create Group'}
               </Button>
               <Button type="button" variant="ghost" onClick={onClose} fullWidth className="sm:w-auto" disabled={isSubmitting}>
                 Cancel

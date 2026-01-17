@@ -152,13 +152,13 @@ export default function TeacherLayout({
             {/* Groups Section */}
             <div className="mt-6">
               <p className="text-xs font-medium text-[#92c0c9] uppercase tracking-wider mb-2 px-3">
-                My Classes
+                My Groups
               </p>
               <div className="flex flex-col gap-1">
                 {isLoadingGroups ? (
                   <div className="px-3 py-2 text-[#92c0c9] text-sm">Loading...</div>
                 ) : teacherGroups.length === 0 ? (
-                  <div className="px-3 py-2 text-[#92c0c9] text-sm">No classes yet</div>
+                  <div className="px-3 py-2 text-[#92c0c9] text-sm">No groups yet</div>
                 ) : (
                   teacherGroups.map((group) => {
                     const isActive = pathname.includes(`/teacher/groups/${group.id}`);
@@ -187,7 +187,7 @@ export default function TeacherLayout({
           {/* Bottom Actions */}
           <div className="flex flex-col gap-3">
             <Button icon="add" fullWidth onClick={() => setShowGroupForm(true)}>
-              New Class
+              New Group
             </Button>
             <div className="relative" ref={userMenuRef}>
               <button

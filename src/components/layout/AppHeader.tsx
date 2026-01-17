@@ -31,13 +31,13 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
   // Role-aware navigation
   const isTeacher = user.role === 'TEACHER';
 
-  // Nav items - Class/My Classes tab routes and labels differ by role
+  // Nav items - Group/My Groups tab routes and labels differ by role
   const navItems = [
     { key: 'today', label: 'Today', href: '/student/today' },
     { key: 'progress', label: 'Progress', href: '/student/progress' },
     {
-      key: 'class',
-      label: isTeacher ? 'My Classes' : 'Class',
+      key: 'group',
+      label: isTeacher ? 'My Groups' : 'Group',
       href: isTeacher ? '/teacher/dashboard' : '/student/group'
     },
   ];
@@ -46,8 +46,8 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
   const getActiveTab = () => {
     if (pathname.startsWith('/student/today')) return 'today';
     if (pathname.startsWith('/student/progress')) return 'progress';
-    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'class';
-    if (pathname.startsWith('/teacher/dashboard') || pathname.startsWith('/teacher/groups')) return 'class';
+    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'group';
+    if (pathname.startsWith('/teacher/dashboard') || pathname.startsWith('/teacher/groups')) return 'group';
     return null;
   };
   

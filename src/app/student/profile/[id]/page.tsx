@@ -114,7 +114,7 @@ export default function StudentProfilePage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#13c8ec] text-white rounded-lg hover:bg-[#13c8ec]/80 transition-colors"
             >
               <span className="material-symbols-outlined">arrow_back</span>
-              Back to Class
+              Back to Group
             </Link>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function StudentProfilePage() {
           className="inline-flex items-center gap-2 text-[#92c0c9] hover:text-white transition-colors text-sm"
         >
           <span className="material-symbols-outlined !text-lg">arrow_back</span>
-          Back to Class
+          Back to Group
         </Link>
 
         {/* Profile Header */}
@@ -227,7 +227,7 @@ export default function StudentProfilePage() {
               <div>
                 <p className="text-white font-medium text-sm">Public Habits Only</p>
                 <p className="text-[#92c0c9] text-xs mt-1">
-                  You&apos;re viewing habits that {user.name} has chosen to share publicly with the class.
+                  You&apos;re viewing habits that {user.name} has chosen to share publicly with the group.
                   Private and anonymised habits are not shown.
                 </p>
               </div>

@@ -105,7 +105,7 @@ export default function StudentTodayPage() {
   // Loading state for habits
   const [isLoadingHabits, setIsLoadingHabits] = useState(true);
 
-  // Join class state
+  // Join group state
   const [showJoinForm, setShowJoinForm] = useState(false);
   const [joinedGroups, setJoinedGroups] = useState<JoinedGroup[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
@@ -378,9 +378,9 @@ export default function StudentTodayPage() {
               </p>
             </SectionCard>
 
-            {/* My Classes - only show if user has joined groups */}
+            {/* My Groups - only show if user has joined groups */}
             {!isLoadingGroups && joinedGroups.length > 0 && (
-              <SectionCard title="My Classes">
+              <SectionCard title="My Groups">
                 <div className="space-y-2 mb-4">
                   {joinedGroups.map((group) => (
                     <div
@@ -400,7 +400,7 @@ export default function StudentTodayPage() {
                   icon="group_add"
                   onClick={() => setShowJoinForm(true)}
                 >
-                  Join Another Class
+                  Join Another Group
                 </Button>
               </SectionCard>
             )}
@@ -476,7 +476,7 @@ export default function StudentTodayPage() {
         />
       )}
 
-      {/* Join Class Modal */}
+      {/* Join Group Modal */}
       {showJoinForm && (
         <JoinClassForm
           onClose={() => setShowJoinForm(false)}

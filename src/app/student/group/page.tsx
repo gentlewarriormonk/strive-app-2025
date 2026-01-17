@@ -100,7 +100,7 @@ export default function StudentGroupPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to join class');
+        throw new Error(data.error || 'Failed to join group');
       }
 
       setJoinSuccess(`Successfully joined ${data.group.name}!`);
@@ -112,7 +112,7 @@ export default function StudentGroupPage() {
         setJoinSuccess(null);
       }, 1500);
     } catch (err) {
-      setJoinError(err instanceof Error ? err.message : 'Failed to join class');
+      setJoinError(err instanceof Error ? err.message : 'Failed to join group');
     } finally {
       setIsJoining(false);
     }
@@ -125,7 +125,7 @@ export default function StudentGroupPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-[#92c0c9]">Loading your class...</p>
+            <p className="text-[#92c0c9]">Loading your group...</p>
           </div>
         </div>
       </PageShell>
@@ -139,9 +139,9 @@ export default function StudentGroupPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center max-w-md w-full">
             <span className="material-symbols-outlined text-5xl text-[#92c0c9] mb-4">group_add</span>
-            <h2 className="text-2xl font-bold text-white mb-2">Join a Class</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">Join a Group</h2>
             <p className="text-[#92c0c9] mb-6">
-              Enter the join code your teacher gave you to connect with your class.
+              Enter the join code to connect with your group.
             </p>
 
             {/* Join Form */}
@@ -186,7 +186,7 @@ export default function StudentGroupPage() {
                 fullWidth
                 disabled={isJoining || joinCode.length < 8}
               >
-                {isJoining ? 'Joining...' : 'Join Class'}
+                {isJoining ? 'Joining...' : 'Join Group'}
               </Button>
             </form>
 
@@ -213,7 +213,7 @@ export default function StudentGroupPage() {
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
               <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                {selectedGroup?.name || 'My Class'}
+                {selectedGroup?.name || 'My Group'}
               </h1>
               {groups.length > 1 && (
                 <select
@@ -231,8 +231,8 @@ export default function StudentGroupPage() {
               <p className="text-[#92c0c9] text-base">{selectedGroup.description}</p>
             )}
             <p className="text-slate-500 text-sm max-w-2xl">
-              You can see only habits marked as &quot;Visible to Class&quot;.
-              Teacher-only habits are not shown here.
+              You can see only habits marked as &quot;Visible to Group&quot;.
+              Private habits are not shown here.
             </p>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function StudentGroupPage() {
             <SectionCard padding="md">
               <div className="text-center">
                 <p className="text-3xl font-bold text-green-400">{classStats.avgCompletionToday}%</p>
-                <p className="text-[#92c0c9] text-sm">Class Completion</p>
+                <p className="text-[#92c0c9] text-sm">Group Completion</p>
               </div>
             </SectionCard>
           </div>
@@ -284,9 +284,9 @@ export default function StudentGroupPage() {
           </section>
         )}
 
-        {/* Classmates */}
+        {/* Group Members */}
         <section>
-          <h2 className="text-lg font-bold text-white mb-3">Classmates</h2>
+          <h2 className="text-lg font-bold text-white mb-3">Group Members</h2>
           {members.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {members.map((member) => (
@@ -345,9 +345,9 @@ export default function StudentGroupPage() {
           ) : (
             <div className="bg-[#192f33] rounded-xl p-8 text-center">
               <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">group</span>
-              <p className="text-white font-medium mb-2">No Classmates Yet</p>
+              <p className="text-white font-medium mb-2">No Group Members Yet</p>
               <p className="text-[#92c0c9] text-sm">
-                You&apos;re the first one here! More students will appear as they join.
+                You&apos;re the first one here! More members will appear as they join.
               </p>
             </div>
           )}
@@ -360,8 +360,8 @@ export default function StudentGroupPage() {
             <div>
               <p className="text-white font-medium text-sm">Privacy Settings</p>
               <p className="text-[#92c0c9] text-xs mt-1">
-                Only habits marked as &quot;Visible to Class&quot; are shown here.
-                Teacher-only habits are never visible to classmates.
+                Only habits marked as &quot;Visible to Group&quot; are shown here.
+                Private habits are never visible to group members.
                 You can change visibility settings when creating or editing habits.
               </p>
             </div>

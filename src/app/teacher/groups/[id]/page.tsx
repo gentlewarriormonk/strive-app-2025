@@ -62,8 +62,8 @@ function JoinCodeDisplay({ code, groupName }: { code: string; groupName: string 
     <div className="flex flex-col items-center text-center">
       <h2 className="text-xl font-bold text-white mb-2">Invite Your Students</h2>
       <p className="text-[#92c0c9] text-sm mb-6 max-w-md">
-        Share this code with your students so they can join {groupName}.
-        They can enter it in the Strive app under &quot;Join a Class&quot;.
+        Share this code so others can join {groupName}.
+        They can enter it in the Strive app under &quot;Join a Group&quot;.
       </p>
 
       {/* QR Code placeholder */}
@@ -133,15 +133,64 @@ export default function GroupDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
+  // Group rename state
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [isSavingName, setIsSavingName] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleEditName = () => {
+    if (dashboardData?.group) {
+      setEditedName(dashboardData.group.name);
+      setIsEditingName(true);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingName(false);
+    setEditedName('');
+  };
+
+  const handleSaveName = async () => {
+    if (!editedName.trim() || !dashboardData?.group) return;
+
+    setIsSavingName(true);
+    try {
+      const response = await fetch(`/api/groups/${groupId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editedName.trim() }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Failed to rename group');
+      }
+
+      const updatedGroup = await response.json();
+      setDashboardData(prev => prev ? {
+        ...prev,
+        group: { ...prev.group, name: updatedGroup.name },
+      } : null);
+      setIsEditingName(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to rename group');
+    } finally {
+      setIsSavingName(false);
+    }
+  };
+
   useEffect(() => {
     async function fetchDashboard() {
       try {
         const response = await fetch(`/api/teacher/dashboard?groupId=${groupId}`);
         if (!response.ok) {
           if (response.status === 404) {
-            setError('Class not found');
+            setError('Group not found');
           } else {
-            setError('Failed to load class');
+            setError('Failed to load group');
           }
           return;
         }
@@ -149,7 +198,7 @@ export default function GroupDetailPage() {
         setDashboardData(data);
       } catch (err) {
         console.error('Failed to fetch dashboard:', err);
-        setError('Failed to load class');
+        setError('Failed to load group');
       } finally {
         setIsLoading(false);
       }
@@ -166,7 +215,7 @@ export default function GroupDetailPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-[#92c0c9]">Loading class...</p>
+            <p className="text-[#92c0c9]">Loading group...</p>
           </div>
         </div>
       </div>
@@ -180,9 +229,9 @@ export default function GroupDetailPage() {
           <div className="text-center">
             <span className="material-symbols-outlined text-4xl text-red-400 mb-4">error</span>
             <p className="text-white font-medium mb-2">Something went wrong</p>
-            <p className="text-[#92c0c9] text-sm">{error || 'Class not found'}</p>
+            <p className="text-[#92c0c9] text-sm">{error || 'Group not found'}</p>
             <Link href="/teacher/dashboard" className="text-[#13c8ec] hover:underline mt-4 inline-block">
-              Back to My Classes
+              Back to My Groups
             </Link>
           </div>
         </div>
@@ -205,13 +254,60 @@ export default function GroupDetailPage() {
             >
               <span className="material-symbols-outlined">arrow_back</span>
             </Link>
-            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              {group.name}
-            </h1>
+            {isEditingName ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  className="text-2xl md:text-3xl font-black text-white tracking-tight bg-[#192f33] border border-[#325e67] rounded-lg px-3 py-1 focus:outline-none focus:border-[#13c8ec]"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSaveName();
+                    if (e.key === 'Escape') handleCancelEdit();
+                  }}
+                />
+                <button
+                  onClick={handleSaveName}
+                  disabled={isSavingName || !editedName.trim()}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined !text-lg">
+                    {isSavingName ? 'hourglass_empty' : 'check'}
+                  </span>
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={isSavingName}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined !text-lg">close</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                  {group.name}
+                </h1>
+                <button
+                  onClick={handleEditName}
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+                  title="Rename group"
+                >
+                  <span className="material-symbols-outlined !text-lg">edit</span>
+                </button>
+                {saveSuccess && (
+                  <span className="text-green-400 text-sm flex items-center gap-1">
+                    <span className="material-symbols-outlined !text-sm">check_circle</span>
+                    Saved
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           {hasStudents && (
             <p className="text-[#92c0c9] text-base ml-11">
-              {stats.totalStudents} student{stats.totalStudents !== 1 ? 's' : ''} • {stats.avgCompletion}% avg completion
+              {stats.totalStudents} member{stats.totalStudents !== 1 ? 's' : ''} • {stats.avgCompletion}% avg completion
             </p>
           )}
           {group.description && (
@@ -240,7 +336,7 @@ export default function GroupDetailPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-white">{stats.totalStudents}</p>
-                  <p className="text-[#92c0c9] text-sm">Students</p>
+                  <p className="text-[#92c0c9] text-sm">Members</p>
                 </div>
               </div>
             </SectionCard>

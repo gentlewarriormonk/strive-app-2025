@@ -30,10 +30,10 @@ export default function LandingPage() {
                 <div className="flex flex-col gap-6 text-left lg:w-1/2 lg:gap-8">
                   <div className="flex flex-col gap-4">
                     <h1 className="text-white text-4xl font-black leading-tight tracking-tight md:text-5xl">
-                      Build better wellbeing habits together in class.
+                      Own your habits. Own your wellbeing.
                     </h1>
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
-                      Turn good intentions into lasting habits — with smart design, social support, and progress tracking that motivates without manipulating.
+                      Design habits that stick. Track what matters. Grow together.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
@@ -111,7 +111,7 @@ export default function LandingPage() {
                       <h3 className="text-white text-lg font-bold">Social Accountability</h3>
                     </div>
                     <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      See classmates&apos; progress, celebrate streaks, support each other
+                      See your group&apos;s progress, celebrate streaks, support each other
                     </p>
                   </div>
                   <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
@@ -126,42 +126,42 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* Features Section - For Teachers/Students/Schools */}
+              {/* Features Section - For Individuals/Groups/Schools */}
               <section className="flex flex-col gap-6 scroll-mt-24">
                 <h2 className="text-white text-2xl font-bold text-center">
-                  A toolkit for modern wellbeing education
+                  Built for individuals, teams, and schools
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-                  <div id="teachers" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
+                  <div id="individuals" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
-                      <span className="material-symbols-outlined text-3xl">school</span>
+                      <span className="material-symbols-outlined text-3xl">person</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-white text-lg font-bold">For Teachers</h3>
+                      <h3 className="text-white text-lg font-bold">For Individuals</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Gain insights into classroom wellbeing and support individual student growth with easy-to-use tools.
+                        Track personal habits with streaks, stats, and motivation — whether you&apos;re part of a group or going solo.
                       </p>
                     </div>
                   </div>
-                  <div id="students" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
+                  <div id="groups" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
-                      <span className="material-symbols-outlined text-3xl">sentiment_satisfied</span>
+                      <span className="material-symbols-outlined text-3xl">groups</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-white text-lg font-bold">For Students</h3>
+                      <h3 className="text-white text-lg font-bold">For Groups & Teams</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Engage with interactive tools to build healthy habits, track personal progress, and feel empowered.
+                        Classes, sports teams, clubs, or any community — create a group, share progress, and grow together.
                       </p>
                     </div>
                   </div>
                   <div id="schools" className="flex flex-1 flex-col gap-4 rounded-xl border border-white/10 bg-[#192f33] p-6 hover:border-[#13c8ec]/30 transition-colors scroll-mt-24">
                     <div className="text-[#13c8ec]">
-                      <span className="material-symbols-outlined text-3xl">shield</span>
+                      <span className="material-symbols-outlined text-3xl">school</span>
                     </div>
                     <div className="flex flex-col gap-1">
                       <h3 className="text-white text-lg font-bold">For Schools</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Implement a school-wide wellbeing program with comprehensive data, resources, and reporting.
+                        Support student wellbeing with teacher dashboards, privacy controls, and school-wide insights.
                       </p>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ export default function LandingPage() {
                     <div className="flex flex-col gap-1">
                       <h3 className="text-white text-lg font-bold">Set Goals</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Teachers and students collaborate to set meaningful wellbeing goals for the classroom.
+                        Create your own habits or join a group to build them together.
                       </p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export default function LandingPage() {
                     <div className="flex flex-col gap-1">
                       <h3 className="text-white text-lg font-bold">Track Progress</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Students track their habits daily through an engaging, user-friendly interface.
+                        Check in daily, build streaks, and see your progress over time.
                       </p>
                     </div>
                   </div>
@@ -203,7 +203,7 @@ export default function LandingPage() {
                     <div className="flex flex-col gap-1">
                       <h3 className="text-white text-lg font-bold">Celebrate Growth</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Visualize progress, celebrate milestones, and foster a supportive class environment.
+                        Earn XP, level up, and support others on their journey.
                       </p>
                     </div>
                   </div>
@@ -332,10 +332,10 @@ export default function LandingPage() {
               {/* CTA Section */}
               <section className="flex flex-col items-center gap-6 px-4 py-12 bg-[#192f33]/50 rounded-2xl mx-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Ready to help your students thrive?
+                  Ready to build better habits?
                 </h2>
                 <p className="text-[#92c0c9] text-center max-w-xl">
-                  Join teachers around the world who are using Strive to build better wellbeing habits in their classrooms.
+                  Join thousands of people using Strive to build lasting habits — alone or together.
                 </p>
                 <Link
                   href="/login"
