@@ -33,7 +33,7 @@ export default function LandingPage() {
                       Build better wellbeing habits together in class.
                     </h1>
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
-                      Help students move from knowing what&apos;s good for them to actually doing it — with evidence-based habit design, social accountability, and progress tracking that motivates without manipulating.
+                      Turn good intentions into lasting habits — with smart design, social support, and progress tracking that motivates without manipulating.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
