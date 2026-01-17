@@ -26,8 +26,24 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, description, category, visibility, scheduleFrequency, scheduleDays, startDate } = body;
 
+    // Validate required fields
     if (!name || !category) {
       return NextResponse.json({ error: 'Name and category are required' }, { status: 400 });
+    }
+
+    // Validate and sanitize name
+    const trimmedName = typeof name === 'string' ? name.trim() : '';
+    if (trimmedName.length === 0) {
+      return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+    }
+    if (trimmedName.length > 100) {
+      return NextResponse.json({ error: 'Name must be 100 characters or less' }, { status: 400 });
+    }
+
+    // Validate description length
+    const trimmedDescription = typeof description === 'string' ? description.trim() : null;
+    if (trimmedDescription && trimmedDescription.length > 500) {
+      return NextResponse.json({ error: 'Description must be 500 characters or less' }, { status: 400 });
     }
 
     // Map category string to enum value
@@ -46,8 +62,8 @@ export async function POST(request: Request) {
     const habit = await prisma.habit.create({
       data: {
         userId: session.user.id,
-        name,
-        description: description || null,
+        name: trimmedName,
+        description: trimmedDescription,
         category: categoryEnum as any, // Cast to any to allow string enum value
         visibility: visibilityEnum,
         scheduleFrequency: scheduleFrequency || 'DAILY',

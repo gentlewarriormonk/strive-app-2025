@@ -34,8 +34,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, description } = body;
 
-    if (!name || name.trim().length === 0) {
+    // Validate and sanitize name
+    const trimmedName = typeof name === 'string' ? name.trim() : '';
+    if (trimmedName.length === 0) {
       return NextResponse.json({ error: 'Group name is required' }, { status: 400 });
+    }
+    if (trimmedName.length > 100) {
+      return NextResponse.json({ error: 'Group name must be 100 characters or less' }, { status: 400 });
+    }
+
+    // Validate description length
+    const trimmedDescription = typeof description === 'string' ? description.trim() : null;
+    if (trimmedDescription && trimmedDescription.length > 500) {
+      return NextResponse.json({ error: 'Description must be 500 characters or less' }, { status: 400 });
     }
 
     // Get or create a default school for the teacher
@@ -72,8 +83,8 @@ export async function POST(request: Request) {
     // Create the group
     const group = await prisma.group.create({
       data: {
-        name: name.trim(),
-        description: description?.trim() || null,
+        name: trimmedName,
+        description: trimmedDescription,
         schoolId,
         teacherId: session.user.id,
         joinCode,

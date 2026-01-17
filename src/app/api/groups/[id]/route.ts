@@ -107,17 +107,33 @@ export async function PATCH(
       return NextResponse.json({ error: 'Not authorized to update this group' }, { status: 403 });
     }
 
-    // Validate name
-    if (name !== undefined && (!name || name.trim().length === 0)) {
-      return NextResponse.json({ error: 'Group name cannot be empty' }, { status: 400 });
+    // Validate and sanitize name
+    let trimmedName: string | undefined;
+    if (name !== undefined) {
+      trimmedName = typeof name === 'string' ? name.trim() : '';
+      if (trimmedName.length === 0) {
+        return NextResponse.json({ error: 'Group name cannot be empty' }, { status: 400 });
+      }
+      if (trimmedName.length > 100) {
+        return NextResponse.json({ error: 'Group name must be 100 characters or less' }, { status: 400 });
+      }
+    }
+
+    // Validate description length
+    let trimmedDescription: string | null | undefined;
+    if (description !== undefined) {
+      trimmedDescription = typeof description === 'string' ? description.trim() : null;
+      if (trimmedDescription && trimmedDescription.length > 500) {
+        return NextResponse.json({ error: 'Description must be 500 characters or less' }, { status: 400 });
+      }
     }
 
     // Update the group
     const updatedGroup = await prisma.group.update({
       where: { id: groupId },
       data: {
-        ...(name !== undefined && { name: name.trim() }),
-        ...(description !== undefined && { description: description?.trim() || null }),
+        ...(trimmedName !== undefined && { name: trimmedName }),
+        ...(trimmedDescription !== undefined && { description: trimmedDescription || null }),
       },
     });
 

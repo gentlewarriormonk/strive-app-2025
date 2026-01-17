@@ -151,6 +151,7 @@ async function seedDemoData() {
     demoSchool = await prisma.school.create({
       data: {
         name: 'Demo School',
+        code: 'DEMO' + Math.random().toString(36).substring(2, 6).toUpperCase(),
       },
     });
     console.log(`  Created school: ${demoSchool.name}`);

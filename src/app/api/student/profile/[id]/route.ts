@@ -65,6 +65,32 @@ export async function GET(
       }
     }
 
+    // Check if viewer is a classmate (in the same group as the profile user)
+    let isClassmate = false;
+    if (!isOwnProfile && !isTeacherOfStudent) {
+      // Get groups where the viewer is a member
+      const viewerGroups = await prisma.groupMembership.findMany({
+        where: { userId: viewerId },
+        select: { groupId: true },
+      });
+
+      if (viewerGroups.length > 0) {
+        // Check if profile user is in any of the same groups
+        const sharedMembership = await prisma.groupMembership.findFirst({
+          where: {
+            userId: profileUserId,
+            groupId: { in: viewerGroups.map(g => g.groupId) },
+          },
+        });
+        isClassmate = !!sharedMembership;
+      }
+    }
+
+    // Authorization check: Must be self, teacher of student, or classmate
+    if (!isOwnProfile && !isTeacherOfStudent && !isClassmate) {
+      return NextResponse.json({ error: 'Not authorized to view this profile' }, { status: 403 });
+    }
+
     // Determine visibility filter
     // Own profile or teacher: see all habits
     // Classmate: only PUBLIC_TO_CLASS
