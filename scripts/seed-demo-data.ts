@@ -143,7 +143,22 @@ async function seedDemoData() {
   });
   console.log(`  Created user: ${demoUser.name} (Level ${demoUser.level}, ${demoUser.xp} XP)`);
 
-  // 2. Create demo group leader (teacher)
+  // 2. Find or create a school for the demo group
+  console.log('Finding or creating demo school...');
+  let demoSchool = await prisma.school.findFirst();
+
+  if (!demoSchool) {
+    demoSchool = await prisma.school.create({
+      data: {
+        name: 'Demo School',
+      },
+    });
+    console.log(`  Created school: ${demoSchool.name}`);
+  } else {
+    console.log(`  Using existing school: ${demoSchool.name}`);
+  }
+
+  // 3. Create demo group leader (teacher)
   console.log('Creating demo group leader...');
   const demoTeacher = await prisma.user.findFirst({
     where: { role: 'TEACHER' },
@@ -167,7 +182,7 @@ async function seedDemoData() {
     console.log(`  Created teacher: ${newTeacher.name}`);
   }
 
-  // 3. Create demo group
+  // 4. Create demo group
   console.log('Creating demo group...');
   const demoGroup = await prisma.group.create({
     data: {
@@ -175,11 +190,12 @@ async function seedDemoData() {
       description: 'A group focused on building healthy morning routines',
       joinCode: 'DEMO1234',
       teacherId: groupTeacherId,
+      schoolId: demoSchool.id,
     },
   });
   console.log(`  Created group: ${demoGroup.name} (Code: ${demoGroup.joinCode})`);
 
-  // 4. Create another group member
+  // 5. Create another group member
   console.log('Creating demo group member...');
   const demoMember = await prisma.user.create({
     data: {
