@@ -35,6 +35,9 @@ export default function LandingPage() {
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
                       Design habits that stick. Track what matters. Grow together.
                     </p>
+                    <p className="text-white/80 text-base md:text-lg font-normal leading-relaxed">
+                      Track daily habits, build streaks, and grow with your group.
+                    </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
                     <Link
@@ -66,14 +69,11 @@ export default function LandingPage() {
               {/* The Problem Section */}
               <section className="flex flex-col gap-6 px-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Wellbeing education has a gap
+                  Habits are hard. Strive makes them easier.
                 </h2>
                 <div className="max-w-3xl mx-auto text-center">
                   <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
-                    We teach students about sleep, exercise, mindfulness, and healthy relationships. But knowing isn&apos;t doing. The gap between understanding what&apos;s good for us and actually doing it consistently — that&apos;s where most wellbeing education falls short.
-                  </p>
-                  <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
-                    Students need more than information. They need systems to turn intentions into actions.
+                    Design habits that fit your life. Track progress without pressure. See your growth over time.
                   </p>
                 </div>
               </section>
@@ -165,6 +165,19 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
+                </div>
+              </section>
+
+              {/* Privacy Callout */}
+              <section className="flex flex-col gap-4 px-4">
+                <div className="max-w-3xl mx-auto text-center rounded-xl bg-[#13c8ec]/10 border border-[#13c8ec]/30 p-6">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <span className="material-symbols-outlined text-[#13c8ec] text-2xl">lock</span>
+                    <h3 className="text-white text-lg font-bold">Your Privacy, Your Control</h3>
+                  </div>
+                  <p className="text-[#92c0c9] text-base leading-relaxed">
+                    You control what others see. Keep habits private, share with your group, or go public.
+                  </p>
                 </div>
               </section>
 
@@ -277,7 +290,7 @@ export default function LandingPage() {
               {/* Origin Story Section */}
               <section className="flex flex-col gap-6 px-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Built by a Teacher, for Students
+                  Built by a Teacher, for Everyone
                 </h2>
                 <div className="max-w-3xl mx-auto rounded-xl bg-[#192f33] border border-white/10 p-6 md:p-8">
                   <p className="text-[#92c0c9] text-base leading-relaxed">
@@ -311,6 +324,9 @@ export default function LandingPage() {
                       — Gareth Manning, Teacher & Creator
                     </p>
                   </div>
+                  <p className="text-[#92c0c9] text-base leading-relaxed mt-6">
+                    What started in a classroom now helps individuals, teams, and organizations build lasting habits.
+                  </p>
                 </div>
               </section>
 
