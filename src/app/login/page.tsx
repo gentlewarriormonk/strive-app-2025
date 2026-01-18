@@ -69,25 +69,6 @@ export default function LoginPage() {
                 </svg>
                 <span>Continue with Google</span>
               </button>
-
-              {/* Demo Links */}
-              <div className="flex flex-col gap-2 pt-4 border-t border-white/10">
-                <p className="text-xs text-[#92c0c9] text-center mb-2">Demo access:</p>
-                <Link
-                  href="/student/today"
-                  className="flex w-full items-center justify-center rounded-lg h-10 px-4 bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors"
-                >
-                  <span className="material-symbols-outlined mr-2 !text-lg">person</span>
-                  Continue as Student
-                </Link>
-                <Link
-                  href="/teacher/dashboard"
-                  className="flex w-full items-center justify-center rounded-lg h-10 px-4 bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors"
-                >
-                  <span className="material-symbols-outlined mr-2 !text-lg">school</span>
-                  Continue as Teacher
-                </Link>
-              </div>
             </div>
           </div>
 
