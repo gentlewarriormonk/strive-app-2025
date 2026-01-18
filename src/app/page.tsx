@@ -35,9 +35,6 @@ export default function LandingPage() {
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
                       Design habits that stick. Track what matters. Grow together.
                     </p>
-                    <p className="text-white/80 text-base md:text-lg font-normal leading-relaxed">
-                      Track daily habits, build streaks, and grow with your group.
-                    </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
                     <Link
@@ -282,50 +279,7 @@ export default function LandingPage() {
                     Strive uses XP, streaks, and levels — but never notifications designed to create anxiety, dark patterns to keep you scrolling, or social comparison that breeds shame.
                   </p>
                   <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
-                    The goal is building agency and self-efficacy, not app addiction. Students learn to own their progress. The app is a tool, not a crutch.
-                  </p>
-                </div>
-              </section>
-
-              {/* Origin Story Section */}
-              <section className="flex flex-col gap-6 px-4">
-                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Built by a Teacher, for Everyone
-                </h2>
-                <div className="max-w-3xl mx-auto rounded-xl bg-[#192f33] border border-white/10 p-6 md:p-8">
-                  <p className="text-[#92c0c9] text-base leading-relaxed">
-                    Strive started in a Wellbeing class at REAL School Budapest. Students learned about habit formation — cue-routine-reward loops, implementation intentions, identity-based habits. They set goals and tracked progress in individual Google Sheets.
-                  </p>
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-green-400 text-xl">check_circle</span>
-                        <span className="text-white font-medium">What worked</span>
-                      </div>
-                      <p className="text-[#92c0c9] text-sm leading-relaxed pl-7">
-                        Students engaged deeply and many built lasting habits.
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-red-400 text-xl">cancel</span>
-                        <span className="text-white font-medium">What didn&apos;t</span>
-                      </div>
-                      <p className="text-[#92c0c9] text-sm leading-relaxed pl-7">
-                        Managing 20+ spreadsheets was painful. No social visibility. No data insights. No engagement.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-6 pt-6 border-t border-white/10">
-                    <p className="text-white text-base leading-relaxed italic">
-                      &quot;Strive is the app I wished existed — purpose-built for schools, with the right balance of accountability and privacy.&quot;
-                    </p>
-                    <p className="text-[#13c8ec] text-sm font-medium mt-2">
-                      — Gareth Manning, Teacher & Creator
-                    </p>
-                  </div>
-                  <p className="text-[#92c0c9] text-base leading-relaxed mt-6">
-                    What started in a classroom now helps individuals, teams, and organizations build lasting habits.
+                    The goal is building agency and self-efficacy, not app addiction. You learn to own your progress. The app is a tool, not a crutch.
                   </p>
                 </div>
               </section>
