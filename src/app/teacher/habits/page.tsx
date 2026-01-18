@@ -6,7 +6,7 @@ import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { CategorySummaryCard } from '@/components/CategorySummaryCard';
-import { Habit, HabitCategory, CATEGORY_CONFIG, HabitStats } from '@/types/models';
+import { Habit, HabitCategory, getCategoryConfig, CATEGORY_CONFIG, HabitStats } from '@/types/models';
 
 // Interactive Habit Row for teacher with completion toggle
 function TeacherHabitRow({
@@ -22,7 +22,7 @@ function TeacherHabitRow({
   onToggleComplete: () => void;
   onEdit: () => void;
 }) {
-  const categoryConfig = CATEGORY_CONFIG[habit.category];
+  const categoryConfig = getCategoryConfig(habit.category);
 
   return (
     <div className="bg-[#192f33] rounded-xl shadow-sm p-4 flex items-center gap-4 card-hover">

@@ -7,7 +7,7 @@ import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { JoinClassForm } from '@/components/groups/JoinClassForm';
-import { Habit, HabitStats, CATEGORY_CONFIG, LEVEL_THRESHOLDS, getXPForNextLevel } from '@/types/models';
+import { Habit, HabitStats, getCategoryConfig, LEVEL_THRESHOLDS, getXPForNextLevel } from '@/types/models';
 
 interface JoinedGroup {
   id: string;
@@ -31,7 +31,7 @@ function InteractiveHabitRow({
   onToggleComplete: () => void;
   onEdit?: () => void;
 }) {
-  const categoryConfig = CATEGORY_CONFIG[habit.category];
+  const categoryConfig = getCategoryConfig(habit.category);
 
   return (
     <div className="bg-[#192f33] rounded-xl shadow-sm p-4 flex items-center gap-4 card-hover">

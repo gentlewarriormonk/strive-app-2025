@@ -1,4 +1,4 @@
-import { HabitCategory, CATEGORY_CONFIG } from '@/types/models';
+import { HabitCategory, getCategoryConfig } from '@/types/models';
 
 interface CategorySummaryCardProps {
   category: HabitCategory;
@@ -11,7 +11,7 @@ export function CategorySummaryCard({
   avgCompletion,
   longestStreak,
 }: CategorySummaryCardProps) {
-  const config = CATEGORY_CONFIG[category];
+  const config = getCategoryConfig(category);
 
   return (
     <div className="flex items-center gap-4 rounded-xl p-4 bg-[#192f33]">

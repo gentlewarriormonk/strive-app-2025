@@ -133,6 +133,8 @@ export interface ChallengeParticipation {
 }
 
 // Category icons and colors for UI
+export const DEFAULT_CATEGORY_CONFIG = { icon: 'category', color: 'text-gray-300', bgColor: 'bg-gray-900/40' };
+
 export const CATEGORY_CONFIG: Record<HabitCategory, { icon: string; color: string; bgColor: string }> = {
   'Sleep': { icon: 'nights_stay', color: 'text-blue-300', bgColor: 'bg-blue-900/40' },
   'Movement': { icon: 'directions_run', color: 'text-green-300', bgColor: 'bg-green-900/40' },
@@ -143,6 +145,11 @@ export const CATEGORY_CONFIG: Record<HabitCategory, { icon: string; color: strin
   'Digital Hygiene': { icon: 'phone_android', color: 'text-indigo-300', bgColor: 'bg-indigo-900/40' },
   'Other': { icon: 'category', color: 'text-gray-300', bgColor: 'bg-gray-900/40' },
 };
+
+// Safe getter for category config with fallback
+export function getCategoryConfig(category: string | null | undefined) {
+  return CATEGORY_CONFIG[category as HabitCategory] ?? DEFAULT_CATEGORY_CONFIG;
+}
 
 // XP calculation helpers
 export const XP_PER_COMPLETION = 10;

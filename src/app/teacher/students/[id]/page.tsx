@@ -9,7 +9,7 @@ import {
   getUserChallengeParticipation,
   challenges,
 } from '@/lib/mockData';
-import { HabitCategory, CATEGORY_CONFIG } from '@/types/models';
+import { HabitCategory, getCategoryConfig, CATEGORY_CONFIG } from '@/types/models';
 
 interface StudentDetailPageProps {
   params: Promise<{ id: string }>;
@@ -150,7 +150,7 @@ export default async function TeacherStudentDetailPage({ params }: StudentDetail
         <h2 className="text-xl font-bold text-white mb-4">All Habits</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {habitsWithStats.map(({ habit, stats }) => {
-            const config = CATEGORY_CONFIG[habit.category];
+            const config = getCategoryConfig(habit.category);
             const isPrivate = habit.visibility !== 'PUBLIC_TO_CLASS';
 
             return (

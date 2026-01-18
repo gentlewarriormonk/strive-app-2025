@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { CategorySummaryCard } from '@/components/CategorySummaryCard';
-import { HabitCategory, CATEGORY_CONFIG, getXPForNextLevel } from '@/types/models';
+import { HabitCategory, getCategoryConfig, getXPForNextLevel } from '@/types/models';
 
 interface ProfileUser {
   id: string;
@@ -243,7 +243,7 @@ export default function StudentProfilePage() {
           {habits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {habits.map((habit) => {
-                const config = CATEGORY_CONFIG[habit.category];
+                const config = getCategoryConfig(habit.category);
                 return (
                   <div
                     key={habit.id}

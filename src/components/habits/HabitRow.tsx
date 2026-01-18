@@ -1,6 +1,6 @@
 'use client';
 
-import { Habit, HabitStats, CATEGORY_CONFIG } from '@/types/models';
+import { Habit, HabitStats, getCategoryConfig } from '@/types/models';
 import { useState } from 'react';
 
 interface HabitRowProps {
@@ -19,7 +19,7 @@ export function HabitRow({
   onEdit,
 }: HabitRowProps) {
   const [completed, setCompleted] = useState(isCompletedToday);
-  const categoryConfig = CATEGORY_CONFIG[habit.category];
+  const categoryConfig = getCategoryConfig(habit.category);
 
   const handleToggle = () => {
     setCompleted(!completed);
