@@ -299,6 +299,60 @@ export default function LandingPage() {
                 </div>
               </section>
 
+              {/* What We Believe Section */}
+              <section className="flex flex-col gap-8 px-4">
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  What We Believe
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Habits are self-care</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Every habit is an investment in your future self.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Tracking isn&apos;t enough</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      We help you design habits that stick, not just count the ones that don&apos;t.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Identity outlasts motivation</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      &quot;I am someone who...&quot; is more powerful than &quot;I want to...&quot;
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Social connection, not surveillance</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Share what you want, with whom you want.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Never miss twice</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      Perfection isn&apos;t the goal. Getting back on track is the skill.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">The app is a tool, not a crutch</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      We succeed when you don&apos;t need us anymore.
+                    </p>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <Link
+                    href="/philosophy"
+                    className="text-[#13c8ec] hover:text-[#0ea5c7] text-base font-medium transition-colors inline-flex items-center gap-1"
+                  >
+                    Read our full philosophy
+                    <span className="material-symbols-outlined !text-lg">arrow_forward</span>
+                  </Link>
+                </div>
+              </section>
+
               {/* CTA Section */}
               <section className="flex flex-col items-center gap-6 px-4 py-12 bg-[#192f33]/50 rounded-2xl mx-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
