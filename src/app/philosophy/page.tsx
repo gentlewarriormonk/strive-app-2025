@@ -1,7 +1,15 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 
 export default function PhilosophyPage() {
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div
       className="relative flex min-h-screen w-full flex-col overflow-x-hidden"
@@ -14,13 +22,13 @@ export default function PhilosophyPage() {
           <div className="flex w-full max-w-[900px] flex-1 flex-col">
             <PublicHeader />
 
-            <main className="flex flex-col gap-12 py-16">
+            <main className="flex flex-col gap-20 py-20">
               {/* Hero */}
               <section className="flex flex-col gap-4 text-center">
                 <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight">
                   Take Control of Your Wellbeing
                 </h1>
-                <p className="text-[#92c0c9] text-lg leading-relaxed max-w-2xl mx-auto">
+                <p className="text-[#92c0c9] text-lg leading-relaxed max-w-prose mx-auto text-left">
                   Strive is built for high-agency people who take ownership of their habits, their growth, and their lives.
                 </p>
               </section>
@@ -81,7 +89,7 @@ export default function PhilosophyPage() {
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   What We Won&apos;t Do
                 </h2>
-                <p className="text-[#92c0c9] text-base leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#92c0c9] text-base leading-relaxed text-left max-w-prose mx-auto">
                   No dark patterns. No shame-based comparison. No anxiety notifications. No data exploitation. No false promises about changing your life in 21 days.
                 </p>
               </section>
@@ -91,7 +99,7 @@ export default function PhilosophyPage() {
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   Who Strive Is For
                 </h2>
-                <p className="text-[#92c0c9] text-base leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#92c0c9] text-base leading-relaxed text-left max-w-prose mx-auto">
                   High-agency individuals building personal habits. Teams and groups growing together with shared accountability. Schools supporting student wellbeing with the right balance of visibility and privacy.
                 </p>
               </section>
@@ -101,7 +109,7 @@ export default function PhilosophyPage() {
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   Where Strive Came From
                 </h2>
-                <p className="text-[#92c0c9] text-base leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#92c0c9] text-base leading-relaxed text-left max-w-prose mx-auto">
                   Strive started in a Wellbeing class at REAL School Budapest, where students tracked habits in Google Sheets. The approach worked, but the tools didn&apos;t. Strive is the purpose-built solution we wished existed.
                 </p>
               </section>

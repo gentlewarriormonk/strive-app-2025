@@ -217,11 +217,11 @@ export default function LandingPage() {
               </section>
 
               {/* Motivation Without Manipulation Section */}
-              <section className="flex flex-col gap-6 px-4">
+              <section className="flex flex-col gap-6 px-4 py-20">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   Motivation Without Manipulation
                 </h2>
-                <div className="max-w-3xl mx-auto text-center">
+                <div className="max-w-prose mx-auto text-left">
                   <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
                     Strive uses XP, streaks, and levels — but never notifications designed to create anxiety, dark patterns to keep you scrolling, or social comparison that breeds shame.
                   </p>
@@ -231,23 +231,32 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* Early Stage Disclaimer Section */}
-              <section className="flex flex-col gap-6 px-4">
-                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Early Stage & Experimental
-                </h2>
-                <div className="max-w-3xl mx-auto text-center">
-                  <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
-                    Strive is new. It&apos;s evidence-informed but unproven at scale. We&apos;re piloting with real students and learning as we go.
-                  </p>
-                  <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
-                    If you&apos;re a teacher interested in trying Strive with your class, we&apos;d love your feedback. It will shape what this becomes.
-                  </p>
+              {/* Early Stage Disclaimer Section - Full-width band */}
+              <section className="-mx-4 sm:-mx-8 md:-mx-20 lg:-mx-40 px-4 sm:px-8 md:px-20 lg:px-40 py-16 bg-slate-800/80 border-y border-teal-900/50">
+                <div className="max-w-[1100px] mx-auto">
+                  <div className="flex flex-col gap-6">
+                    <div className="flex items-center justify-center gap-3">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/40 text-teal-400 text-xs font-bold uppercase tracking-wider">
+                        Beta
+                      </span>
+                      <h2 className="text-white text-2xl md:text-3xl font-bold">
+                        Early Stage & Experimental
+                      </h2>
+                    </div>
+                    <div className="max-w-prose mx-auto text-left">
+                      <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
+                        Strive is new. It&apos;s evidence-informed but unproven at scale. We&apos;re piloting with real students and learning as we go.
+                      </p>
+                      <p className="text-white text-base md:text-lg leading-relaxed mt-4 font-medium">
+                        If you&apos;re a teacher interested in trying Strive with your class, we&apos;d love your feedback. It will shape what this becomes.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </section>
 
               {/* What We Believe Section */}
-              <section className="flex flex-col gap-8 px-4">
+              <section className="flex flex-col gap-8 px-4 py-20">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   What We Believe
                 </h2>
