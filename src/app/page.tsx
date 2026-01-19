@@ -68,59 +68,6 @@ export default function LandingPage() {
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   Habits are hard. Strive makes them easier.
                 </h2>
-                <div className="max-w-3xl mx-auto text-center">
-                  <p className="text-[#92c0c9] text-base md:text-lg leading-relaxed">
-                    Design habits that fit your life. Track progress without pressure. See your growth over time.
-                  </p>
-                </div>
-              </section>
-
-              {/* The Science Section */}
-              <section className="flex flex-col gap-8 px-4">
-                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
-                  Smart Habits, Not Just Smart Goals
-                </h2>
-                <p className="text-[#92c0c9] text-base text-center max-w-2xl mx-auto">
-                  Strive is built on proven behavior change principles:
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">target</span>
-                      <h3 className="text-white text-lg font-bold">Implementation Intentions</h3>
-                    </div>
-                    <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      Not just &quot;I want to exercise&quot; but &quot;I will run for 20 minutes every Monday, Wednesday, Friday after school&quot;
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">sync</span>
-                      <h3 className="text-white text-lg font-bold">Cue-Routine-Reward</h3>
-                    </div>
-                    <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      Design habits that stick by connecting them to existing behaviors
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">groups</span>
-                      <h3 className="text-white text-lg font-bold">Social Accountability</h3>
-                    </div>
-                    <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      See your group&apos;s progress, celebrate streaks, support each other
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#192f33] p-6">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#13c8ec] text-2xl">trending_up</span>
-                      <h3 className="text-white text-lg font-bold">Visual Progress</h3>
-                    </div>
-                    <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      Streaks, XP, and heatmaps make consistency visible and motivating
-                    </p>
-                  </div>
-                </div>
               </section>
 
               {/* Features Section - For Individuals/Groups/Schools */}
@@ -375,6 +322,12 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-8">
                 <p className="text-[#92c0c9] text-sm">© {new Date().getFullYear()} Strive. All rights reserved.</p>
                 <div className="flex items-center gap-6">
+                  <Link
+                    href="/philosophy"
+                    className="text-[#92c0c9] hover:text-white text-sm transition-colors"
+                  >
+                    Philosophy
+                  </Link>
                   <a
                     href="#"
                     className="text-[#92c0c9] text-sm cursor-default opacity-60"
