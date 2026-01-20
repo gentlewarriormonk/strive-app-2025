@@ -5,9 +5,9 @@ import { useEffect } from 'react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 
 export default function PhilosophyPage() {
-  // Scroll to top on mount
+  // Scroll to top instantly on mount - no animation
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
 
   return (

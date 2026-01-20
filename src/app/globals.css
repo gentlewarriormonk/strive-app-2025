@@ -58,7 +58,8 @@
 
 /* Base styles */
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth removed - causes animated transitions on page navigation */
+  /* For in-page anchor scrolling, use scrollIntoView({ behavior: 'smooth' }) in JS */
 }
 
 body {
