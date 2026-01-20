@@ -40,20 +40,24 @@ const prompts: Record<string, { system: string; user: (i: PromptInputs) => strin
   },
   "polish-intention": {
     system:
-      "You fix grammar and create natural, logical sentences. If something doesn't make logical sense, fix it. Return ONLY the corrected text, nothing else.",
+      "You create natural, grammatically correct sentences. Return ONLY the two sentences with no numbering, no bullet points, no extra text.",
     user: (i) =>
-      `Create a grammatically correct implementation intention.
-The habit is: ${i.habit}
-The trigger is: after ${i.cue}
-The location is: ${i.location}
-The obstacle is: ${i.obstacle}
-The backup plan is: ${i.backup}
+      `Create two grammatically correct sentences from these inputs:
 
-Format as exactly two sentences:
-1. "After I [trigger], I will [habit] at [location]."
-2. "If [obstacle happens], then I will [backup]."
+- Habit: ${i.habit}
+- Trigger: ${i.cue}
+- Location: ${i.location}
+- Obstacle: ${i.obstacle}
+- Backup plan: ${i.backup}
 
-Make it grammatically correct and logically coherent. Don't include frequency words like "every day" or "every workday" in the first sentence. Return only the two sentences.`,
+Sentence 1 format: "After I [trigger], I will [habit] at [location]."
+Sentence 2 format: "If [obstacle], I will [backup]."
+
+Rules:
+- No numbers or bullet points
+- Fix any grammar issues (e.g., "If X may be Y" should be "If X is Y")
+- Make it sound natural
+- Return ONLY the two sentences, nothing else`,
   },
 };
 

@@ -33,7 +33,7 @@ export default function LandingPage() {
                       Own your habits. Own your wellbeing.
                     </h1>
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
-                      Design habits that stick. Track what matters. Grow together.
+                      Design habits that stick with AI-powered guidance. Track what matters. Grow together.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3">
@@ -127,18 +127,18 @@ export default function LandingPage() {
 
               {/* How It Works Section */}
               <section id="how-it-works" className="flex flex-col gap-8 scroll-mt-8">
-                <h2 className="text-white text-2xl font-bold text-center">
-                  How it works in 3 simple steps
+                <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
+                  How Strive Helps You Build Habits That Stick
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 max-w-4xl mx-auto">
                   <div className="flex flex-col gap-4 items-start rounded-xl bg-[#192f33] border border-white/10 p-6">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       1
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-white text-lg font-bold">Set Goals</h3>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-white text-lg font-bold">Design with intention</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Create your own habits or join a group to build them together.
+                        Don&apos;t just track habits — design them. Our AI-guided flow helps you create specific, actionable plans based on proven behavior science.
                       </p>
                     </div>
                   </div>
@@ -146,10 +146,10 @@ export default function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       2
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-white text-lg font-bold">Track Progress</h3>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-white text-lg font-bold">Plan for obstacles</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Check in daily, build streaks, and see your progress over time.
+                        Research shows people who plan for obstacles are 2-3x more likely to succeed. Strive helps you anticipate what might get in the way and prepare backup plans.
                       </p>
                     </div>
                   </div>
@@ -157,10 +157,21 @@ export default function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       3
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-white text-lg font-bold">Celebrate Growth</h3>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-white text-lg font-bold">Track with flexibility</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Earn XP, level up, and support others on their journey.
+                        Life happens. Strive focuses on progress over perfection — because the goal isn&apos;t a streak, it&apos;s becoming someone who shows up for themselves.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-4 items-start rounded-xl bg-[#192f33] border border-white/10 p-6">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
+                      4
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-white text-lg font-bold">Reflect and grow</h3>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed">
+                        Weekly reflections help you learn what&apos;s working and build an identity around your habits, not just a checklist.
                       </p>
                     </div>
                   </div>
@@ -270,7 +281,7 @@ export default function LandingPage() {
                   <div className="flex flex-col gap-2">
                     <h3 className="text-[#13c8ec] text-lg font-bold">Tracking isn&apos;t enough</h3>
                     <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      We help you design habits that stick, not just count the ones that don&apos;t.
+                      Recording what you do doesn&apos;t change who you become. Strive helps you design habits using AI-powered guidance based on implementation intentions — specific plans for when, where, and how you&apos;ll act.
                     </p>
                   </div>
                   <div className="flex flex-col gap-2">
