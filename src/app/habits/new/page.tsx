@@ -14,6 +14,25 @@ type HabitData = {
 
 type AISuggestions = string[] | null;
 
+// Static obstacle options (more reliable than AI suggestions for personal context)
+const defaultObstacles = [
+  "Feeling tired",
+  "Not enough time",
+  "Forgetting",
+  "Bad weather",
+  "Not in the mood",
+  "Interruptions"
+];
+
+// Clean up grammar for obstacle preview
+function cleanObstacleGrammar(text: string): string {
+  return text
+    .replace(/might not be/gi, 'is not')
+    .replace(/may not be/gi, 'is not')
+    .replace(/might be/gi, 'is')
+    .replace(/may be/gi, 'is');
+}
+
 export default function NewHabitPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -29,14 +48,12 @@ export default function NewHabitPage() {
   // AI suggestion states
   const [habitSuggestions, setHabitSuggestions] = useState<AISuggestions>(null);
   const [cueSuggestions, setCueSuggestions] = useState<AISuggestions>(null);
-  const [obstacleSuggestions, setObstacleSuggestions] = useState<AISuggestions>(null);
   const [backupSuggestions, setBackupSuggestions] = useState<AISuggestions>(null);
   const [polishedIntention, setPolishedIntention] = useState<string | null>(null);
 
   // Loading states
   const [loadingHabitSuggestions, setLoadingHabitSuggestions] = useState(false);
   const [loadingCueSuggestions, setLoadingCueSuggestions] = useState(false);
-  const [loadingObstacleSuggestions, setLoadingObstacleSuggestions] = useState(false);
   const [loadingBackupSuggestions, setLoadingBackupSuggestions] = useState(false);
   const [loadingPolish, setLoadingPolish] = useState(false);
 
@@ -88,15 +105,6 @@ export default function NewHabitPage() {
     const suggestions = await callAI('suggest-cues', { habit: habitData.name, cue });
     setCueSuggestions(suggestions);
     setLoadingCueSuggestions(false);
-  }, [callAI, habitData.name]);
-
-  // Fetch obstacle suggestions on step 3 load
-  const fetchObstacleSuggestions = useCallback(async () => {
-    if (!habitData.name) return;
-    setLoadingObstacleSuggestions(true);
-    const suggestions = await callAI('suggest-obstacles', { habit: habitData.name });
-    setObstacleSuggestions(suggestions);
-    setLoadingObstacleSuggestions(false);
   }, [callAI, habitData.name]);
 
   // Fetch backup suggestions with debounce
@@ -157,13 +165,6 @@ export default function NewHabitPage() {
       fetchBackupSuggestions(value);
     }, 800);
   };
-
-  // Fetch obstacle suggestions when entering step 3
-  useEffect(() => {
-    if (step === 3 && !obstacleSuggestions && !loadingObstacleSuggestions) {
-      fetchObstacleSuggestions();
-    }
-  }, [step, obstacleSuggestions, loadingObstacleSuggestions, fetchObstacleSuggestions]);
 
   // Fetch polished intention when entering step 4
   useEffect(() => {
@@ -333,7 +334,7 @@ export default function NewHabitPage() {
 
   // Fallback template for polished intention
   const getTemplateIntention = () => {
-    return `After I ${habitData.cue}, I will ${habitData.name} at ${habitData.location}. If ${habitData.obstacle}, I will ${habitData.backupPlan}.`;
+    return `After I ${habitData.cue}, I will ${habitData.name} at ${habitData.location}. If ${cleanObstacleGrammar(habitData.obstacle.toLowerCase())}, I will ${habitData.backupPlan}.`;
   };
 
   return (
@@ -476,28 +477,24 @@ export default function NewHabitPage() {
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-4 text-white placeholder:text-white/40 focus:outline-none focus:border-[#13c8ec]/50 text-lg"
                   autoFocus
                 />
-                {loadingObstacleSuggestions ? (
-                  <LoadingSpinner />
-                ) : obstacleSuggestions && obstacleSuggestions.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {obstacleSuggestions.map((obstacle, i) => (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          setHabitData(prev => ({ ...prev, obstacle }));
-                          fetchBackupSuggestions(obstacle);
-                        }}
-                        className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                          habitData.obstacle === obstacle
-                            ? 'bg-[#13c8ec] text-[#101f22]'
-                            : 'bg-white/10 text-white hover:bg-white/20'
-                        }`}
-                      >
-                        {obstacle}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {defaultObstacles.map((obstacle, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setHabitData(prev => ({ ...prev, obstacle }));
+                        fetchBackupSuggestions(obstacle);
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                        habitData.obstacle === obstacle
+                          ? 'bg-[#13c8ec] text-[#101f22]'
+                          : 'bg-white/10 text-white hover:bg-white/20'
+                      }`}
+                    >
+                      {obstacle}
+                    </button>
+                  ))}
+                </div>
               </div>
               {habitData.obstacle.trim().length > 0 && (
                 <div className="flex flex-col gap-2">
@@ -523,7 +520,7 @@ export default function NewHabitPage() {
               <div className="bg-white/5 border border-white/10 rounded-lg p-4">
                 <p className="text-[#92c0c9] text-sm">
                   <span className="text-white font-medium">Your if-then plan: </span>
-                  If {habitData.obstacle}, then I will {habitData.backupPlan}.
+                  If {cleanObstacleGrammar(habitData.obstacle.toLowerCase())}, then I will {habitData.backupPlan}.
                 </p>
               </div>
             )}
