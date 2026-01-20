@@ -25,13 +25,16 @@ function InteractiveHabitRow({
   isCompletedToday,
   onToggleComplete,
   onEdit,
+  onDelete,
 }: {
   habit: Habit;
   stats: HabitStats;
   isCompletedToday: boolean;
   onToggleComplete: () => void;
   onEdit?: () => void;
+  onDelete?: () => void;
 }) {
+  const [showMenu, setShowMenu] = useState(false);
   const categoryConfig = getCategoryConfig(habit.category);
 
   return (
@@ -80,14 +83,49 @@ function InteractiveHabitRow({
             <span className="material-symbols-outlined !text-lg">edit</span>
           </button>
         )}
-        <button
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9]/40 cursor-not-allowed"
-          aria-label="More options"
-          aria-disabled="true"
-          title="Coming soon"
-        >
-          <span className="material-symbols-outlined !text-lg">more_vert</span>
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+            aria-label="More options"
+          >
+            <span className="material-symbols-outlined !text-lg">more_vert</span>
+          </button>
+          {showMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowMenu(false)}
+              />
+              <div className="absolute right-0 top-full mt-1 z-20 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
+                {onEdit && (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      onEdit();
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined !text-lg">edit</span>
+                    Edit
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      onDelete();
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined !text-lg">delete</span>
+                    Delete
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -286,12 +324,39 @@ export default function StudentTodayPage() {
   // Edit habit
   const handleEditHabit = useCallback((data: HabitFormData) => {
     if (!editingHabit) return;
-    setLocalHabits(prev => prev.map(h => 
-      h.id === editingHabit 
+    setLocalHabits(prev => prev.map(h =>
+      h.id === editingHabit
         ? { ...h, name: data.name, description: data.description, category: data.category, visibility: data.visibility, scheduleFrequency: data.scheduleFrequency, scheduleDays: data.scheduleDays }
         : h
     ));
   }, [editingHabit]);
+
+  // Delete habit via API
+  const handleDeleteHabit = useCallback(async (habitId: string) => {
+    if (!confirm('Are you sure you want to delete this habit? This cannot be undone.')) {
+      return;
+    }
+
+    // Optimistic update
+    const previousHabits = localHabits;
+    setLocalHabits(prev => prev.filter(h => h.id !== habitId));
+
+    try {
+      const response = await fetch(`/api/habits/${habitId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        // Revert on error
+        setLocalHabits(previousHabits);
+        console.error('Failed to delete habit');
+      }
+    } catch (error) {
+      // Revert on error
+      setLocalHabits(previousHabits);
+      console.error('Failed to delete habit:', error);
+    }
+  }, [localHabits]);
 
   return (
     <PageShell>
@@ -345,6 +410,7 @@ export default function StudentTodayPage() {
                     isCompletedToday={isCompletedToday}
                     onToggleComplete={() => toggleHabitCompletion(habit.id)}
                     onEdit={() => setEditingHabit(habit.id)}
+                    onDelete={() => handleDeleteHabit(habit.id)}
                   />
                 ))
               ) : (
