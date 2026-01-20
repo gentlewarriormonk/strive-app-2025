@@ -499,23 +499,25 @@ export default function NewHabitPage() {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-white/60 text-sm">My backup plan:</label>
-                <input
-                  type="text"
-                  value={habitData.backupPlan}
-                  onChange={(e) => updateField('backupPlan', e.target.value)}
-                  placeholder="e.g., do a shorter version, do it indoors"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-4 text-white placeholder:text-white/40 focus:outline-none focus:border-[#13c8ec]/50 text-lg"
-                  onKeyDown={(e) => e.key === 'Enter' && canProceed() && handleNext()}
-                />
-                <SuggestionRadios
-                  suggestions={backupSuggestions}
-                  currentValue={habitData.backupPlan}
-                  onSelect={(value) => setHabitData(prev => ({ ...prev, backupPlan: value }))}
-                  loading={loadingBackupSuggestions}
-                />
-              </div>
+              {habitData.obstacle.trim().length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-white/60 text-sm">My backup plan:</label>
+                  <input
+                    type="text"
+                    value={habitData.backupPlan}
+                    onChange={(e) => updateField('backupPlan', e.target.value)}
+                    placeholder="e.g., do a shorter version, do it indoors"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-4 text-white placeholder:text-white/40 focus:outline-none focus:border-[#13c8ec]/50 text-lg"
+                    onKeyDown={(e) => e.key === 'Enter' && canProceed() && handleNext()}
+                  />
+                  <SuggestionRadios
+                    suggestions={backupSuggestions}
+                    currentValue={habitData.backupPlan}
+                    onSelect={(value) => setHabitData(prev => ({ ...prev, backupPlan: value }))}
+                    loading={loadingBackupSuggestions}
+                  />
+                </div>
+              )}
             </div>
             {habitData.obstacle && habitData.backupPlan && (
               <div className="bg-white/5 border border-white/10 rounded-lg p-4">
