@@ -118,7 +118,68 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* SECTION 4: What We Believe (3 beliefs) */}
+              {/* SECTION 4: Built for Classrooms */}
+              <section className="flex flex-col gap-10 px-4 py-8 bg-[#0d191b]/50 -mx-4 sm:-mx-8 md:-mx-20 lg:-mx-40">
+                <div className="max-w-[1100px] mx-auto px-4 sm:px-8 md:px-20 lg:px-40 w-full">
+                  <div className="flex flex-col gap-3 text-center mb-8">
+                    <h2 className="text-white text-2xl md:text-3xl font-bold">
+                      Built for classrooms
+                    </h2>
+                    <p className="text-[#92c0c9] text-base md:text-lg">
+                      Teachers get the visibility they need. Students keep the privacy they want.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                    <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-5">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-[#13c8ec] text-2xl">visibility</span>
+                        <h3 className="text-white text-base font-bold">See progress at a glance</h3>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed">
+                        View your whole class&apos;s streaks, completions, and engagement in one dashboard.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-5">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-[#13c8ec] text-2xl">lock</span>
+                        <h3 className="text-white text-base font-bold">Privacy by design</h3>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed">
+                        Students control what classmates see. Teachers always have full visibility for support.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-5">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-[#13c8ec] text-2xl">group</span>
+                        <h3 className="text-white text-base font-bold">Model the behavior</h3>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed">
+                        Share your own habits with your class. Show students you&apos;re on the journey too.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-5">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-[#13c8ec] text-2xl">bolt</span>
+                        <h3 className="text-white text-base font-bold">Zero prep required</h3>
+                      </div>
+                      <p className="text-[#92c0c9] text-sm leading-relaxed">
+                        Students join with a code. No accounts to create, no rosters to upload.
+                      </p>
+                    </div>
+                  </div>
+                  {/* TODO: Add teacher dashboard screenshot here */}
+                  <div className="mt-8 max-w-4xl mx-auto">
+                    <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 p-8">
+                      <span className="material-symbols-outlined text-[#92c0c9]/40 text-4xl mb-2">dashboard</span>
+                      <p className="text-[#92c0c9]/60 text-sm text-center">
+                        Teacher dashboard preview coming soon
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION 5: What We Believe (3 beliefs) */}
               <section className="flex flex-col gap-10 px-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   What We Believe
@@ -154,7 +215,7 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* SECTION 5: Final CTA */}
+              {/* SECTION 6: Final CTA */}
               <section className="flex flex-col items-center gap-6 px-4 py-12 bg-[#192f33]/50 rounded-2xl mx-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   Ready to build better habits?
