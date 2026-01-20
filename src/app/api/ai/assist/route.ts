@@ -34,13 +34,20 @@ const prompts: Record<string, { system: string; user: (i: PromptInputs) => strin
   },
   "suggest-backups": {
     system:
-      "You suggest realistic backup plans. Return ONLY a JSON array of exactly 3 short strings (max 8 words each). No explanation.",
+      "You suggest specific backup plans that directly address the stated obstacle. Return ONLY a JSON array of exactly 3 strings. No explanation.",
     user: (i) =>
-      `Someone wants to "${i.habit}" but might face: "${i.obstacle}". Suggest 3 realistic backup plans.`,
+      `The user wants to "${i.habit}". Their obstacle is: "${i.obstacle}".
+
+Suggest 3 specific backup plans that directly solve or work around this exact obstacle. The backup should help them still accomplish the habit or a modified version of it.
+
+Bad example: obstacle is "cat not in the mood" → "meditate" (doesn't help with the cat)
+Good example: obstacle is "cat not in the mood" → "try again in 10 minutes" (directly addresses it)
+
+Return a JSON array of 3 backup plans.`,
   },
   "polish-intention": {
     system:
-      "You create natural, grammatically correct sentences. Return ONLY the two sentences with no numbering, no bullet points, no extra text.",
+      "You create natural, grammatically correct sentences. Return ONLY the two sentences, no numbering, no bullet points, no extra text.",
     user: (i) =>
       `Create two grammatically correct sentences from these inputs:
 
@@ -50,14 +57,15 @@ const prompts: Record<string, { system: string; user: (i: PromptInputs) => strin
 - Obstacle: ${i.obstacle}
 - Backup plan: ${i.backup}
 
-Sentence 1 format: "After I [trigger], I will [habit] at [location]."
-Sentence 2 format: "If [obstacle], I will [backup]."
+Format:
+Sentence 1: "After I [trigger], I will [habit] at [location]."
+Sentence 2: "If [obstacle], I will [backup]."
 
 Rules:
-- No numbers or bullet points
-- Fix any grammar issues (e.g., "If X may be Y" should be "If X is Y")
-- Make it sound natural
-- Return ONLY the two sentences, nothing else`,
+- Convert uncertain language to certain: "might not be" → "is not", "may be" → "is"
+- The obstacle should be stated as a condition, not a possibility
+- Make both sentences flow naturally
+- Return ONLY the two sentences as a single paragraph, nothing else`,
   },
 };
 
