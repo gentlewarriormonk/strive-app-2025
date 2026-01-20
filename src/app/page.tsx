@@ -33,7 +33,7 @@ export default function LandingPage() {
                       Become who you want to be — one habit at a time.
                     </h1>
                     <p className="text-[#92c0c9] text-base md:text-lg font-normal leading-relaxed">
-                      Strive helps you design habits that stick, using behavioral science — not dark patterns.
+                      Strive helps you design habits that stick, using behavioral science — not tricks to keep you hooked.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start">
@@ -71,7 +71,7 @@ export default function LandingPage() {
                 </h2>
                 <div className="max-w-3xl mx-auto">
                   <p className="text-[#92c0c9] text-lg md:text-xl leading-relaxed text-center">
-                    Most habit apps use streaks to create anxiety and notifications to create addiction. Strive is different. We help you build agency and self-efficacy — not app dependency. The goal is to help you become someone who doesn&apos;t need us anymore.
+                    Most habit apps use streaks to create guilt and notifications to keep you hooked. Strive is different. We help you build agency and self-efficacy — not app dependency. The goal is to help you become someone who doesn&apos;t need us anymore.
                   </p>
                 </div>
               </section>
@@ -239,35 +239,23 @@ export default function LandingPage() {
                   <p className="text-[#92c0c9] text-sm">© 2026 Strive. All rights reserved.</p>
                   <div className="flex items-center gap-6">
                     <Link
+                      href="/story"
+                      className="text-[#92c0c9] hover:text-white text-sm transition-colors"
+                    >
+                      Story
+                    </Link>
+                    <Link
                       href="/philosophy"
                       className="text-[#92c0c9] hover:text-white text-sm transition-colors"
                     >
                       Philosophy
                     </Link>
-                    <a
-                      href="#"
-                      className="text-[#92c0c9] text-sm cursor-default opacity-60"
-                      aria-disabled="true"
-                      onClick={(e) => e.preventDefault()}
+                    <Link
+                      href="/safety"
+                      className="text-[#92c0c9] hover:text-white text-sm transition-colors"
                     >
-                      Privacy Policy
-                    </a>
-                    <a
-                      href="#"
-                      className="text-[#92c0c9] text-sm cursor-default opacity-60"
-                      aria-disabled="true"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Terms of Service
-                    </a>
-                    <a
-                      href="#"
-                      className="text-[#92c0c9] text-sm cursor-default opacity-60"
-                      aria-disabled="true"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Contact Us
-                    </a>
+                      Safety
+                    </Link>
                   </div>
                 </div>
                 <p className="text-[#92c0c9]/60 text-xs text-center">
