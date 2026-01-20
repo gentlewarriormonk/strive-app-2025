@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
@@ -312,13 +313,21 @@ export default function StudentTodayPage() {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <h2 className="text-2xl font-bold text-white">Today&apos;s Habits</h2>
-              <Button
-                icon="add_circle"
-                onClick={() => setShowHabitForm(true)}
-                className="hidden sm:flex"
-              >
-                New Habit
-              </Button>
+              <div className="hidden sm:flex items-center gap-3">
+                <Link
+                  href="/habits/new"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#13c8ec]/30 text-[#13c8ec] hover:bg-[#13c8ec]/10 transition-colors text-sm font-medium"
+                >
+                  <span className="material-symbols-outlined !text-lg">auto_awesome</span>
+                  Design a Habit
+                </Link>
+                <Button
+                  icon="add_circle"
+                  onClick={() => setShowHabitForm(true)}
+                >
+                  Quick Add
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -344,12 +353,25 @@ export default function StudentTodayPage() {
                     add_task
                   </span>
                   <p className="text-white font-medium mb-2">No habits yet</p>
-                  <p className="text-[#92c0c9] text-sm mb-4">
+                  <p className="text-[#92c0c9] text-sm mb-6">
                     Start building healthy habits by creating your first one.
                   </p>
-                  <Button onClick={() => setShowHabitForm(true)} icon="add">
-                    Create Your First Habit
-                  </Button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <Link
+                      href="/habits/new"
+                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#13c8ec] text-[#101f22] font-bold hover:bg-[#0ea5c7] transition-colors"
+                    >
+                      <span className="material-symbols-outlined !text-lg">auto_awesome</span>
+                      Design a Habit That Sticks
+                    </Link>
+                    <button
+                      onClick={() => setShowHabitForm(true)}
+                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white hover:bg-white/10 transition-colors"
+                    >
+                      <span className="material-symbols-outlined !text-lg">add</span>
+                      Quick Add
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

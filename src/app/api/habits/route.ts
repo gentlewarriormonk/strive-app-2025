@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, description, category, visibility, scheduleFrequency, scheduleDays, startDate } = body;
+    const { name, description, category, visibility, scheduleFrequency, scheduleDays, startDate, cue, location, obstacle, backupPlan } = body;
 
     // Validate required fields
     if (!name || !category) {
@@ -58,6 +58,12 @@ export async function POST(request: Request) {
       visibilityEnum = 'PRIVATE_TO_PEERS';
     }
 
+    // Sanitize implementation intention fields
+    const trimmedCue = typeof cue === 'string' ? cue.trim() : null;
+    const trimmedLocation = typeof location === 'string' ? location.trim() : null;
+    const trimmedObstacle = typeof obstacle === 'string' ? obstacle.trim() : null;
+    const trimmedBackupPlan = typeof backupPlan === 'string' ? backupPlan.trim() : null;
+
     const habit = await prisma.habit.create({
       data: {
         userId: session.user.id,
@@ -69,6 +75,10 @@ export async function POST(request: Request) {
         scheduleDays: scheduleDays || [],
         startDate: startDate ? new Date(startDate) : new Date(),
         isActive: true,
+        cue: trimmedCue,
+        location: trimmedLocation,
+        obstacle: trimmedObstacle,
+        backupPlan: trimmedBackupPlan,
       },
     });
 

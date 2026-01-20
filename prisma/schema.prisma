@@ -168,6 +168,12 @@ model Habit {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
+  // Implementation Intention fields
+  cue               String?           // "After I..." anchor
+  location          String?           // Where the habit will be done
+  obstacle          String?           // What might get in the way
+  backupPlan        String?           // "If [obstacle], then I will..."
+
   // Relations
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   completions HabitCompletion[]
