@@ -21,27 +21,13 @@ export function PublicHeader() {
       </Link>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex flex-1 items-center justify-end gap-8">
-        <nav className="flex items-center gap-9">
-          <Link
-            href="#individuals"
-            className="text-white/80 hover:text-white transition-colors text-sm font-medium"
-          >
-            For Individuals
-          </Link>
-          <Link
-            href="#groups"
-            className="text-white/80 hover:text-white transition-colors text-sm font-medium"
-          >
-            For Groups
-          </Link>
-          <Link
-            href="#schools"
-            className="text-white/80 hover:text-white transition-colors text-sm font-medium"
-          >
-            For Schools
-          </Link>
-        </nav>
+      <div className="hidden md:flex items-center gap-8">
+        <Link
+          href="/philosophy"
+          className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+        >
+          About
+        </Link>
         <Link
           href="/login"
           className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-[#13c8ec] text-[#101f22] text-sm font-bold tracking-wide hover:bg-[#0ea5c7] transition-colors"
@@ -66,25 +52,11 @@ export function PublicHeader() {
         <div className="absolute top-16 left-0 right-0 bg-[#111f22] border-b border-white/10 md:hidden z-50 animate-fade-in">
           <nav className="flex flex-col p-4 gap-4">
             <Link
-              href="#individuals"
+              href="/philosophy"
               className="text-white/80 hover:text-white transition-colors text-sm font-medium py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              For Individuals
-            </Link>
-            <Link
-              href="#groups"
-              className="text-white/80 hover:text-white transition-colors text-sm font-medium py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              For Groups
-            </Link>
-            <Link
-              href="#schools"
-              className="text-white/80 hover:text-white transition-colors text-sm font-medium py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              For Schools
+              About
             </Link>
             <Link
               href="/login"
@@ -99,4 +71,3 @@ export function PublicHeader() {
     </header>
   );
 }
-
