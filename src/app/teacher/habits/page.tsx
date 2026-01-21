@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { QuickAddForm, QuickAddData } from '@/components/habits/QuickAddForm';
 import { EditHabitForm, EditHabitData } from '@/components/habits/EditHabitForm';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { DropdownMenu } from '@/components/ui/DropdownMenu';
 import { WeeklyDots } from '@/components/habits/WeeklyDots';
 import { ImplementationIntention } from '@/components/habits/ImplementationIntention';
 import { Habit, getCategoryConfig } from '@/types/models';
@@ -55,9 +56,13 @@ function TeacherHabitRow({
   onEdit?: () => void;
   onDelete?: () => void;
 }) {
-  const [showMenu, setShowMenu] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const categoryConfig = getCategoryConfig(habit.category);
+
+  const menuItems = [
+    ...(onEdit ? [{ label: 'Edit', icon: 'edit', onClick: onEdit }] : []),
+    ...(onDelete ? [{ label: 'Delete', icon: 'delete', onClick: onDelete, variant: 'danger' as const }] : []),
+  ];
 
   return (
     <div className="bg-[#192f33] rounded-xl shadow-sm overflow-hidden card-hover">
@@ -122,49 +127,7 @@ function TeacherHabitRow({
             className="habit-checkbox"
             aria-label={`Mark ${habit.name} as ${isCompletedToday ? 'incomplete' : 'complete'}`}
           />
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
-              aria-label="More options"
-            >
-              <span className="material-symbols-outlined !text-lg">more_vert</span>
-            </button>
-            {showMenu && (
-              <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowMenu(false)}
-                />
-                <div className="absolute right-0 top-full mt-1 z-50 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
-                  {onEdit && (
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        onEdit();
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
-                    >
-                      <span className="material-symbols-outlined !text-lg">edit</span>
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        onDelete();
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center gap-2"
-                    >
-                      <span className="material-symbols-outlined !text-lg">delete</span>
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+          <DropdownMenu items={menuItems} />
         </div>
       </div>
     </div>
