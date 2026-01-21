@@ -157,10 +157,10 @@ body {
   transform: scale(0.95);
 }
 
-/* CHECKED STATE: Solid emerald fill with white checkmark */
+/* CHECKED STATE: Solid teal fill with white checkmark */
 .habit-checkbox:checked {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-color: #10b981;
+  background: #14b8a6;
+  border-color: #14b8a6;
   animation: checkbox-pulse var(--duration-fast) var(--ease-bounce);
 }
 
@@ -170,12 +170,15 @@ body {
   100% { transform: scale(1); }
 }
 
+/* Checkmark - MUST stay visible after animation */
 .habit-checkbox:checked::after {
   content: 'check';
   font-family: 'Material Symbols Outlined';
   font-size: 1.25rem;
   font-weight: 700;
   color: white;
+  opacity: 1;
+  transform: scale(1);
   animation: checkmark-draw var(--duration-fast) var(--ease-out);
 }
 
@@ -206,12 +209,12 @@ body {
 }
 
 .habit-checkbox:hover:checked {
-  border-color: #059669;
+  border-color: #0d9488;
 }
 
 .habit-checkbox:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
 }
 
 .habit-checkbox:focus:not(:checked) {

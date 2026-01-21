@@ -161,8 +161,7 @@ export default function TeacherLayout({
           </div>
 
           {/* User Profile - Always anchored to bottom */}
-          {/* DEBUG: Red border to verify visibility - remove after confirming fix */}
-          <div className="flex flex-col gap-3 mt-auto pt-4 flex-shrink-0 border-2 border-red-500">
+          <div className="flex flex-col gap-3 mt-auto pt-4 flex-shrink-0">
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
