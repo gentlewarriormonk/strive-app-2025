@@ -516,15 +516,6 @@ export default function TeacherHabitsPage() {
         )}
       </div>
 
-      {/* Mobile FAB */}
-      <button
-        onClick={() => setShowHabitForm(true)}
-        className="sm:hidden fixed bottom-6 right-6 flex items-center justify-center h-14 w-14 bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] text-white rounded-full shadow-lg hover:shadow-[#13c8ec]/40 transition-shadow z-20"
-        aria-label="Add new habit"
-      >
-        <span className="material-symbols-outlined text-2xl">add</span>
-      </button>
-
       {/* Habit Form Modal - New */}
       {showHabitForm && (
         <HabitForm

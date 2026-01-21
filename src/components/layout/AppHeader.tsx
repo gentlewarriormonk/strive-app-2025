@@ -28,26 +28,18 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   
-  // Role-aware navigation
-  const isTeacher = user.role === 'TEACHER';
-
-  // Nav items - Group/My Groups tab routes and labels differ by role
+  // Unified nav items - same labels for all roles
   const navItems = [
-    { key: 'today', label: 'Today', href: '/student/today' },
-    { key: 'progress', label: 'Progress', href: '/student/progress' },
-    {
-      key: 'group',
-      label: isTeacher ? 'My Groups' : 'Group',
-      href: isTeacher ? '/teacher/dashboard' : '/student/group'
-    },
+    { key: 'habits', label: 'My Habits', href: '/student/today', icon: 'check_circle' },
+    { key: 'journey', label: 'My Journey', href: '/student/progress', icon: 'trending_up' },
+    { key: 'groups', label: 'My Groups', href: '/student/group', icon: 'group' },
   ];
 
   // Determine active tab from pathname
   const getActiveTab = () => {
-    if (pathname.startsWith('/student/today')) return 'today';
-    if (pathname.startsWith('/student/progress')) return 'progress';
-    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'group';
-    if (pathname.startsWith('/teacher/dashboard') || pathname.startsWith('/teacher/groups')) return 'group';
+    if (pathname.startsWith('/student/today') || pathname.startsWith('/student/habits')) return 'habits';
+    if (pathname.startsWith('/student/progress') || pathname.startsWith('/student/journey')) return 'journey';
+    if (pathname.startsWith('/student/group') || pathname.startsWith('/student/profile')) return 'groups';
     return null;
   };
   
@@ -59,7 +51,7 @@ export function AppHeader({ user, showStudentNav = false }: AppHeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href={user.role === 'TEACHER' ? '/teacher/dashboard' : '/student/today'} className="flex items-center">
+            <Link href="/student/today" className="flex items-center">
               <Image
                 src="/strive-logo-white-on-transparent.png"
                 alt="Strive"

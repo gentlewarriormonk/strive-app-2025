@@ -123,7 +123,7 @@ export default function TeacherLayout({
               />
             </div>
 
-            {/* Main Navigation - My Habits only */}
+            {/* Main Navigation */}
             <nav className="flex flex-col gap-1 mt-2">
               <Link
                 href="/teacher/habits"
@@ -135,6 +135,17 @@ export default function TeacherLayout({
               >
                 <span className="material-symbols-outlined">check_circle</span>
                 <span className="text-sm font-medium">My Habits</span>
+              </Link>
+              <Link
+                href="/teacher/journey"
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                  pathname === '/teacher/journey'
+                    ? 'bg-[#234248] text-white'
+                    : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
+                }`}
+              >
+                <span className="material-symbols-outlined">trending_up</span>
+                <span className="text-sm font-medium">My Journey</span>
               </Link>
             </nav>
 
@@ -265,7 +276,7 @@ export default function TeacherLayout({
               )}
             </div>
           </div>
-          {/* Mobile Navigation - My Habits + Groups */}
+          {/* Mobile Navigation - Three main tabs */}
           <nav className="flex gap-2 mt-3 overflow-x-auto pb-1">
             <Link
               href="/teacher/habits"
@@ -277,25 +288,26 @@ export default function TeacherLayout({
             >
               My Habits
             </Link>
-            {teacherGroups.map((group) => (
-              <Link
-                key={group.id}
-                href={`/teacher/groups/${group.id}`}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  pathname.includes(`/teacher/groups/${group.id}`)
-                    ? 'bg-[#234248] text-white'
-                    : 'text-[#92c0c9]'
-                }`}
-              >
-                {group.name}
-              </Link>
-            ))}
-            <button
-              onClick={() => setShowGroupForm(true)}
-              className="flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium text-[#92c0c9]/60 hover:text-[#92c0c9] transition-colors"
+            <Link
+              href="/teacher/journey"
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                pathname === '/teacher/journey'
+                  ? 'bg-[#234248] text-white'
+                  : 'text-[#92c0c9]'
+              }`}
             >
-              + Add
-            </button>
+              My Journey
+            </Link>
+            <Link
+              href="/teacher/groups"
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                pathname === '/teacher/groups' || pathname.startsWith('/teacher/groups/')
+                  ? 'bg-[#234248] text-white'
+                  : 'text-[#92c0c9]'
+              }`}
+            >
+              My Groups
+            </Link>
           </nav>
         </header>
 
