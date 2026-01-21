@@ -1,279 +1,414 @@
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SectionCard } from '@/components/ui/SectionCard';
-import { CategorySummaryCard } from '@/components/CategorySummaryCard';
-import {
-  getUserById,
-  getUserHabits,
-  getHabitStats,
-  getUserChallengeParticipation,
-  challenges,
-} from '@/lib/mockData';
-import { HabitCategory, getCategoryConfig, CATEGORY_CONFIG } from '@/types/models';
+import { MiniWeekDots } from '@/components/habits/WeeklyDots';
+import { getCategoryConfig, HabitCategory } from '@/types/models';
 
-interface StudentDetailPageProps {
-  params: Promise<{ id: string }>;
+interface HabitData {
+  id: string;
+  name: string;
+  category: HabitCategory;
+  visibility: string;
+  currentStreak: number;
+  completionsThisWeek: number;
+  weeklyCompletions: boolean[];
+  needsAttention: boolean;
+  implementationIntention?: string;
 }
 
-export default async function TeacherStudentDetailPage({ params }: StudentDetailPageProps) {
-  const { id } = await params;
-  const student = getUserById(id);
+interface PrivateHabitData {
+  id: string;
+  needsAttention: boolean;
+}
 
-  if (!student || student.role !== 'STUDENT') {
-    notFound();
+interface StudentData {
+  student: {
+    id: string;
+    name: string;
+    email: string | null;
+    image: string | null;
+    xp: number;
+    level: number;
+  };
+  group: {
+    id: string;
+    name: string;
+  };
+  stats: {
+    totalCompletionsAllTime: number;
+    totalCompletionsThisWeek: number;
+    bestStreak: number;
+    activeHabits: number;
+  };
+  todayIndex: number;
+  weeklyAggregate: boolean[];
+  habitsNeedingAttention: HabitData[];
+  habitsOnTrack: HabitData[];
+  privateHabits: PrivateHabitData[];
+  teacherNote: string;
+}
+
+// Get identity message based on total completions
+function getIdentityMessage(totalCompletions: number): string {
+  if (totalCompletions === 0) return "Just getting started";
+  if (totalCompletions < 10) return "Building the foundation";
+  if (totalCompletions < 25) return "Finding their rhythm";
+  if (totalCompletions < 50) return "Consistency is taking shape";
+  if (totalCompletions < 100) return "Habits are becoming identity";
+  return "A master of their own growth";
+}
+
+// Days of week labels
+const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+// Weekly dots component for student overview
+function StudentWeeklyDots({
+  completions,
+  todayIndex,
+}: {
+  completions: boolean[];
+  todayIndex: number;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      {DAYS.map((day, i) => {
+        const isToday = i === todayIndex;
+        const isFuture = i > todayIndex;
+        const completed = completions[i];
+
+        return (
+          <div key={i} className="flex flex-col items-center gap-1">
+            <span className="text-[#92c0c9] text-xs">{day}</span>
+            <div
+              className={`w-4 h-4 rounded-full ${
+                isFuture
+                  ? 'bg-[#325e67]'
+                  : completed
+                  ? 'bg-[#13c8ec]'
+                  : 'bg-[#325e67]'
+              } ${isToday ? 'ring-2 ring-white/30' : ''}`}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function TeacherStudentDetailPage() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const studentId = params.id as string;
+  const groupId = searchParams.get('groupId');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<StudentData | null>(null);
+
+  // Teacher notes state
+  const [noteText, setNoteText] = useState('');
+  const [isSavingNote, setIsSavingNote] = useState(false);
+  const [noteSaved, setNoteSaved] = useState(false);
+
+  // Fetch student data
+  useEffect(() => {
+    async function fetchStudentData() {
+      try {
+        const url = groupId
+          ? `/api/teacher/student/${studentId}?groupId=${groupId}`
+          : `/api/teacher/student/${studentId}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Student not found');
+          } else if (response.status === 403) {
+            setError('Access denied');
+          } else {
+            setError('Failed to load student data');
+          }
+          return;
+        }
+        const studentData = await response.json();
+        setData(studentData);
+        setNoteText(studentData.teacherNote || '');
+      } catch (err) {
+        console.error('Failed to fetch student data:', err);
+        setError('Failed to load student data');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (studentId) {
+      fetchStudentData();
+    }
+  }, [studentId, groupId]);
+
+  // Save teacher note
+  const saveNote = useCallback(async () => {
+    if (!data) return;
+
+    setIsSavingNote(true);
+    try {
+      const response = await fetch('/api/teacher/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId: data.student.id,
+          groupId: data.group.id,
+          noteText,
+        }),
+      });
+
+      if (response.ok) {
+        setNoteSaved(true);
+        setTimeout(() => setNoteSaved(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to save note:', err);
+    } finally {
+      setIsSavingNote(false);
+    }
+  }, [data, noteText]);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-4" />
+            <p className="text-[#92c0c9]">Loading student data...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  // Get ALL habits (teacher can see all)
-  const studentHabits = getUserHabits(student.id);
-  const habitsWithStats = studentHabits.map((habit) => ({
-    habit,
-    stats: getHabitStats(habit.id),
-  }));
+  // Error state
+  if (error || !data) {
+    return (
+      <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <span className="material-symbols-outlined text-4xl text-red-400 mb-4">error</span>
+            <p className="text-white font-medium mb-2">Something went wrong</p>
+            <p className="text-[#92c0c9] text-sm mb-4">{error || 'Student not found'}</p>
+            <Link
+              href={groupId ? `/teacher/groups/${groupId}` : '/teacher/dashboard'}
+              className="text-[#13c8ec] hover:underline"
+            >
+              Go back
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // Challenge participations
-  const participations = getUserChallengeParticipation(student.id);
-  const activeParticipations = participations.filter((p) => {
-    const challenge = challenges.find((c) => c.id === p.challengeId);
-    return challenge?.isActive;
-  });
-
-  // Calculate overall stats
-  const avgCompletion =
-    habitsWithStats.length > 0
-      ? Math.round(
-          habitsWithStats.reduce((sum, h) => sum + h.stats.completionRate, 0) /
-            habitsWithStats.length
-        )
-      : 0;
-
-  const bestStreak =
-    habitsWithStats.length > 0
-      ? Math.max(...habitsWithStats.map((h) => h.stats.longestStreak))
-      : 0;
-
-  const totalCompletionsThisWeek = habitsWithStats.reduce(
-    (sum, h) => sum + h.stats.completionsThisWeek,
-    0
-  );
-
-  // Category breakdown
-  const categorySummaries = Object.keys(CATEGORY_CONFIG)
-    .map((cat) => {
-      const categoryHabits = habitsWithStats.filter((h) => h.habit.category === cat);
-      const avgCatCompletion =
-        categoryHabits.length > 0
-          ? Math.round(
-              categoryHabits.reduce((sum, h) => sum + h.stats.completionRate, 0) /
-                categoryHabits.length
-            )
-          : 0;
-      const longestCatStreak =
-        categoryHabits.length > 0
-          ? Math.max(...categoryHabits.map((h) => h.stats.longestStreak))
-          : 0;
-      return {
-        category: cat as HabitCategory,
-        avgCompletion: avgCatCompletion,
-        longestStreak: longestCatStreak,
-        hasHabits: categoryHabits.length > 0,
-      };
-    })
-    .filter((s) => s.hasHabits);
+  const { student, group, stats, todayIndex, weeklyAggregate, habitsNeedingAttention, habitsOnTrack, privateHabits } = data;
 
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
       {/* Back Link */}
       <Link
-        href="/teacher/dashboard"
+        href={`/teacher/groups/${group.id}`}
         className="inline-flex items-center gap-2 text-[#92c0c9] hover:text-white transition-colors text-sm mb-6"
       >
         <span className="material-symbols-outlined !text-lg">arrow_back</span>
-        Back to Dashboard
+        Back to {group.name}
       </Link>
 
-      {/* Student Header */}
-      <div className="flex flex-col md:flex-row gap-6 items-start md:items-center mb-8">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-2xl font-bold">
-          {student.name.charAt(0)}
-        </div>
-        <div className="flex-1">
-          <h1 className="text-3xl font-black text-white mb-2">{student.name}</h1>
-          <div className="flex flex-wrap gap-4 text-sm text-[#92c0c9]">
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined !text-lg text-[#13c8ec]">
-                military_tech
-              </span>
-              Level {student.level}
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined !text-lg text-[#F5A623]">stars</span>
-              {student.xp} XP
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined !text-lg">check_circle</span>
-              {studentHabits.length} active habits
-            </span>
-          </div>
-        </div>
-      </div>
+      {/* Identity Header */}
+      <div className="bg-[#192f33] rounded-xl p-6 mb-8">
+        <div className="flex flex-col items-center text-center gap-4">
+          <h1 className="text-xl text-[#92c0c9]">{student.name}&apos;s Journey</h1>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <SectionCard padding="md">
-          <div className="text-center">
-            <p className="text-3xl font-bold gradient-text">{avgCompletion}%</p>
-            <p className="text-[#92c0c9] text-sm mt-1">Avg. Completion</p>
-          </div>
-        </SectionCard>
-        <SectionCard padding="md">
-          <div className="text-center">
-            <p className="text-3xl font-bold text-[#F5A623]">{bestStreak}</p>
-            <p className="text-[#92c0c9] text-sm mt-1">Best Streak (days)</p>
-          </div>
-        </SectionCard>
-        <SectionCard padding="md">
-          <div className="text-center">
-            <p className="text-3xl font-bold text-white">{totalCompletionsThisWeek}</p>
-            <p className="text-[#92c0c9] text-sm mt-1">Completions This Week</p>
-          </div>
-        </SectionCard>
-        <SectionCard padding="md">
-          <div className="text-center">
-            <p className="text-3xl font-bold text-white">{activeParticipations.length}</p>
-            <p className="text-[#92c0c9] text-sm mt-1">Active Challenges</p>
-          </div>
-        </SectionCard>
-      </div>
-
-      {/* All Habits (Teacher can see all, including private) */}
-      <section className="mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">All Habits</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {habitsWithStats.map(({ habit, stats }) => {
-            const config = getCategoryConfig(habit.category);
-            const isPrivate = habit.visibility !== 'PUBLIC_TO_CLASS';
-
-            return (
-              <div
-                key={habit.id}
-                className={`bg-[#192f33] rounded-xl p-4 flex items-start gap-4 ${
-                  isPrivate ? 'border border-dashed border-[#325e67]' : ''
-                }`}
-              >
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${config.bgColor}`}
-                >
-                  <span className={`material-symbols-outlined ${config.color}`}>
-                    {config.icon}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-white font-medium">{habit.name}</p>
-                    {isPrivate && (
-                      <span className="flex-shrink-0 text-xs text-[#92c0c9] bg-[#234248] px-2 py-0.5 rounded">
-                        {habit.visibility === 'PRIVATE_TO_PEERS' ? 'Private' : 'Anonymous'}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[#92c0c9] text-xs mt-1">{habit.category}</p>
-                  <div className="flex flex-wrap gap-4 mt-2 text-xs text-[#92c0c9]">
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined !text-sm text-[#F5A623]">
-                        local_fire_department
-                      </span>
-                      {stats.currentStreak} day streak
-                    </span>
-                    <span>{stats.completionRate}% completion</span>
-                    <span>{stats.completionsThisWeek}/7 this week</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-
-          {habitsWithStats.length === 0 && (
-            <div className="col-span-2 bg-[#192f33] rounded-xl p-8 text-center">
-              <p className="text-[#92c0c9]">{student.name} hasn&apos;t created any habits yet.</p>
+          <div className="relative">
+            <div className="text-6xl md:text-7xl font-black gradient-text">
+              {stats.totalCompletionsAllTime}
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Category Breakdown */}
-      {categorySummaries.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">Category Breakdown</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categorySummaries.map((summary) => (
-              <CategorySummaryCard
-                key={summary.category}
-                category={summary.category}
-                avgCompletion={summary.avgCompletion}
-                longestStreak={summary.longestStreak}
-              />
-            ))}
+            <div className="text-[#92c0c9] text-sm mt-1">completions</div>
           </div>
-        </section>
-      )}
 
-      {/* Challenge Participation */}
-      {activeParticipations.length > 0 && (
-        <section>
-          <h2 className="text-xl font-bold text-white mb-4">Challenge Progress</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {activeParticipations.map((participation) => {
-              const challenge = challenges.find((c) => c.id === participation.challengeId);
-              if (!challenge) return null;
+          <p className="text-white font-medium">
+            {getIdentityMessage(stats.totalCompletionsAllTime)}
+          </p>
 
-              const progressPercent = Math.min(
-                (participation.progress / challenge.targetValue) * 100,
-                100
-              );
+          {/* Weekly overview */}
+          <div className="flex flex-col items-center gap-2 mt-2">
+            <span className="text-[#92c0c9] text-sm">This week</span>
+            <StudentWeeklyDots completions={weeklyAggregate} todayIndex={todayIndex} />
+            <span className="text-[#92c0c9] text-xs">
+              {stats.totalCompletionsThisWeek} completion{stats.totalCompletionsThisWeek !== 1 ? 's' : ''} so far
+            </span>
+          </div>
+        </div>
+      </div>
 
+      {/* Habits Needing Attention */}
+      {habitsNeedingAttention.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-400">warning</span>
+            Needs Attention ({habitsNeedingAttention.length})
+          </h2>
+          <div className="flex flex-col gap-3">
+            {habitsNeedingAttention.map((habit) => {
+              const config = getCategoryConfig(habit.category);
               return (
-                <SectionCard key={participation.id} padding="md">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-white font-bold">{challenge.name}</h3>
-                      <p className="text-[#92c0c9] text-xs mt-1">
-                        {challenge.targetType === 'STREAK_DAYS' ? 'Streak' : 'Completions'} challenge
-                      </p>
-                    </div>
-                    {participation.isCompleted && (
-                      <span className="flex items-center gap-1 text-green-400 text-sm">
-                        <span className="material-symbols-outlined !text-lg">check_circle</span>
-                        Done
-                      </span>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[#92c0c9]">Progress</span>
-                      <span className="text-white font-medium">
-                        {participation.progress} / {challenge.targetValue}
+                <div
+                  key={habit.id}
+                  className="bg-[#192f33] rounded-xl p-4 border-l-4 border-amber-500/50"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${config.bgColor}`}>
+                      <span className={`material-symbols-outlined ${config.color}`}>
+                        {config.icon}
                       </span>
                     </div>
-                    <div className="w-full bg-[#325e67] rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all ${
-                          participation.isCompleted
-                            ? 'bg-green-400'
-                            : 'bg-gradient-to-r from-[#13c8ec] to-[#3b82f6]'
-                        }`}
-                        style={{ width: `${progressPercent}%` }}
-                      />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-medium">{habit.name}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <MiniWeekDots
+                          completions={habit.weeklyCompletions}
+                          todayIndex={todayIndex}
+                        />
+                        <span className="text-amber-400 text-xs">Streak broken</span>
+                      </div>
                     </div>
                   </div>
-                </SectionCard>
+                </div>
               );
             })}
           </div>
         </section>
       )}
+
+      {/* Habits On Track */}
+      {habitsOnTrack.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#13c8ec]">check_circle</span>
+            On Track ({habitsOnTrack.length})
+          </h2>
+          <div className="flex flex-col gap-3">
+            {habitsOnTrack.map((habit) => {
+              const config = getCategoryConfig(habit.category);
+              return (
+                <div
+                  key={habit.id}
+                  className="bg-[#192f33] rounded-xl p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${config.bgColor}`}>
+                      <span className={`material-symbols-outlined ${config.color}`}>
+                        {config.icon}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-white font-medium">{habit.name}</p>
+                        {habit.currentStreak > 0 && (
+                          <div className="flex items-center gap-1">
+                            <span className="material-symbols-outlined !text-sm text-[#F5A623]">
+                              local_fire_department
+                            </span>
+                            <span className="text-[#F5A623] text-sm font-medium">
+                              {habit.currentStreak}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-2">
+                        <MiniWeekDots
+                          completions={habit.weeklyCompletions}
+                          todayIndex={todayIndex}
+                        />
+                        <span className="text-[#92c0c9] text-xs">
+                          {habit.completionsThisWeek} this week
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Private Habits Section */}
+      {privateHabits.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#92c0c9]">lock</span>
+            Private Habits ({privateHabits.length})
+          </h2>
+          <SectionCard>
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-[#92c0c9]">shield</span>
+              <div>
+                <p className="text-white">
+                  {privateHabits.length} habit{privateHabits.length !== 1 ? 's' : ''} marked &quot;Teacher Only&quot;
+                </p>
+                <p className="text-[#92c0c9] text-sm">
+                  {privateHabits.filter(h => !h.needsAttention).length} on track •{' '}
+                  {privateHabits.filter(h => h.needsAttention).length} need{privateHabits.filter(h => h.needsAttention).length === 1 ? 's' : ''} attention
+                </p>
+              </div>
+            </div>
+          </SectionCard>
+        </section>
+      )}
+
+      {/* No Habits State */}
+      {habitsNeedingAttention.length === 0 && habitsOnTrack.length === 0 && privateHabits.length === 0 && (
+        <div className="bg-[#192f33] rounded-xl p-8 text-center mb-8">
+          <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">add_task</span>
+          <p className="text-white font-medium">{student.name} hasn&apos;t created any habits yet.</p>
+        </div>
+      )}
+
+      {/* Teacher Notes Section */}
+      <section className="border-t border-white/10 pt-6">
+        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#92c0c9]">edit_note</span>
+          Teacher Notes
+          <span className="text-xs text-[#92c0c9] font-normal">(Private)</span>
+        </h2>
+        <div className="bg-[#192f33] rounded-xl p-4">
+          <textarea
+            value={noteText}
+            onChange={(e) => setNoteText(e.target.value)}
+            placeholder="Add private notes about this student (e.g., conversations, observations, follow-up reminders)..."
+            className="w-full h-32 bg-[#101f22] border border-[#325e67] rounded-lg p-3 text-white placeholder-[#92c0c9]/50 resize-none focus:outline-none focus:border-[#13c8ec]"
+          />
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-[#92c0c9] text-xs">
+              Only you can see these notes.
+            </p>
+            <div className="flex items-center gap-2">
+              {noteSaved && (
+                <span className="text-green-400 text-sm flex items-center gap-1">
+                  <span className="material-symbols-outlined !text-sm">check_circle</span>
+                  Saved
+                </span>
+              )}
+              <button
+                onClick={saveNote}
+                disabled={isSavingNote}
+                className="px-4 py-2 bg-[#13c8ec] text-[#101f22] font-medium rounded-lg hover:bg-[#0ea5c7] transition-colors disabled:opacity-50 text-sm"
+              >
+                {isSavingNote ? 'Saving...' : 'Save Notes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-
-
-

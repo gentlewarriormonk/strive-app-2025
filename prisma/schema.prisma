@@ -236,3 +236,16 @@ model ChallengeParticipation {
 
   @@unique([challengeId, userId])
 }
+
+// Teacher notes for pastoral support
+model TeacherNote {
+  id        String   @id @default(cuid())
+  teacherId String
+  studentId String
+  groupId   String?
+  noteText  String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teacherId, studentId])
+}

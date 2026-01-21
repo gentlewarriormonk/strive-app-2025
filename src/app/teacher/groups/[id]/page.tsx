@@ -16,9 +16,23 @@ interface StudentSummary {
     level: number;
   };
   activeHabits: number;
-  recentCompletion: number;
+  lastActive: string | null;
+  completionsThisWeek: number;
+  completionsLastWeek: number;
   bestStreak: number;
-  challengesJoined: number;
+}
+
+interface Celebration {
+  type: string;
+  studentName: string;
+  detail: string;
+}
+
+interface StudentNeedingSupport {
+  id: string;
+  name: string;
+  reason: string;
+  lastActive: string | null;
 }
 
 interface GroupData {
@@ -31,11 +45,76 @@ interface GroupData {
 interface DashboardData {
   group: GroupData;
   studentSummaries: StudentSummary[];
+  celebrations: Celebration[];
+  studentsNeedingSupport: StudentNeedingSupport[];
+  classPulse: number[];
+  todayIndex: number;
   stats: {
     totalStudents: number;
-    avgCompletion: number;
+    activeStudentsThisWeek: number;
+    totalCompletionsThisWeek: number;
   };
 }
+
+// Class Pulse weekly dots component
+function ClassPulseDots({ pulse, todayIndex }: { pulse: number[]; todayIndex: number }) {
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  return (
+    <div className="flex items-center gap-2">
+      {days.map((day, i) => {
+        const isToday = i === todayIndex;
+        const isFuture = i > todayIndex;
+        const percentage = pulse[i] || 0;
+
+        // Determine fill level: filled (>50%), half (<= 50% but > 0), empty (0% or future)
+        let fillClass = 'bg-[#325e67]'; // empty
+        if (!isFuture) {
+          if (percentage > 50) {
+            fillClass = 'bg-[#13c8ec]'; // filled
+          } else if (percentage > 0) {
+            fillClass = 'bg-[#13c8ec]/50'; // half
+          }
+        }
+
+        return (
+          <div key={i} className="flex flex-col items-center gap-1">
+            <span className="text-[#92c0c9] text-xs">{day}</span>
+            <div
+              className={`w-4 h-4 rounded-full ${fillClass} ${
+                isToday ? 'ring-2 ring-white/30' : ''
+              }`}
+              title={isFuture ? 'Future' : `${percentage}% of class active`}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Format last active date
+function formatLastActive(lastActive: string | null): string {
+  if (!lastActive) return 'Never';
+
+  const date = new Date(lastActive);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return `${diffDays} days ago`;
+}
+
+// Supportive coaching messages
+const supportiveMessages: Record<string, string> = {
+  inactive: "Sometimes life gets busy. A quick conversation might help them get back on track.",
+  brokenStreak: "Streaks break. The skill is recovering. Consider asking what got in the way.",
+  dropInActivity: "This might be a good time for a check-in about any obstacles they're facing.",
+};
 
 // QR Code display component
 function JoinCodeDisplay({ code, groupName }: { code: string; groupName: string }) {
@@ -63,47 +142,8 @@ function JoinCodeDisplay({ code, groupName }: { code: string; groupName: string 
       <h2 className="text-xl font-bold text-white mb-2">Invite Your Students</h2>
       <p className="text-[#92c0c9] text-sm mb-6 max-w-md">
         Share this code so others can join {groupName}.
-        They can enter it in the Strive app under &quot;Join a Group&quot;.
       </p>
 
-      {/* QR Code placeholder */}
-      <div className="w-40 h-40 bg-white p-3 rounded-lg mb-4">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          <rect x="0" y="0" width="30" height="30" fill="black"/>
-          <rect x="70" y="0" width="30" height="30" fill="black"/>
-          <rect x="0" y="70" width="30" height="30" fill="black"/>
-          <rect x="5" y="5" width="20" height="20" fill="white"/>
-          <rect x="75" y="5" width="20" height="20" fill="white"/>
-          <rect x="5" y="75" width="20" height="20" fill="white"/>
-          <rect x="10" y="10" width="10" height="10" fill="black"/>
-          <rect x="80" y="10" width="10" height="10" fill="black"/>
-          <rect x="10" y="80" width="10" height="10" fill="black"/>
-          <rect x="35" y="5" width="5" height="5" fill="black"/>
-          <rect x="45" y="5" width="5" height="5" fill="black"/>
-          <rect x="55" y="5" width="5" height="5" fill="black"/>
-          <rect x="35" y="15" width="5" height="5" fill="black"/>
-          <rect x="50" y="15" width="5" height="5" fill="black"/>
-          <rect x="5" y="35" width="5" height="5" fill="black"/>
-          <rect x="15" y="40" width="5" height="5" fill="black"/>
-          <rect x="25" y="35" width="5" height="5" fill="black"/>
-          <rect x="35" y="35" width="30" height="30" fill="black"/>
-          <rect x="40" y="40" width="20" height="20" fill="white"/>
-          <rect x="45" y="45" width="10" height="10" fill="black"/>
-          <rect x="70" y="35" width="5" height="5" fill="black"/>
-          <rect x="80" y="40" width="5" height="5" fill="black"/>
-          <rect x="90" y="35" width="5" height="5" fill="black"/>
-          <rect x="5" y="55" width="5" height="5" fill="black"/>
-          <rect x="20" y="55" width="5" height="5" fill="black"/>
-          <rect x="35" y="70" width="5" height="5" fill="black"/>
-          <rect x="45" y="75" width="5" height="5" fill="black"/>
-          <rect x="55" y="70" width="5" height="5" fill="black"/>
-          <rect x="70" y="70" width="25" height="25" fill="black"/>
-          <rect x="75" y="75" width="15" height="15" fill="white"/>
-          <rect x="80" y="80" width="5" height="5" fill="black"/>
-        </svg>
-      </div>
-
-      {/* Join Code */}
       <div className="bg-[#101f22] rounded-lg px-6 py-3 mb-4">
         <p className="text-3xl font-mono font-bold text-[#13c8ec] tracking-wider">
           {code}
@@ -117,10 +157,6 @@ function JoinCodeDisplay({ code, groupName }: { code: string; groupName: string 
       >
         {copied ? 'Copied!' : 'Copy Code'}
       </Button>
-
-      <p className="text-[#92c0c9] text-xs mt-4">
-        Students can scan the QR code or enter the code manually
-      </p>
     </div>
   );
 }
@@ -132,12 +168,15 @@ export default function GroupDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [showAllStudents, setShowAllStudents] = useState(false);
+  const [showPatternsDetail, setShowPatternsDetail] = useState(false);
 
   // Group rename state
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [isSavingName, setIsSavingName] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   const handleEditName = () => {
     if (dashboardData?.group) {
@@ -182,6 +221,24 @@ export default function GroupDetailPage() {
     }
   };
 
+  const copyJoinCode = async () => {
+    if (!dashboardData?.group.joinCode) return;
+    try {
+      await navigator.clipboard.writeText(dashboardData.group.joinCode);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    } catch (err) {
+      const textArea = document.createElement('textarea');
+      textArea.value = dashboardData.group.joinCode;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
+
   useEffect(() => {
     async function fetchDashboard() {
       try {
@@ -211,7 +268,7 @@ export default function GroupDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-4" />
@@ -224,7 +281,7 @@ export default function GroupDetailPage() {
 
   if (error || !dashboardData) {
     return (
-      <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <span className="material-symbols-outlined text-4xl text-red-400 mb-4">error</span>
@@ -239,81 +296,97 @@ export default function GroupDetailPage() {
     );
   }
 
-  const { group, studentSummaries, stats } = dashboardData;
+  const { group, studentSummaries, celebrations, studentsNeedingSupport, classPulse, todayIndex, stats } = dashboardData;
   const hasStudents = studentSummaries.length > 0;
 
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-      {/* Page Header */}
-      <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/teacher/dashboard"
-              className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
-            >
-              <span className="material-symbols-outlined">arrow_back</span>
-            </Link>
-            {isEditingName ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                  className="text-2xl md:text-3xl font-black text-white tracking-tight bg-[#192f33] border border-[#325e67] rounded-lg px-3 py-1 focus:outline-none focus:border-[#13c8ec]"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSaveName();
-                    if (e.key === 'Escape') handleCancelEdit();
-                  }}
-                />
-                <button
-                  onClick={handleSaveName}
-                  disabled={isSavingName || !editedName.trim()}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined !text-lg">
-                    {isSavingName ? 'hourglass_empty' : 'check'}
-                  </span>
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  disabled={isSavingName}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined !text-lg">close</span>
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                  {group.name}
-                </h1>
-                <button
-                  onClick={handleEditName}
-                  className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
-                  title="Rename group"
-                >
-                  <span className="material-symbols-outlined !text-lg">edit</span>
-                </button>
-                {saveSuccess && (
-                  <span className="text-green-400 text-sm flex items-center gap-1">
-                    <span className="material-symbols-outlined !text-sm">check_circle</span>
-                    Saved
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-          {hasStudents && (
-            <p className="text-[#92c0c9] text-base ml-11">
-              {stats.totalStudents} member{stats.totalStudents !== 1 ? 's' : ''} • {stats.avgCompletion}% avg completion
-            </p>
-          )}
-          {group.description && (
-            <p className="text-[#92c0c9] text-sm ml-11">{group.description}</p>
+    <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col gap-4 mb-8">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/teacher/dashboard"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Link>
+          {isEditingName ? (
+            <div className="flex items-center gap-2 flex-1">
+              <input
+                type="text"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className="text-2xl md:text-3xl font-black text-white tracking-tight bg-[#192f33] border border-[#325e67] rounded-lg px-3 py-1 focus:outline-none focus:border-[#13c8ec] flex-1"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveName();
+                  if (e.key === 'Escape') handleCancelEdit();
+                }}
+              />
+              <button
+                onClick={handleSaveName}
+                disabled={isSavingName || !editedName.trim()}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined !text-lg">
+                  {isSavingName ? 'hourglass_empty' : 'check'}
+                </span>
+              </button>
+              <button
+                onClick={handleCancelEdit}
+                disabled={isSavingName}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined !text-lg">close</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 flex-1">
+              <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                {group.name}
+              </h1>
+              <button
+                onClick={handleEditName}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+                title="Rename group"
+              >
+                <span className="material-symbols-outlined !text-lg">edit</span>
+              </button>
+              {saveSuccess && (
+                <span className="text-green-400 text-sm flex items-center gap-1">
+                  <span className="material-symbols-outlined !text-sm">check_circle</span>
+                  Saved
+                </span>
+              )}
+            </div>
           )}
         </div>
+
+        {hasStudents && (
+          <p className="text-[#92c0c9] text-base ml-11">
+            {stats.totalStudents} member{stats.totalStudents !== 1 ? 's' : ''} • {stats.totalCompletionsThisWeek} completion{stats.totalCompletionsThisWeek !== 1 ? 's' : ''} this week
+          </p>
+        )}
+
+        {/* Join Code - Compact */}
+        {hasStudents && (
+          <div className="ml-11 flex items-center gap-3">
+            <span className="text-[#92c0c9] text-sm">Join Code:</span>
+            <span className="text-lg font-mono font-bold text-[#13c8ec]">{group.joinCode}</span>
+            <button
+              onClick={copyJoinCode}
+              className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${
+                copiedCode
+                  ? 'text-green-400 bg-green-400/10'
+                  : 'text-[#92c0c9] hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <span className="material-symbols-outlined !text-base">
+                {copiedCode ? 'check' : 'content_copy'}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Empty State - Prominent Join Code */}
@@ -323,143 +396,165 @@ export default function GroupDetailPage() {
         </SectionCard>
       )}
 
-      {/* With Students - Show compact invite + stats + table */}
+      {/* With Students - Support-focused layout */}
       {hasStudents && (
-        <>
-          {/* Stats and Invite Row */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
-            {/* Quick Stats */}
-            <SectionCard padding="md">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#13c8ec]/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#13c8ec]">group</span>
+        <div className="flex flex-col gap-8">
+          {/* Celebrations Section */}
+          {celebrations.length > 0 && (
+            <section>
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span>This Week&apos;s Wins</span>
+              </h2>
+              <div className="flex flex-col gap-3">
+                {celebrations.map((celebration, i) => (
+                  <div
+                    key={i}
+                    className="bg-[#192f33] rounded-xl p-4 flex items-start gap-3"
+                  >
+                    <span className="text-xl">
+                      {celebration.type === 'streak' ? '🔥' : celebration.type === 'xp' ? '⭐' : '✨'}
+                    </span>
+                    <p className="text-white">
+                      {celebration.studentName && (
+                        <span className="font-medium">{celebration.studentName} </span>
+                      )}
+                      {celebration.detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Class Pulse Section */}
+          <section>
+            <h2 className="text-lg font-bold text-white mb-4">Class Pulse</h2>
+            <SectionCard>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#92c0c9] text-sm">This week</span>
+                  <ClassPulseDots pulse={classPulse} todayIndex={todayIndex} />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">{stats.totalStudents}</p>
-                  <p className="text-[#92c0c9] text-sm">Members</p>
+                <div className="flex items-center gap-6 text-sm">
+                  <div>
+                    <span className="text-[#13c8ec] font-bold">{stats.activeStudentsThisWeek}</span>
+                    <span className="text-[#92c0c9]"> of {stats.totalStudents} students active this week</span>
+                  </div>
                 </div>
               </div>
             </SectionCard>
+          </section>
 
-            <SectionCard padding="md">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-green-400">trending_up</span>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">{stats.avgCompletion}%</p>
-                  <p className="text-[#92c0c9] text-sm">Avg Completion</p>
-                </div>
-              </div>
-            </SectionCard>
+          {/* Patterns to Watch Section */}
+          {studentsNeedingSupport.length > 0 && (
+            <section>
+              <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                <span className="material-symbols-outlined text-amber-400">visibility</span>
+                Patterns to Watch
+              </h2>
+              <p className="text-[#92c0c9] text-sm mb-4">
+                {studentsNeedingSupport.length} student{studentsNeedingSupport.length !== 1 ? 's' : ''} might benefit from a check-in.
+                Consider a general conversation about obstacles.
+              </p>
 
-            {/* Compact Invite */}
-            <SectionCard padding="md">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[#92c0c9] text-xs mb-1">Join Code</p>
-                  <p className="text-xl font-mono font-bold text-[#13c8ec]">{group.joinCode}</p>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon="content_copy"
-                  onClick={() => navigator.clipboard.writeText(group.joinCode)}
+              {!showPatternsDetail ? (
+                <button
+                  onClick={() => setShowPatternsDetail(true)}
+                  className="text-[#13c8ec] hover:text-[#0ea5c7] text-sm font-medium transition-colors flex items-center gap-1"
                 >
-                  Copy
-                </Button>
-              </div>
-            </SectionCard>
-          </div>
-
-          {/* Students Table */}
-          <div className="overflow-hidden rounded-lg border border-[#325e67] bg-[#111f22]">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-[#192f33]">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-white">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-white hidden sm:table-cell">
-                      Active habits
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-white hidden md:table-cell">
-                      Recent completion %
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-white hidden lg:table-cell">
-                      Best streak
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-white hidden xl:table-cell">
-                      XP / Level
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#325e67]">
-                  {studentSummaries.map((summary) => {
-                    const { student, activeHabits, recentCompletion, bestStreak } = summary;
-
-                    return (
-                      <tr
-                        key={student.id}
-                        className="cursor-pointer transition-colors hover:bg-[#192f33]"
-                      >
-                        <td className="h-[72px] px-4 py-2">
-                          <Link
-                            href={`/teacher/students/${student.id}`}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-sm font-bold">
-                              {student.name.charAt(0)}
-                            </div>
-                            <span className="text-white text-sm font-normal">{student.name}</span>
-                          </Link>
-                        </td>
-                        <td className="h-[72px] px-4 py-2 text-sm text-[#92c0c9] hidden sm:table-cell">
-                          {activeHabits}
-                        </td>
-                        <td className="h-[72px] px-4 py-2 text-sm hidden md:table-cell">
-                          <span
-                            className={
-                              recentCompletion >= 80
-                                ? 'text-green-400'
-                                : recentCompletion >= 60
-                                ? 'text-yellow-400'
-                                : 'text-red-400'
-                            }
-                          >
-                            {recentCompletion}%
-                          </span>
-                        </td>
-                        <td className="h-[72px] px-4 py-2 text-sm text-[#92c0c9] hidden lg:table-cell">
-                          {bestStreak > 0 ? (
-                            <span className="flex items-center gap-1">
-                              <span className="material-symbols-outlined !text-base text-[#F5A623]">
-                                local_fire_department
-                              </span>
-                              {bestStreak} days
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="h-[72px] px-4 py-2 hidden xl:table-cell">
-                          <div className="flex items-center gap-3">
-                            <div className="w-24 overflow-hidden rounded-full bg-[#325e67]">
-                              <div
-                                className="h-1.5 rounded-full bg-[#13c8ec]"
-                                style={{ width: `${Math.min((student.xp % 500) / 5, 100)}%` }}
-                              />
-                            </div>
-                            <p className="text-sm font-medium text-white">Lv {student.level}</p>
+                  <span>View students who might need support</span>
+                  <span className="material-symbols-outlined !text-sm">arrow_forward</span>
+                </button>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {studentsNeedingSupport.map((student) => (
+                    <div
+                      key={student.id}
+                      className="bg-[#192f33] rounded-xl p-4 border-l-4 border-amber-500/50"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white font-bold">
+                            {student.name.charAt(0)}
                           </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
+                          <div>
+                            <p className="text-white font-medium">{student.name}</p>
+                            <p className="text-[#92c0c9] text-sm">{student.reason}</p>
+                          </div>
+                        </div>
+                        <Link
+                          href={`/teacher/students/${student.id}?groupId=${groupId}`}
+                          className="text-[#13c8ec] hover:text-[#0ea5c7] text-sm font-medium transition-colors flex items-center gap-1"
+                        >
+                          View
+                          <span className="material-symbols-outlined !text-sm">arrow_forward</span>
+                        </Link>
+                      </div>
+                      <p className="text-[#92c0c9]/70 text-xs mt-3 italic">
+                        {student.reason.includes('days ago')
+                          ? supportiveMessages.inactive
+                          : student.reason.includes('habits need')
+                          ? supportiveMessages.brokenStreak
+                          : supportiveMessages.dropInActivity}
+                      </p>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => setShowPatternsDetail(false)}
+                    className="text-[#92c0c9] hover:text-white text-sm transition-colors"
+                  >
+                    Hide details
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* All Students Section - Collapsed by default */}
+          <section>
+            <button
+              onClick={() => setShowAllStudents(!showAllStudents)}
+              className="w-full flex items-center justify-between py-3 text-white hover:text-[#13c8ec] transition-colors"
+            >
+              <span className="font-bold">View all students ({stats.totalStudents})</span>
+              <span className={`material-symbols-outlined transition-transform ${showAllStudents ? 'rotate-180' : ''}`}>
+                expand_more
+              </span>
+            </button>
+
+            {showAllStudents && (
+              <div className="mt-4 flex flex-col gap-2">
+                {studentSummaries
+                  .sort((a, b) => {
+                    // Sort by last active (most recent first)
+                    if (!a.lastActive && !b.lastActive) return 0;
+                    if (!a.lastActive) return 1;
+                    if (!b.lastActive) return -1;
+                    return new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime();
+                  })
+                  .map((summary) => (
+                    <Link
+                      key={summary.student.id}
+                      href={`/teacher/students/${summary.student.id}?groupId=${groupId}`}
+                      className="bg-[#192f33] rounded-lg p-3 flex items-center justify-between hover:bg-[#1a3538] transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-sm font-bold">
+                          {summary.student.name.charAt(0)}
+                        </div>
+                        <span className="text-white">{summary.student.name}</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-[#92c0c9]">
+                        <span>{formatLastActive(summary.lastActive)}</span>
+                        <span>{summary.activeHabits} habit{summary.activeHabits !== 1 ? 's' : ''}</span>
+                        <span className="material-symbols-outlined !text-lg">chevron_right</span>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+            )}
+          </section>
+        </div>
       )}
     </div>
   );

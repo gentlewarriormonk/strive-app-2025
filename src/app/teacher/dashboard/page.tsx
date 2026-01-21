@@ -10,7 +10,9 @@ interface GroupData {
   name: string;
   description: string | null;
   joinCode: string;
-  memberCount?: number;
+  memberCount: number;
+  completionsThisWeek: number;
+  activeStudentsThisWeek: number;
 }
 
 export default function TeacherDashboardPage() {
@@ -61,7 +63,12 @@ export default function TeacherDashboardPage() {
 
       if (response.ok) {
         const newGroup = await response.json();
-        setGroups(prev => [...prev, newGroup]);
+        setGroups(prev => [{
+          ...newGroup,
+          memberCount: 0,
+          completionsThisWeek: 0,
+          activeStudentsThisWeek: 0,
+        }, ...prev]);
         setNewGroupName('');
         setNewGroupDescription('');
         setShowNewGroupForm(false);
@@ -133,7 +140,7 @@ export default function TeacherDashboardPage() {
             My Groups
           </h1>
           <p className="text-[#92c0c9] text-base">
-            Manage your groups and track member progress.
+            Support your students&apos; habit journeys.
           </p>
         </div>
         <Button icon="add_circle" onClick={() => setShowNewGroupForm(true)}>
@@ -155,7 +162,7 @@ export default function TeacherDashboardPage() {
                 type="text"
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
-                placeholder="e.g., Morning Wellness Group"
+                placeholder="e.g., G5 Wellbeing"
                 className="w-full px-4 py-2 bg-[#101f22] border border-[#325e67] rounded-lg text-white placeholder-[#92c0c9]/50 focus:outline-none focus:border-[#13c8ec]"
                 required
               />
@@ -169,7 +176,7 @@ export default function TeacherDashboardPage() {
                 type="text"
                 value={newGroupDescription}
                 onChange={(e) => setNewGroupDescription(e.target.value)}
-                placeholder="e.g., Daily wellness check-in group"
+                placeholder="e.g., Building healthy habits together"
                 className="w-full px-4 py-2 bg-[#101f22] border border-[#325e67] rounded-lg text-white placeholder-[#92c0c9]/50 focus:outline-none focus:border-[#13c8ec]"
               />
             </div>
@@ -200,7 +207,7 @@ export default function TeacherDashboardPage() {
             <span className="material-symbols-outlined text-5xl text-[#92c0c9] mb-4">group</span>
             <h2 className="text-2xl font-bold text-white mb-2">No Groups Yet</h2>
             <p className="text-[#92c0c9] mb-6">
-              Create your first group to start tracking habits and well-being together.
+              Create your first group to start supporting students on their habit journeys.
             </p>
             <Button icon="add_circle" onClick={() => setShowNewGroupForm(true)}>
               Create Your First Group
@@ -238,12 +245,26 @@ export default function TeacherDashboardPage() {
                   </div>
 
                   {/* Member Count */}
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
                     <span className="material-symbols-outlined text-[#92c0c9] !text-lg">group</span>
                     <span className="text-[#92c0c9] text-sm">
-                      {group.memberCount ?? 0} member{(group.memberCount ?? 0) !== 1 ? 's' : ''}
+                      {group.memberCount} member{group.memberCount !== 1 ? 's' : ''}
                     </span>
                   </div>
+
+                  {/* Weekly Activity - Encouraging aggregate */}
+                  {group.memberCount > 0 && (
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="material-symbols-outlined text-[#13c8ec] !text-lg">
+                        {group.completionsThisWeek > 0 ? 'check_circle' : 'schedule'}
+                      </span>
+                      <span className="text-[#92c0c9] text-sm">
+                        {group.completionsThisWeek > 0
+                          ? `${group.completionsThisWeek} completion${group.completionsThisWeek !== 1 ? 's' : ''} this week`
+                          : 'Getting started'}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Join Code */}
                   <div className="mt-auto pt-4 border-t border-[#325e67]">

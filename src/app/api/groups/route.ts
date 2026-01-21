@@ -106,6 +106,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get start of current week (Monday)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayOfWeek = today.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + mondayOffset);
+
     // Get groups where user is the teacher
     const groups = await prisma.group.findMany({
       where: {
@@ -117,19 +125,51 @@ export async function GET() {
             memberships: true,
           },
         },
+        memberships: {
+          include: {
+            user: {
+              include: {
+                habitCompletions: {
+                  where: {
+                    date: {
+                      gte: monday,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    // Transform to include member count
-    const groupsWithCount = groups.map(group => ({
-      ...group,
-      memberCount: group._count.memberships,
-    }));
+    // Transform to include member count and weekly completions
+    const groupsWithStats = groups.map(group => {
+      // Count completions this week from all members
+      const completionsThisWeek = group.memberships.reduce((total, membership) => {
+        return total + membership.user.habitCompletions.length;
+      }, 0);
 
-    return NextResponse.json(groupsWithCount);
+      // Count active students (those with at least one completion this week)
+      const activeStudentsThisWeek = group.memberships.filter(
+        m => m.user.habitCompletions.length > 0
+      ).length;
+
+      // Remove memberships from response to reduce payload
+      const { memberships, _count, ...groupData } = group;
+
+      return {
+        ...groupData,
+        memberCount: _count.memberships,
+        completionsThisWeek,
+        activeStudentsThisWeek,
+      };
+    });
+
+    return NextResponse.json(groupsWithStats);
   } catch (error) {
     console.error('Error fetching groups:', error);
     return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });
