@@ -10,6 +10,9 @@ type HabitData = {
   location: string;
   obstacle: string;
   backupPlan: string;
+  scheduleFrequency: 'DAILY' | 'SPECIFIC_DAYS';
+  scheduleDays: number[];
+  visibility: 'PUBLIC_TO_CLASS' | 'PRIVATE_TO_PEERS';
 };
 
 type AISuggestions = string[] | null;
@@ -43,6 +46,9 @@ export default function NewHabitPage() {
     location: '',
     obstacle: '',
     backupPlan: '',
+    scheduleFrequency: 'DAILY',
+    scheduleDays: [],
+    visibility: 'PUBLIC_TO_CLASS',
   });
 
   // AI suggestion states
@@ -187,13 +193,19 @@ export default function NewHabitPage() {
         return habitData.obstacle.trim().length > 0 && habitData.backupPlan.trim().length > 0;
       case 4:
         return true;
+      case 5:
+        // If specific days, at least one day must be selected
+        if (habitData.scheduleFrequency === 'SPECIFIC_DAYS' && habitData.scheduleDays.length === 0) {
+          return false;
+        }
+        return true;
       default:
         return false;
     }
   };
 
   const handleNext = () => {
-    if (canProceed() && step < 4) {
+    if (canProceed() && step < 5) {
       setStep(step + 1);
     }
   };
@@ -219,6 +231,9 @@ export default function NewHabitPage() {
           location: habitData.location,
           obstacle: habitData.obstacle,
           backupPlan: habitData.backupPlan,
+          scheduleFrequency: habitData.scheduleFrequency,
+          scheduleDays: habitData.scheduleDays,
+          visibility: habitData.visibility,
         }),
       });
 
@@ -236,7 +251,7 @@ export default function NewHabitPage() {
 
   const ProgressDots = () => (
     <div className="flex items-center justify-center gap-2 mt-8">
-      {[1, 2, 3, 4].map((dot) => (
+      {[1, 2, 3, 4, 5].map((dot) => (
         <div
           key={dot}
           className={`w-2 h-2 rounded-full transition-colors ${
@@ -349,7 +364,7 @@ export default function NewHabitPage() {
         <Link href="/student/today" className="text-white/60 hover:text-white transition-colors">
           <span className="material-symbols-outlined">close</span>
         </Link>
-        <span className="text-white/60 text-sm">Step {step} of 4</span>
+        <span className="text-white/60 text-sm">Step {step} of 5</span>
         {step > 1 ? (
           <button
             onClick={handleBack}
@@ -555,11 +570,191 @@ export default function NewHabitPage() {
             )}
 
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || loadingPolish}
+              onClick={handleNext}
+              disabled={loadingPolish}
               className="w-full py-4 rounded-lg bg-[#13c8ec] text-[#101f22] font-bold text-lg hover:bg-[#0ea5c7] transition-colors disabled:opacity-60"
             >
-              {isSubmitting ? 'Creating...' : 'I commit to this'}
+              I commit to this
+            </button>
+            <ProgressDots />
+          </div>
+        )}
+
+        {/* Step 5: Confirmation + Settings */}
+        {step === 5 && (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2 text-center">
+              <div className="flex items-center justify-center gap-2 text-[#14b8a6]">
+                <span className="material-symbols-outlined text-3xl">check_circle</span>
+                <h1 className="text-white text-2xl md:text-3xl font-bold">
+                  You&apos;re all set!
+                </h1>
+              </div>
+            </div>
+
+            {/* Implementation Intention Display */}
+            <div className="bg-[#192f33] border border-[#13c8ec]/30 rounded-xl p-6">
+              <p className="text-white text-lg leading-relaxed text-center italic">
+                &ldquo;{polishedIntention || getTemplateIntention()}&rdquo;
+              </p>
+            </div>
+
+            {/* Schedule Section */}
+            <div className="flex flex-col gap-3">
+              <label className="text-white font-medium">How often?</label>
+              <div className="flex flex-col gap-2">
+                <label
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    habitData.scheduleFrequency === 'DAILY'
+                      ? 'border-[#14b8a6] bg-[#14b8a6]/10'
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="schedule"
+                    checked={habitData.scheduleFrequency === 'DAILY'}
+                    onChange={() => setHabitData(prev => ({ ...prev, scheduleFrequency: 'DAILY', scheduleDays: [] }))}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      habitData.scheduleFrequency === 'DAILY' ? 'border-[#14b8a6]' : 'border-white/40'
+                    }`}
+                  >
+                    {habitData.scheduleFrequency === 'DAILY' && (
+                      <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                    )}
+                  </div>
+                  <span className="text-white text-sm">Every day</span>
+                </label>
+                <label
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    habitData.scheduleFrequency === 'SPECIFIC_DAYS'
+                      ? 'border-[#14b8a6] bg-[#14b8a6]/10'
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="schedule"
+                    checked={habitData.scheduleFrequency === 'SPECIFIC_DAYS'}
+                    onChange={() => setHabitData(prev => ({ ...prev, scheduleFrequency: 'SPECIFIC_DAYS' }))}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      habitData.scheduleFrequency === 'SPECIFIC_DAYS' ? 'border-[#14b8a6]' : 'border-white/40'
+                    }`}
+                  >
+                    {habitData.scheduleFrequency === 'SPECIFIC_DAYS' && (
+                      <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                    )}
+                  </div>
+                  <span className="text-white text-sm">Specific days</span>
+                </label>
+              </div>
+
+              {/* Day toggles */}
+              {habitData.scheduleFrequency === 'SPECIFIC_DAYS' && (
+                <div className="flex justify-between gap-1 mt-2">
+                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => {
+                    const dayIndex = [1, 2, 3, 4, 5, 6, 0][index]; // Monday first, Sunday last
+                    const isSelected = habitData.scheduleDays.includes(dayIndex);
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => {
+                          setHabitData(prev => ({
+                            ...prev,
+                            scheduleDays: isSelected
+                              ? prev.scheduleDays.filter(d => d !== dayIndex)
+                              : [...prev.scheduleDays, dayIndex]
+                          }));
+                        }}
+                        className={`w-10 h-10 rounded-full font-bold text-sm transition-colors ${
+                          isSelected
+                            ? 'bg-[#14b8a6] text-white'
+                            : 'bg-white/10 text-[#92c0c9] hover:bg-white/20'
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Visibility Section */}
+            <div className="flex flex-col gap-3">
+              <label className="text-white font-medium">Who can see this?</label>
+              <div className="flex flex-col gap-2">
+                <label
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    habitData.visibility === 'PUBLIC_TO_CLASS'
+                      ? 'border-[#14b8a6] bg-[#14b8a6]/10'
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={habitData.visibility === 'PUBLIC_TO_CLASS'}
+                    onChange={() => setHabitData(prev => ({ ...prev, visibility: 'PUBLIC_TO_CLASS' }))}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      habitData.visibility === 'PUBLIC_TO_CLASS' ? 'border-[#14b8a6]' : 'border-white/40'
+                    }`}
+                  >
+                    {habitData.visibility === 'PUBLIC_TO_CLASS' && (
+                      <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                    )}
+                  </div>
+                  <span className="text-white text-sm">My group (teacher + classmates)</span>
+                </label>
+                <label
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    habitData.visibility === 'PRIVATE_TO_PEERS'
+                      ? 'border-[#14b8a6] bg-[#14b8a6]/10'
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={habitData.visibility === 'PRIVATE_TO_PEERS'}
+                    onChange={() => setHabitData(prev => ({ ...prev, visibility: 'PRIVATE_TO_PEERS' }))}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      habitData.visibility === 'PRIVATE_TO_PEERS' ? 'border-[#14b8a6]' : 'border-white/40'
+                    }`}
+                  >
+                    {habitData.visibility === 'PRIVATE_TO_PEERS' && (
+                      <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                    )}
+                  </div>
+                  <span className="text-white text-sm">Teacher only</span>
+                </label>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || !canProceed()}
+              className="w-full py-4 rounded-lg bg-[#14b8a6] text-white font-bold text-lg hover:bg-[#0d9488] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? 'Creating...' : (
+                <>
+                  Start tracking
+                  <span className="material-symbols-outlined">arrow_forward</span>
+                </>
+              )}
             </button>
             <ProgressDots />
           </div>

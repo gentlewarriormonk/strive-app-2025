@@ -4,7 +4,9 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
+import { QuickAddForm, QuickAddData } from '@/components/habits/QuickAddForm';
+import { EditHabitForm, EditHabitData } from '@/components/habits/EditHabitForm';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { WeeklyDots } from '@/components/habits/WeeklyDots';
 import { ImplementationIntention } from '@/components/habits/ImplementationIntention';
 import { Habit, getCategoryConfig } from '@/types/models';
@@ -183,6 +185,7 @@ export default function TeacherHabitsPage() {
   const { data: session } = useSession();
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<string | null>(null);
+  const [deletingHabit, setDeletingHabit] = useState<{ id: string; name: string } | null>(null);
 
   // Get user info from session
   const userName = session?.user?.name || 'Teacher';
@@ -311,12 +314,17 @@ export default function TeacherHabitsPage() {
     }
   }, [localHabits]);
 
-  // Add new habit via API
-  const handleAddHabit = useCallback(async (data: HabitFormData) => {
+  // Add new habit via API (Quick Add)
+  const handleAddHabit = useCallback(async (data: QuickAddData) => {
     const response = await fetch('/api/habits', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        name: data.name,
+        visibility: data.visibility,
+        category: 'Other',
+        scheduleFrequency: 'DAILY',
+      }),
     });
 
     if (!response.ok) {
@@ -337,24 +345,53 @@ export default function TeacherHabitsPage() {
     }]);
   }, []);
 
-  // Edit habit
-  const handleEditHabit = useCallback((data: HabitFormData) => {
+  // Edit habit via API
+  const handleEditHabit = useCallback(async (data: EditHabitData) => {
     if (!editingHabit) return;
+
+    const response = await fetch(`/api/habits/${editingHabit}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update habit');
+    }
+
     setLocalHabits(prev => prev.map(h =>
       h.id === editingHabit
-        ? { ...h, name: data.name, description: data.description, category: data.category, visibility: data.visibility, scheduleFrequency: data.scheduleFrequency, scheduleDays: data.scheduleDays }
+        ? {
+            ...h,
+            name: data.name,
+            cue: data.cue,
+            location: data.location,
+            obstacle: data.obstacle,
+            backupPlan: data.backupPlan,
+            visibility: data.visibility,
+            scheduleFrequency: data.scheduleFrequency,
+            scheduleDays: data.scheduleDays
+          }
         : h
     ));
   }, [editingHabit]);
 
-  // Delete habit via API
-  const handleDeleteHabit = useCallback(async (habitId: string) => {
-    if (!confirm('Are you sure you want to delete this habit? This cannot be undone.')) {
-      return;
-    }
+  // Initiate delete (show confirmation dialog)
+  const initiateDelete = useCallback((habitId: string, habitName: string) => {
+    setDeletingHabit({ id: habitId, name: habitName });
+  }, []);
 
+  // Confirm delete habit via API
+  const confirmDeleteHabit = useCallback(async () => {
+    if (!deletingHabit) return;
+
+    const habitId = deletingHabit.id;
     const previousHabits = localHabits;
+
+    // Optimistic update
     setLocalHabits(prev => prev.filter(h => h.id !== habitId));
+    setDeletingHabit(null);
 
     try {
       const response = await fetch(`/api/habits/${habitId}`, {
@@ -369,7 +406,7 @@ export default function TeacherHabitsPage() {
       setLocalHabits(previousHabits);
       console.error('Failed to delete habit:', error);
     }
-  }, [localHabits]);
+  }, [deletingHabit, localHabits]);
 
   // Get shared groups names for display
   const sharedGroupsText = useMemo(() => {
@@ -445,7 +482,7 @@ export default function TeacherHabitsPage() {
                   implementationIntention={habit.implementationIntention}
                   onToggleComplete={() => toggleHabitCompletion(habit.id)}
                   onEdit={() => setEditingHabit(habit.id)}
-                  onDelete={() => handleDeleteHabit(habit.id)}
+                  onDelete={() => initiateDelete(habit.id, habit.name)}
                 />
               ))}
             </div>
@@ -516,37 +553,52 @@ export default function TeacherHabitsPage() {
         )}
       </div>
 
-      {/* Habit Form Modal - New */}
+      {/* Quick Add Modal */}
       {showHabitForm && (
-        <HabitForm
+        <QuickAddForm
           onClose={() => setShowHabitForm(false)}
           onSubmit={handleAddHabit}
         />
       )}
 
-      {/* Habit Form Modal - Edit */}
-      {editingHabit && (
-        <HabitForm
+      {/* Edit Habit Modal */}
+      {editingHabit && localHabits.find((h) => h.id === editingHabit) && (
+        <EditHabitForm
           onClose={() => setEditingHabit(null)}
-          initialData={
-            localHabits.find((h) => h.id === editingHabit)
-              ? {
-                  name: localHabits.find((h) => h.id === editingHabit)!.name,
-                  description: localHabits.find((h) => h.id === editingHabit)!.description || '',
-                  category: localHabits.find((h) => h.id === editingHabit)!.category,
-                  visibility: localHabits.find((h) => h.id === editingHabit)!.visibility,
-                  scheduleFrequency: localHabits.find((h) => h.id === editingHabit)!.scheduleFrequency,
-                  scheduleDays: localHabits.find((h) => h.id === editingHabit)!.scheduleDays || [],
-                  startDate: localHabits
-                    .find((h) => h.id === editingHabit)!
-                    .startDate.toISOString()
-                    .split('T')[0],
-                }
-              : undefined
-          }
+          initialData={{
+            id: editingHabit,
+            name: localHabits.find((h) => h.id === editingHabit)!.name,
+            cue: localHabits.find((h) => h.id === editingHabit)!.cue,
+            location: localHabits.find((h) => h.id === editingHabit)!.location,
+            obstacle: localHabits.find((h) => h.id === editingHabit)!.obstacle,
+            backupPlan: localHabits.find((h) => h.id === editingHabit)!.backupPlan,
+            visibility: localHabits.find((h) => h.id === editingHabit)!.visibility,
+            scheduleFrequency: localHabits.find((h) => h.id === editingHabit)!.scheduleFrequency,
+            scheduleDays: localHabits.find((h) => h.id === editingHabit)!.scheduleDays || [],
+          }}
           onSubmit={handleEditHabit}
+          onDelete={() => {
+            const habit = localHabits.find((h) => h.id === editingHabit);
+            if (habit) {
+              setEditingHabit(null);
+              initiateDelete(habit.id, habit.name);
+            }
+          }}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!deletingHabit}
+        title="Delete Habit?"
+        message={`Are you sure you want to delete "${deletingHabit?.name}"?`}
+        subtext="Your completion history will be preserved, but this habit won't appear in your daily list anymore."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={confirmDeleteHabit}
+        onCancel={() => setDeletingHabit(null)}
+      />
     </div>
   );
 }
