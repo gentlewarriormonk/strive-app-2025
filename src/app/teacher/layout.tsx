@@ -112,14 +112,14 @@ export default function TeacherLayout({
         <aside className="hidden md:flex h-screen sticky top-0 w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
         <div className="flex h-full flex-col p-4">
           <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto">
-            {/* Logo */}
-            <div className="flex flex-col gap-1 items-start">
+            {/* Logo - aligned with nav items below */}
+            <div className="px-3">
               <Image
                 src="/strive-logo-white-on-transparent.png"
                 alt="Strive"
                 width={128}
                 height={32}
-                className="h-8 w-auto object-contain object-left"
+                className="h-8 w-auto"
               />
             </div>
 
