@@ -6,7 +6,7 @@
   --color-primary: #13c8ec;
   --color-primary-dark: #0ea5c7;
   --color-accent: #F5A623;
-  
+
   /* Background colors */
   --color-bg-dark: #101f22;
   --color-bg-darker: #0d191b;
@@ -14,28 +14,54 @@
   --color-bg-card-hover: #1a3a3f;
   --color-bg-elevated: #111f22;
   --color-bg-input: #192f33;
-  
+
   /* Border colors */
   --color-border: #325e67;
   --color-border-subtle: rgba(255, 255, 255, 0.1);
-  
+
   /* Text colors */
   --color-text-primary: #ffffff;
   --color-text-secondary: #e7f1f3;
   --color-text-muted: #92c0c9;
   --color-text-subtle: #6b8a92;
-  
+
   /* Semantic colors */
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
   --shadow-primary: 0 0 20px rgba(19, 200, 236, 0.3);
+
+  /* Animation Durations */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-celebration: 600ms;
+
+  /* Animation Easings */
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0.0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Tailwind theme inline configuration */
@@ -120,14 +146,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease-in-out;
+  transition:
+    transform var(--duration-instant) var(--ease-out),
+    background-color var(--duration-instant) var(--ease-out),
+    border-color var(--duration-instant) var(--ease-out);
   background: transparent;
+}
+
+.habit-checkbox:active {
+  transform: scale(0.95);
 }
 
 .habit-checkbox:checked {
   background: rgba(19, 200, 236, 0.2);
   border-color: rgba(19, 200, 236, 0.5);
-  transform: scale(1.05);
+  animation: checkbox-pulse var(--duration-fast) var(--ease-bounce);
+}
+
+@keyframes checkbox-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
 
 .habit-checkbox:checked::after {
@@ -136,12 +175,23 @@ body {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-primary);
-  transition: all 0.2s ease-in-out;
-  transform: scale(1);
+  animation: checkmark-appear var(--duration-fast) var(--ease-out);
+}
+
+@keyframes checkmark-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .habit-checkbox::after {
   content: '';
+  opacity: 0;
   transform: scale(0);
 }
 
@@ -154,15 +204,33 @@ body {
   box-shadow: 0 0 0 2px rgba(19, 200, 236, 0.3);
 }
 
-/* Card hover effects */
+/* Card hover effects (desktop) */
 .card-hover {
-  transition: all 0.2s ease-in-out;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
 }
 
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   border-color: rgba(19, 200, 236, 0.3);
+}
+
+/* Mobile touch states - scale down on press */
+.card-hover:active {
+  transform: scale(0.98);
+  transition: transform var(--duration-instant) var(--ease-out);
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) {
+  .card-hover:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: inherit;
+  }
 }
 
 /* Gradient text */
@@ -180,12 +248,19 @@ body {
   font-weight: 700;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out;
+  transition:
+    transform var(--duration-instant) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .btn-primary:hover {
   background: var(--color-primary-dark);
   box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
 }
 
 .btn-secondary {
@@ -194,11 +269,17 @@ body {
   font-weight: 600;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out;
+  transition:
+    transform var(--duration-instant) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
 }
 
 /* Form inputs */
@@ -293,6 +374,158 @@ body {
 
 .animate-slide-in {
   animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Card entrance animation with stagger support */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animate {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: card-enter var(--duration-normal) var(--ease-out) forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 50ms);
+}
+
+/* Static stagger delays for nth-child (fallback) */
+.card-animate:nth-child(1) { animation-delay: 0ms; }
+.card-animate:nth-child(2) { animation-delay: 50ms; }
+.card-animate:nth-child(3) { animation-delay: 100ms; }
+.card-animate:nth-child(4) { animation-delay: 150ms; }
+.card-animate:nth-child(5) { animation-delay: 200ms; }
+.card-animate:nth-child(6) { animation-delay: 250ms; }
+.card-animate:nth-child(7) { animation-delay: 300ms; }
+.card-animate:nth-child(8) { animation-delay: 350ms; }
+
+/* Weekly dots entrance animation */
+@keyframes dot-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dot-animate {
+  opacity: 0;
+  transform: scale(0.5);
+  animation: dot-enter var(--duration-normal) var(--ease-spring) forwards;
+  animation-delay: calc(var(--dot-index, 0) * 50ms);
+}
+
+/* Static stagger for dots */
+.dot-animate:nth-child(1) { animation-delay: 0ms; }
+.dot-animate:nth-child(2) { animation-delay: 50ms; }
+.dot-animate:nth-child(3) { animation-delay: 100ms; }
+.dot-animate:nth-child(4) { animation-delay: 150ms; }
+.dot-animate:nth-child(5) { animation-delay: 200ms; }
+.dot-animate:nth-child(6) { animation-delay: 250ms; }
+.dot-animate:nth-child(7) { animation-delay: 300ms; }
+
+/* Section entrance animation */
+@keyframes section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-animate {
+  opacity: 0;
+  animation: section-enter var(--duration-normal) var(--ease-out) forwards;
+  animation-delay: calc(var(--section-index, 0) * 100ms);
+}
+
+/* Celebration modal animations */
+@keyframes celebration-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes celebration-card-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes celebration-emoji-enter {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.celebration-overlay {
+  animation: celebration-backdrop-enter var(--duration-normal) var(--ease-out) forwards;
+}
+
+.celebration-card {
+  animation: celebration-card-enter var(--duration-celebration) var(--ease-spring) forwards;
+}
+
+.celebration-emoji {
+  opacity: 0;
+  animation: celebration-emoji-enter var(--duration-normal) var(--ease-spring) forwards;
+  animation-delay: 150ms;
+}
+
+/* Toast animation */
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+  }
+}
+
+.toast-animate {
+  animation: toast-enter var(--duration-normal) var(--ease-out) forwards;
+}
+
+.toast-animate.exiting {
+  animation: toast-exit var(--duration-normal) var(--ease-in) forwards;
 }
 
 /* Backdrop blur support */

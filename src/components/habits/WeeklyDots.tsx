@@ -13,9 +13,11 @@ interface WeeklyDotsProps {
   todayIndex: number;
   /** Size variant */
   size?: 'sm' | 'md';
+  /** Enable entrance animation */
+  animate?: boolean;
 }
 
-export function WeeklyDots({ completions, todayIndex, size = 'md' }: WeeklyDotsProps) {
+export function WeeklyDots({ completions, todayIndex, size = 'md', animate = false }: WeeklyDotsProps) {
   const dotSize = size === 'sm' ? 'w-2 h-2' : 'w-3 h-3';
   const gap = size === 'sm' ? 'gap-1' : 'gap-1.5';
 
@@ -24,7 +26,7 @@ export function WeeklyDots({ completions, todayIndex, size = 'md' }: WeeklyDotsP
       {completions.map((completed, index) => (
         <div
           key={index}
-          className={`${dotSize} rounded-full transition-all ${
+          className={`${dotSize} rounded-full ${
             completed
               ? 'bg-[#13c8ec]'
               : 'bg-[#325e67]/50'
@@ -32,7 +34,8 @@ export function WeeklyDots({ completions, todayIndex, size = 'md' }: WeeklyDotsP
             index === todayIndex
               ? 'ring-2 ring-[#13c8ec]/50 ring-offset-1 ring-offset-[#192f33]'
               : ''
-          }`}
+          } ${animate ? 'dot-animate' : ''}`}
+          style={animate ? { '--dot-index': index } as React.CSSProperties : undefined}
           title={`${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}${index === todayIndex ? ' (Today)' : ''}: ${completed ? 'Completed' : 'Not completed'}`}
         />
       ))}
