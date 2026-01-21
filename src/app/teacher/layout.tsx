@@ -83,8 +83,8 @@ export default function TeacherLayout({
   return (
     <OnboardingCheck>
       <div className="relative flex min-h-screen w-full bg-[#101f22]">
-        {/* Side Navigation */}
-        <aside className="hidden md:flex w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
+        {/* Side Navigation - h-screen + sticky keeps sidebar fixed at viewport height */}
+        <aside className="hidden md:flex h-screen sticky top-0 w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
         <div className="flex h-full flex-col p-4">
           <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto">
             {/* Logo and Title */}
@@ -161,7 +161,8 @@ export default function TeacherLayout({
           </div>
 
           {/* User Profile - Always anchored to bottom */}
-          <div className="flex flex-col gap-3 mt-auto pt-4 flex-shrink-0">
+          {/* DEBUG: Red border to verify visibility - remove after confirming fix */}
+          <div className="flex flex-col gap-3 mt-auto pt-4 flex-shrink-0 border-2 border-red-500">
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
