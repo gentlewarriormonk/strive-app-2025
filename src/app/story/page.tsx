@@ -34,13 +34,13 @@ export default function StoryPage() {
                 <h2 className="text-[#13c8ec] text-xl font-bold">The Class</h2>
                 <div className="flex flex-col gap-4 max-w-3xl">
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    In my Wellbeing course at REAL School Budapest, students study how their minds and bodies actually work. We explore how social media is designed to hijack attention — the dopamine spikes and crashes, the infinite scroll, the notification anxiety. We learn the basics of neuroplasticity and how repeated behaviors literally reshape the brain.
+                    Last year in my Wellbeing course at REAL School Budapest, students studied how their minds and bodies actually work. We explored how social media is designed to hijack attention — the dopamine spikes and crashes, the infinite scroll, the notification anxiety. We learned the basics of neuroplasticity and how repeated behaviours reshape the brain over time.
                   </p>
                   <p className="text-white text-base leading-relaxed font-medium">
-                    Then we turn that knowledge into action.
+                    Then we tried to do something about it.
                   </p>
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    Students move from SMART goals to smart habit design — creating specific, science-backed plans to take charge of their own wellbeing. Sleep, movement, focus, connection. I do it alongside them. (Last year I hit my goal of deadlifting 90kg.)
+                    Students moved from SMART goals to smart habit design — creating specific plans to take charge of their own wellbeing. Sleep, movement, focus, connection. I did it alongside them. I hit my own goal that year: deadlifting 90kg.
                   </p>
                 </div>
               </section>
@@ -53,10 +53,10 @@ export default function StoryPage() {
                     The habit design worked. The tracking didn&apos;t.
                   </p>
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I had 20 students, each with their own Google Sheet. Manually checking progress was tedious. Calculating streaks was error-prone. Worst of all, students couldn&apos;t see each other&apos;s journeys — they missed the motivation that comes from knowing you&apos;re not alone.
+                    I had 20 students, each with their own Google Sheet. It was a mess. Manually checking progress was tedious. Calculating streaks was error-prone. Worst of all, students couldn&apos;t see each other&apos;s journeys — and that visibility is where the real motivation lives. When you know others are struggling and showing up too, it changes things. When an educator tracks habits alongside their students, it stops being an assignment. It becomes something we&apos;re all doing together.
                   </p>
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    The tools that existed didn&apos;t fit. Consumer habit apps were designed for individuals, not classrooms. School wellness platforms focused on surveys and compliance, not student agency. Nothing combined the science of behavior change with the power of social accountability.
+                    The tools that existed didn&apos;t fit. Consumer habit apps were designed for individuals, not classrooms. School wellness platforms focused on surveys and compliance, not student agency. Nothing combined the science of behaviour change with the power of doing it in community.
                   </p>
                   <p className="text-white text-base leading-relaxed font-medium">
                     So I decided to build it.
@@ -69,10 +69,10 @@ export default function StoryPage() {
                 <h2 className="text-[#13c8ec] text-xl font-bold">The Build</h2>
                 <div className="flex flex-col gap-4 max-w-3xl">
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I&apos;m not a software engineer. I&apos;ve spent 20 years designing learning systems across 27 countries — and now I build with AI. Strive is what happens when curriculum design meets vibe coding.
+                    I&apos;m not an app developer. I use AI tools to help me code, and I figure things out as I go. Strive is built to meet a real need I couldn&apos;t solve any other way.
                   </p>
                   <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I describe what I want, AI helps write the code, and I learn as I go. This means Strive is evolving. It&apos;s not a polished product from a big tech company. It&apos;s a work in progress, shaped by real student feedback, getting better every week. Some things are rough around the edges. But it&apos;s built with intention, grounded in research, and close to the classroom.
+                    What matters most to me is the connection — the conversations that happen because we can see how each other is doing. That&apos;s where the magic is. Students noticing a classmate&apos;s streak. Checking in when someone falls off. An educator sharing that they missed a day too. This builds belonging and psychological safety. That&apos;s not a feature. That&apos;s the whole point.
                   </p>
                 </div>
               </section>
@@ -81,17 +81,14 @@ export default function StoryPage() {
               <section className="flex flex-col gap-6">
                 <h2 className="text-[#13c8ec] text-xl font-bold">The Vision</h2>
                 <div className="flex flex-col gap-4 max-w-3xl">
-                  <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I believe habits are self-care. Every small action is a vote for the person you want to become.
-                  </p>
-                  <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I believe students should design their own habits, not have them assigned. Agency matters.
-                  </p>
-                  <p className="text-[#92c0c9] text-base leading-relaxed">
-                    I believe technology should help you need it less, not more. The goal isn&apos;t engagement — it&apos;s transformation.
-                  </p>
                   <p className="text-white text-base leading-relaxed font-medium">
-                    Strive is my attempt to put these beliefs into practice.
+                    My vision is to build communities where we strive together to become our best selves.
+                  </p>
+                  <p className="text-[#92c0c9] text-base leading-relaxed">
+                    Habits are a form of self-care — small ways of investing in your future self. Technology should help people need it less over time. The goal isn&apos;t to keep students in the app. It&apos;s to help them become the kind of person who doesn&apos;t need it.
+                  </p>
+                  <p className="text-[#92c0c9] text-base leading-relaxed">
+                    That&apos;s what I&apos;m trying to build.
                   </p>
                 </div>
               </section>

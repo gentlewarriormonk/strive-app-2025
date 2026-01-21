@@ -71,7 +71,7 @@ export default function LandingPage() {
                 </h2>
                 <div className="max-w-3xl mx-auto">
                   <p className="text-[#92c0c9] text-lg md:text-xl leading-relaxed text-center">
-                    Most habit apps use streaks to create guilt and notifications to keep you hooked. Strive is different. We help you build agency and self-efficacy — not app dependency. The goal is to help you become someone who doesn&apos;t need us anymore.
+                    Most habit apps are designed to condition you to come back. We&apos;re trying to do the opposite — help students build agency over their own wellbeing, and then get out of the way. The goal isn&apos;t engagement. It&apos;s helping you become someone who doesn&apos;t need the app anymore.
                   </p>
                 </div>
               </section>
@@ -81,15 +81,15 @@ export default function LandingPage() {
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   How Strive Works
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
                   <div className="flex flex-col gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       1
                     </div>
                     <div className="flex flex-col gap-2">
-                      <h3 className="text-white text-lg font-bold">Design with intention</h3>
+                      <h3 className="text-white text-lg font-bold">Join or create a group</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Create a specific plan using if-then planning: &quot;After I [trigger], I will [habit]. If [obstacle], I will [backup].&quot; Our AI helps you get specific.
+                        Start solo, or bring your class. When you can see how everyone&apos;s doing, real conversations happen.
                       </p>
                     </div>
                   </div>
@@ -98,9 +98,9 @@ export default function LandingPage() {
                       2
                     </div>
                     <div className="flex flex-col gap-2">
-                      <h3 className="text-white text-lg font-bold">Track what matters</h3>
+                      <h3 className="text-white text-lg font-bold">Design a habit that sticks</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Log completions, see your streaks, earn XP. Miss a day? No guilt. Never miss twice is the real goal.
+                        A short guided flow helps you get specific — when, where, and what to do if life gets in the way.
                       </p>
                     </div>
                   </div>
@@ -111,7 +111,7 @@ export default function LandingPage() {
                     <div className="flex flex-col gap-2">
                       <h3 className="text-white text-lg font-bold">Grow together</h3>
                       <p className="text-[#92c0c9] text-sm leading-relaxed">
-                        Join a class, team, or go solo. Share what you want, with whom you want. Your privacy, your control.
+                        The magic isn&apos;t the tracking. It&apos;s knowing you&apos;re not the only one trying — and having people who notice when you show up.
                       </p>
                     </div>
                   </div>
@@ -179,22 +179,28 @@ export default function LandingPage() {
                 </div>
               </section>
 
-              {/* SECTION 5: What We Believe (3 beliefs) */}
+              {/* SECTION 5: What We Believe (4 beliefs) */}
               <section className="flex flex-col gap-10 px-4">
                 <h2 className="text-white text-2xl md:text-3xl font-bold text-center">
                   What We Believe
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
                   <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-6">
                     <h3 className="text-[#13c8ec] text-lg font-bold">Habits are self-care</h3>
                     <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      Every habit is an investment in your future self.
+                      Every habit is a small investment in your future self.
                     </p>
                   </div>
                   <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-6">
                     <h3 className="text-[#13c8ec] text-lg font-bold">Never miss twice</h3>
                     <p className="text-[#92c0c9] text-sm leading-relaxed">
-                      Perfection isn&apos;t the goal. Getting back on track is the skill.
+                      Perfection isn&apos;t the point. Getting back on track is the skill.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-6">
+                    <h3 className="text-[#13c8ec] text-lg font-bold">Humans change better together</h3>
+                    <p className="text-[#92c0c9] text-sm leading-relaxed">
+                      The conversations that happen because we can see each other — that&apos;s where the real motivation lives.
                     </p>
                   </div>
                   <div className="flex flex-col gap-3 rounded-xl bg-[#192f33] border border-white/10 p-6">
