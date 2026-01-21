@@ -367,26 +367,6 @@ export default function GroupDetailPage() {
             {stats.totalStudents} member{stats.totalStudents !== 1 ? 's' : ''} • {stats.totalCompletionsThisWeek} completion{stats.totalCompletionsThisWeek !== 1 ? 's' : ''} this week
           </p>
         )}
-
-        {/* Join Code - Compact */}
-        {hasStudents && (
-          <div className="ml-11 flex items-center gap-3">
-            <span className="text-[#92c0c9] text-sm">Join Code:</span>
-            <span className="text-lg font-mono font-bold text-[#13c8ec]">{group.joinCode}</span>
-            <button
-              onClick={copyJoinCode}
-              className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${
-                copiedCode
-                  ? 'text-green-400 bg-green-400/10'
-                  : 'text-[#92c0c9] hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <span className="material-symbols-outlined !text-base">
-                {copiedCode ? 'check' : 'content_copy'}
-              </span>
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Empty State - Prominent Join Code */}
@@ -553,6 +533,39 @@ export default function GroupDetailPage() {
                   ))}
               </div>
             )}
+          </section>
+
+          {/* Invite Students Section */}
+          <section className="border-t border-[#325e67] pt-8">
+            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#13c8ec]">person_add</span>
+              Invite Students
+            </h2>
+            <SectionCard>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <p className="text-[#92c0c9] text-sm mb-2">Share this code with students to join:</p>
+                  <p className="text-2xl font-mono font-bold text-[#13c8ec] tracking-wider">
+                    {group.joinCode}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={copyJoinCode}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      copiedCode
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-[#101f22] text-white hover:bg-[#192f33]'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined !text-lg">
+                      {copiedCode ? 'check' : 'content_copy'}
+                    </span>
+                    {copiedCode ? 'Copied!' : 'Copy Code'}
+                  </button>
+                </div>
+              </div>
+            </SectionCard>
           </section>
         </div>
       )}

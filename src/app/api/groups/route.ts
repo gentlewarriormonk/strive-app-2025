@@ -106,7 +106,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get start of current week (Monday)
+    // Get start of current week (Monday) and today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dayOfWeek = today.getDay();
@@ -114,7 +114,7 @@ export async function GET() {
     const monday = new Date(today);
     monday.setDate(today.getDate() + mondayOffset);
 
-    // Get groups where user is the teacher
+    // Get groups where user is the teacher with habits for streak calculation
     const groups = await prisma.group.findMany({
       where: {
         teacherId: session.user.id,
@@ -128,11 +128,27 @@ export async function GET() {
         memberships: {
           include: {
             user: {
-              include: {
+              select: {
+                id: true,
+                name: true,
+                xp: true,
                 habitCompletions: {
                   where: {
                     date: {
                       gte: monday,
+                    },
+                  },
+                },
+                habits: {
+                  where: { isActive: true },
+                  include: {
+                    completions: {
+                      where: {
+                        date: {
+                          gte: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000), // Last 30 days for streaks
+                        },
+                      },
+                      orderBy: { date: 'desc' },
                     },
                   },
                 },
@@ -146,17 +162,96 @@ export async function GET() {
       },
     });
 
-    // Transform to include member count and weekly completions
+    // Calculate total completions today across all groups
+    let totalCompletionsToday = 0;
+
+    // Transform to include member count, weekly completions, and celebrations
     const groupsWithStats = groups.map(group => {
       // Count completions this week from all members
       const completionsThisWeek = group.memberships.reduce((total, membership) => {
         return total + membership.user.habitCompletions.length;
       }, 0);
 
-      // Count active students (those with at least one completion this week)
-      const activeStudentsThisWeek = group.memberships.filter(
-        m => m.user.habitCompletions.length > 0
-      ).length;
+      // Count active students today (those with at least one completion today)
+      const activeStudentsToday = group.memberships.filter(m => {
+        return m.user.habitCompletions.some(c => {
+          const completionDate = new Date(c.date);
+          completionDate.setHours(0, 0, 0, 0);
+          return completionDate.getTime() === today.getTime();
+        });
+      }).length;
+
+      // Count completions today for this group
+      const completionsToday = group.memberships.reduce((total, m) => {
+        return total + m.user.habitCompletions.filter(c => {
+          const completionDate = new Date(c.date);
+          completionDate.setHours(0, 0, 0, 0);
+          return completionDate.getTime() === today.getTime();
+        }).length;
+      }, 0);
+      totalCompletionsToday += completionsToday;
+
+      // Find latest celebration (streak milestones: 7, 14, 21, 30)
+      let latestCelebration: {
+        studentName: string;
+        type: 'streak' | 'completions';
+        value: number;
+      } | null = null;
+
+      for (const membership of group.memberships) {
+        const user = membership.user;
+
+        // Check for streak milestones
+        for (const habit of user.habits) {
+          const completionDates = habit.completions.map(c => {
+            const d = new Date(c.date);
+            d.setHours(0, 0, 0, 0);
+            return d.getTime();
+          });
+
+          // Calculate current streak
+          let currentStreak = 0;
+          const checkDate = new Date(today);
+          while (completionDates.includes(checkDate.getTime())) {
+            currentStreak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          }
+
+          // Check for milestone streaks
+          const milestones = [30, 21, 14, 7];
+          for (const milestone of milestones) {
+            if (currentStreak >= milestone) {
+              if (!latestCelebration || milestone > latestCelebration.value) {
+                latestCelebration = {
+                  studentName: user.name || 'A student',
+                  type: 'streak',
+                  value: milestone,
+                };
+              }
+              break;
+            }
+          }
+        }
+
+        // Check for XP/completion milestones (50, 100, 200, 500)
+        const xpMilestones = [500, 200, 100, 50];
+        for (const milestone of xpMilestones) {
+          if (user.xp >= milestone) {
+            // Only show if this is a recent milestone (reached this week)
+            const weeklyXpGain = user.habitCompletions.length * 10;
+            if (user.xp - weeklyXpGain < milestone && user.xp >= milestone) {
+              if (!latestCelebration || (latestCelebration.type !== 'streak' && milestone > latestCelebration.value)) {
+                latestCelebration = {
+                  studentName: user.name || 'A student',
+                  type: 'completions',
+                  value: milestone,
+                };
+              }
+            }
+            break;
+          }
+        }
+      }
 
       // Remove memberships from response to reduce payload
       const { memberships, _count, ...groupData } = group;
@@ -165,11 +260,15 @@ export async function GET() {
         ...groupData,
         memberCount: _count.memberships,
         completionsThisWeek,
-        activeStudentsThisWeek,
+        activeStudentsToday,
+        latestCelebration,
       };
     });
 
-    return NextResponse.json(groupsWithStats);
+    return NextResponse.json({
+      groups: groupsWithStats,
+      totalCompletionsToday,
+    });
   } catch (error) {
     console.error('Error fetching groups:', error);
     return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });

@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { currentTeacher } from '@/lib/mockData';
-import { Button } from '@/components/ui/Button';
 import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
-import { GroupForm } from '@/components/groups/GroupForm';
 import { User, Group } from '@/types/models';
 
 type GroupWithCount = Group & { memberCount: number };
@@ -20,12 +18,10 @@ export default function TeacherLayout({
 }) {
   const pathname = usePathname();
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   // State for groups
   const [teacherGroups, setTeacherGroups] = useState<GroupWithCount[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
-  const [showGroupForm, setShowGroupForm] = useState(false);
 
   // State for user menu dropdown
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -37,7 +33,8 @@ export default function TeacherLayout({
       try {
         const response = await fetch('/api/groups');
         if (response.ok) {
-          const groups = await response.json();
+          const data = await response.json();
+          const groups = data.groups || [];
           setTeacherGroups(groups.map((g: GroupWithCount & { createdAt: string }) => ({
             ...g,
             createdAt: new Date(g.createdAt),
@@ -63,27 +60,6 @@ export default function TeacherLayout({
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Handle creating a new group
-  const handleCreateGroup = useCallback(async (data: { name: string; description: string }) => {
-    const response = await fetch('/api/groups', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create group');
-    }
-
-    const newGroup = await response.json();
-    setTeacherGroups(prev => [{
-      ...newGroup,
-      createdAt: new Date(newGroup.createdAt),
-      memberCount: 0,
-    }, ...prev]);
   }, []);
 
   // Build user object from session or fall back to mock for demo
@@ -184,11 +160,8 @@ export default function TeacherLayout({
             </div>
           </div>
 
-          {/* Bottom Actions */}
+          {/* User Profile */}
           <div className="flex flex-col gap-3">
-            <Button icon="add" fullWidth onClick={() => setShowGroupForm(true)}>
-              New Group
-            </Button>
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -308,14 +281,6 @@ export default function TeacherLayout({
         {children}
       </main>
     </div>
-
-    {/* Group Form Modal */}
-    {showGroupForm && (
-      <GroupForm
-        onClose={() => setShowGroupForm(false)}
-        onSubmit={handleCreateGroup}
-      />
-    )}
     </OnboardingCheck>
   );
 }

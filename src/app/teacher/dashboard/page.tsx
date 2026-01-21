@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 
+interface LatestCelebration {
+  studentName: string;
+  type: 'streak' | 'completions';
+  value: number;
+}
+
 interface GroupData {
   id: string;
   name: string;
@@ -12,18 +18,60 @@ interface GroupData {
   joinCode: string;
   memberCount: number;
   completionsThisWeek: number;
-  activeStudentsThisWeek: number;
+  activeStudentsToday: number;
+  latestCelebration: LatestCelebration | null;
+}
+
+// Get contextual status line for group card
+function getGroupStatusLine(group: GroupData): { text: string; icon: string } | null {
+  // 0 members - invite prompt
+  if (group.memberCount === 0) {
+    return { text: 'Tap to invite your first students', icon: 'person_add' };
+  }
+
+  // Has celebration - show it
+  if (group.latestCelebration) {
+    const { studentName, type, value } = group.latestCelebration;
+    if (type === 'streak') {
+      return { text: `${studentName} hit a ${value}-day streak`, icon: '🔥' };
+    } else {
+      return { text: `${studentName} reached ${value} completions`, icon: '⭐' };
+    }
+  }
+
+  // Has activity but no celebration
+  if (group.completionsThisWeek > 0) {
+    return { text: 'All caught up — no alerts', icon: 'check_circle' };
+  }
+
+  // Members but no activity yet
+  return { text: 'Waiting for first check-ins', icon: 'schedule' };
+}
+
+// Get activity display text
+function getActivityText(group: GroupData): string | null {
+  if (group.memberCount === 0) return null;
+
+  if (group.activeStudentsToday > 0) {
+    return `${group.activeStudentsToday} active today`;
+  }
+
+  if (group.completionsThisWeek > 0) {
+    return `${group.completionsThisWeek} this week`;
+  }
+
+  return null;
 }
 
 export default function TeacherDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<GroupData[]>([]);
+  const [totalCompletionsToday, setTotalCompletionsToday] = useState(0);
   const [showNewGroupForm, setShowNewGroupForm] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   // Fetch teacher's groups on mount
   useEffect(() => {
@@ -32,7 +80,8 @@ export default function TeacherDashboardPage() {
         const response = await fetch('/api/groups');
         if (response.ok) {
           const data = await response.json();
-          setGroups(data);
+          setGroups(data.groups || []);
+          setTotalCompletionsToday(data.totalCompletionsToday || 0);
         } else {
           setError('Failed to load groups');
         }
@@ -67,7 +116,8 @@ export default function TeacherDashboardPage() {
           ...newGroup,
           memberCount: 0,
           completionsThisWeek: 0,
-          activeStudentsThisWeek: 0,
+          activeStudentsToday: 0,
+          latestCelebration: null,
         }, ...prev]);
         setNewGroupName('');
         setNewGroupDescription('');
@@ -81,24 +131,6 @@ export default function TeacherDashboardPage() {
       alert('Failed to create group');
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const copyJoinCode = async (code: string) => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2000);
-    } catch (err) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = code;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2000);
     }
   };
 
@@ -131,6 +163,11 @@ export default function TeacherDashboardPage() {
     );
   }
 
+  // Dynamic subtitle based on activity
+  const subtitle = totalCompletionsToday > 0
+    ? `${totalCompletionsToday} habit${totalCompletionsToday !== 1 ? 's' : ''} completed today across your groups.`
+    : "Support your students' habit journeys.";
+
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
@@ -140,7 +177,7 @@ export default function TeacherDashboardPage() {
             My Groups
           </h1>
           <p className="text-[#92c0c9] text-base">
-            Support your students&apos; habit journeys.
+            {subtitle}
           </p>
         </div>
         <Button icon="add_circle" onClick={() => setShowNewGroupForm(true)}>
@@ -219,85 +256,73 @@ export default function TeacherDashboardPage() {
       {/* Groups Grid */}
       {groups.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {groups.map((group) => (
-            <Link
-              key={group.id}
-              href={`/teacher/groups/${group.id}`}
-              className="block group"
-            >
-              <SectionCard className="h-full transition-all hover:border-[#13c8ec]/50 hover:shadow-lg hover:shadow-[#13c8ec]/10">
-                <div className="flex flex-col h-full">
-                  {/* Group Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1 min-w-0">
+          {groups.map((group) => {
+            const statusLine = getGroupStatusLine(group);
+            const activityText = getActivityText(group);
+
+            return (
+              <Link
+                key={group.id}
+                href={`/teacher/groups/${group.id}`}
+                className="block group"
+              >
+                <SectionCard className="h-full transition-all hover:border-[#13c8ec]/50 hover:shadow-lg hover:shadow-[#13c8ec]/10 hover:-translate-y-0.5">
+                  <div className="flex flex-col h-full">
+                    {/* Group Header */}
+                    <div className="flex items-start justify-between mb-3">
                       <h3 className="text-xl font-bold text-white truncate group-hover:text-[#13c8ec] transition-colors">
                         {group.name}
                       </h3>
-                      {group.description && (
-                        <p className="text-[#92c0c9] text-sm mt-1 truncate">
-                          {group.description}
-                        </p>
+                      <span className="material-symbols-outlined text-[#92c0c9] group-hover:text-[#13c8ec] transition-colors flex-shrink-0">
+                        chevron_right
+                      </span>
+                    </div>
+
+                    {/* Activity Stats */}
+                    <div className="flex items-center gap-2 text-sm text-[#92c0c9] mb-4">
+                      <span className="flex items-center gap-1">
+                        <span className="text-base">👥</span>
+                        {group.memberCount} member{group.memberCount !== 1 ? 's' : ''}
+                      </span>
+                      {activityText && (
+                        <>
+                          <span className="text-[#325e67]">•</span>
+                          <span className="flex items-center gap-1">
+                            <span className="text-base">✨</span>
+                            {activityText}
+                          </span>
+                        </>
                       )}
                     </div>
-                    <span className="material-symbols-outlined text-[#92c0c9] group-hover:text-[#13c8ec] transition-colors">
-                      chevron_right
-                    </span>
-                  </div>
 
-                  {/* Member Count */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="material-symbols-outlined text-[#92c0c9] !text-lg">group</span>
-                    <span className="text-[#92c0c9] text-sm">
-                      {group.memberCount} member{group.memberCount !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-
-                  {/* Weekly Activity - Encouraging aggregate */}
-                  {group.memberCount > 0 && (
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="material-symbols-outlined text-[#13c8ec] !text-lg">
-                        {group.completionsThisWeek > 0 ? 'check_circle' : 'schedule'}
-                      </span>
-                      <span className="text-[#92c0c9] text-sm">
-                        {group.completionsThisWeek > 0
-                          ? `${group.completionsThisWeek} completion${group.completionsThisWeek !== 1 ? 's' : ''} this week`
-                          : 'Getting started'}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Join Code */}
-                  <div className="mt-auto pt-4 border-t border-[#325e67]">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[#92c0c9] text-xs mb-1">Join Code</p>
-                        <p className="text-lg font-mono font-bold text-[#13c8ec]">
-                          {group.joinCode}
-                        </p>
+                    {/* Status Line */}
+                    {statusLine && (
+                      <div className="mt-auto pt-3 border-t border-[#325e67]">
+                        <div className="flex items-center gap-2 text-sm">
+                          {statusLine.icon.length <= 2 ? (
+                            <span className="text-base">{statusLine.icon}</span>
+                          ) : (
+                            <span className={`material-symbols-outlined !text-lg ${
+                              statusLine.icon === 'check_circle' ? 'text-green-400' :
+                              statusLine.icon === 'person_add' ? 'text-[#13c8ec]' :
+                              'text-[#92c0c9]'
+                            }`}>
+                              {statusLine.icon}
+                            </span>
+                          )}
+                          <span className={`${
+                            statusLine.icon === 'person_add' ? 'text-[#13c8ec]' : 'text-[#92c0c9]'
+                          }`}>
+                            {statusLine.text}
+                          </span>
+                        </div>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          copyJoinCode(group.joinCode);
-                        }}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                          copiedCode === group.joinCode
-                            ? 'text-green-400 bg-green-400/10'
-                            : 'text-[#92c0c9] hover:bg-white/10 hover:text-white'
-                        }`}
-                        aria-label="Copy join code"
-                      >
-                        <span className="material-symbols-outlined !text-lg">
-                          {copiedCode === group.joinCode ? 'check' : 'content_copy'}
-                        </span>
-                      </button>
-                    </div>
+                    )}
                   </div>
-                </div>
-              </SectionCard>
-            </Link>
-          ))}
+                </SectionCard>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
