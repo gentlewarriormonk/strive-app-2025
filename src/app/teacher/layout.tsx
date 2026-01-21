@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { currentTeacher } from '@/lib/mockData';
 import { OnboardingCheck } from '@/components/auth/OnboardingCheck';
+import { GroupForm } from '@/components/groups/GroupForm';
 import { User, Group } from '@/types/models';
 
 type GroupWithCount = Group & { memberCount: number };
@@ -26,6 +27,9 @@ export default function TeacherLayout({
   // State for user menu dropdown
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // State for group creation modal
+  const [showGroupForm, setShowGroupForm] = useState(false);
 
   // Fetch groups from API
   useEffect(() => {
@@ -62,6 +66,27 @@ export default function TeacherLayout({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Handle creating a new group
+  const handleCreateGroup = useCallback(async (data: { name: string; description: string }) => {
+    const response = await fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create group');
+    }
+
+    const newGroup = await response.json();
+    setTeacherGroups(prev => [{
+      ...newGroup,
+      createdAt: new Date(newGroup.createdAt),
+      memberCount: 0,
+    }, ...prev]);
+  }, []);
+
   // Build user object from session or fall back to mock for demo
   const teacher: User = session?.user
     ? {
@@ -87,7 +112,7 @@ export default function TeacherLayout({
         <aside className="hidden md:flex h-screen sticky top-0 w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
         <div className="flex h-full flex-col p-4">
           <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto">
-            {/* Logo and Title */}
+            {/* Logo */}
             <div className="flex flex-col gap-1 items-start">
               <Image
                 src="/strive-logo-white-on-transparent.png"
@@ -96,26 +121,14 @@ export default function TeacherLayout({
                 height={32}
                 className="h-8 w-auto object-contain object-left"
               />
-              <p className="text-[#92c0c9] text-sm">Teacher Dashboard</p>
             </div>
 
-            {/* Navigation Links */}
+            {/* Main Navigation - My Habits only */}
             <nav className="flex flex-col gap-1 mt-2">
-              <Link
-                href="/teacher/dashboard"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
-                  pathname === '/teacher/dashboard'
-                    ? 'bg-[#234248] text-white'
-                    : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
-                }`}
-              >
-                <span className="material-symbols-outlined">dashboard</span>
-                <span className="text-sm font-medium">Dashboard</span>
-              </Link>
               <Link
                 href="/teacher/habits"
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
-                  pathname === '/teacher/habits'
+                  pathname === '/teacher/habits' || pathname === '/teacher'
                     ? 'bg-[#234248] text-white'
                     : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
                 }`}
@@ -133,28 +146,40 @@ export default function TeacherLayout({
               <div className="flex flex-col gap-1">
                 {isLoadingGroups ? (
                   <div className="px-3 py-2 text-[#92c0c9] text-sm">Loading...</div>
-                ) : teacherGroups.length === 0 ? (
-                  <div className="px-3 py-2 text-[#92c0c9] text-sm">No groups yet</div>
                 ) : (
-                  teacherGroups.map((group) => {
-                    const isActive = pathname.includes(`/teacher/groups/${group.id}`);
-                    return (
-                      <Link
-                        key={group.id}
-                        href={`/teacher/groups/${group.id}`}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
-                          isActive
-                            ? 'bg-[#234248] text-white'
-                            : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
-                        }`}
-                      >
-                        <span className={`material-symbols-outlined ${isActive ? 'fill' : ''}`}>
-                          group
-                        </span>
-                        <span className="text-sm font-medium">{group.name}</span>
-                      </Link>
-                    );
-                  })
+                  <>
+                    {teacherGroups.length === 0 ? (
+                      <div className="px-3 py-2 text-[#92c0c9]/60 text-sm">No groups yet</div>
+                    ) : (
+                      teacherGroups.map((group) => {
+                        const isActive = pathname.includes(`/teacher/groups/${group.id}`);
+                        return (
+                          <Link
+                            key={group.id}
+                            href={`/teacher/groups/${group.id}`}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                              isActive
+                                ? 'bg-[#234248] text-white'
+                                : 'text-[#92c0c9] hover:bg-[#234248] hover:text-white'
+                            }`}
+                          >
+                            <span className={`material-symbols-outlined ${isActive ? 'fill' : ''}`}>
+                              group
+                            </span>
+                            <span className="text-sm font-medium">{group.name}</span>
+                          </Link>
+                        );
+                      })
+                    )}
+                    {/* Add Group button */}
+                    <button
+                      onClick={() => setShowGroupForm(true)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-[#92c0c9]/60 hover:text-[#92c0c9] hover:bg-[#234248] transition-colors"
+                    >
+                      <span className="material-symbols-outlined">add</span>
+                      <span className="text-sm font-medium">Add Group</span>
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -240,22 +265,12 @@ export default function TeacherLayout({
               )}
             </div>
           </div>
-          {/* Mobile Navigation */}
+          {/* Mobile Navigation - My Habits + Groups */}
           <nav className="flex gap-2 mt-3 overflow-x-auto pb-1">
-            <Link
-              href="/teacher/dashboard"
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                pathname === '/teacher/dashboard'
-                  ? 'bg-[#234248] text-white'
-                  : 'text-[#92c0c9]'
-              }`}
-            >
-              Dashboard
-            </Link>
             <Link
               href="/teacher/habits"
               className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                pathname === '/teacher/habits'
+                pathname === '/teacher/habits' || pathname === '/teacher'
                   ? 'bg-[#234248] text-white'
                   : 'text-[#92c0c9]'
               }`}
@@ -275,12 +290,26 @@ export default function TeacherLayout({
                 {group.name}
               </Link>
             ))}
+            <button
+              onClick={() => setShowGroupForm(true)}
+              className="flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium text-[#92c0c9]/60 hover:text-[#92c0c9] transition-colors"
+            >
+              + Add
+            </button>
           </nav>
         </header>
 
         {children}
       </main>
     </div>
+
+    {/* Group Form Modal */}
+    {showGroupForm && (
+      <GroupForm
+        onClose={() => setShowGroupForm(false)}
+        onSubmit={handleCreateGroup}
+      />
+    )}
     </OnboardingCheck>
   );
 }
