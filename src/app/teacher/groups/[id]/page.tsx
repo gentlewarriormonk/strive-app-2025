@@ -417,8 +417,7 @@ export default function GroupDetailPage() {
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div>
-                    <span className="text-[#13c8ec] font-bold">{stats.activeStudentsThisWeek}</span>
-                    <span className="text-[#92c0c9]"> of {stats.totalStudents} students active this week</span>
+                    <span className="text-[#92c0c9]">{stats.activeStudentsThisWeek} of {stats.totalStudents} students active this week</span>
                   </div>
                 </div>
               </div>

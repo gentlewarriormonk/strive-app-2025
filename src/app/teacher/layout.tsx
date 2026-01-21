@@ -85,16 +85,16 @@ export default function TeacherLayout({
       <div className="relative flex min-h-screen w-full bg-[#101f22]">
         {/* Side Navigation */}
         <aside className="hidden md:flex w-full max-w-xs flex-col border-r border-[#325e67] bg-[#111f22]">
-        <div className="flex h-full flex-col justify-between p-4">
-          <div className="flex flex-col gap-4">
+        <div className="flex h-full flex-col p-4">
+          <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto">
             {/* Logo and Title */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 items-start">
               <Image
                 src="/strive-logo-white-on-transparent.png"
                 alt="Strive"
                 width={128}
                 height={32}
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain object-left"
               />
               <p className="text-[#92c0c9] text-sm">Teacher Dashboard</p>
             </div>
@@ -160,8 +160,8 @@ export default function TeacherLayout({
             </div>
           </div>
 
-          {/* User Profile */}
-          <div className="flex flex-col gap-3">
+          {/* User Profile - Always anchored to bottom */}
+          <div className="flex flex-col gap-3 mt-auto pt-4 flex-shrink-0">
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
