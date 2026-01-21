@@ -4,11 +4,13 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
-import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
 import { HabitForm, HabitFormData } from '@/components/habits/HabitForm';
 import { JoinClassForm } from '@/components/groups/JoinClassForm';
-import { Habit, HabitStats, getCategoryConfig, LEVEL_THRESHOLDS, getXPForNextLevel } from '@/types/models';
+import { WeeklyDots } from '@/components/habits/WeeklyDots';
+import { PrivacyIndicator } from '@/components/habits/PrivacyIndicator';
+import { ImplementationIntention } from '@/components/habits/ImplementationIntention';
+import { Habit, getCategoryConfig } from '@/types/models';
 
 interface JoinedGroup {
   id: string;
@@ -18,118 +20,164 @@ interface JoinedGroup {
   joinedAt: string;
 }
 
-// Interactive Habit Row component with local state
+// Get time-based greeting
+function getTimeBasedGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+// Get motivational message based on completion status
+function getMotivationalMessage(completedToday: number, totalHabits: number): string {
+  if (totalHabits === 0) return "Ready to build some habits?";
+  if (completedToday === totalHabits) return "You've completed all your habits today!";
+  if (completedToday === 0) return "Let's get started on today's habits.";
+  if (completedToday < totalHabits / 2) return "You're making progress. Keep going!";
+  return "Almost there! Just a few more to go.";
+}
+
+// Interactive Habit Row component with weekly dots and implementation intention
 function InteractiveHabitRow({
   habit,
-  stats,
   isCompletedToday,
+  currentStreak,
+  weeklyCompletions,
+  todayIndex,
+  implementationIntention,
   onToggleComplete,
   onEdit,
   onDelete,
 }: {
   habit: Habit;
-  stats: HabitStats;
   isCompletedToday: boolean;
+  currentStreak: number;
+  weeklyCompletions: boolean[];
+  todayIndex: number;
+  implementationIntention?: string;
   onToggleComplete: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }) {
   const [showMenu, setShowMenu] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const categoryConfig = getCategoryConfig(habit.category);
 
   return (
-    <div className="bg-[#192f33] rounded-xl shadow-sm p-4 flex items-center gap-4 card-hover">
-      {/* Category Icon */}
-      <div className={`flex items-center justify-center w-10 h-10 rounded-full ${categoryConfig.bgColor}`}>
-        <span className={`material-symbols-outlined ${categoryConfig.color}`}>
-          {categoryConfig.icon}
-        </span>
-      </div>
-
-      {/* Habit Info */}
-      <div className="flex-1 min-w-0">
-        <p className="text-base font-medium text-white truncate">{habit.name}</p>
-        <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-[#92c0c9] mt-1">
-          {stats.currentStreak > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined !text-base text-[#F5A623]">
-                local_fire_department
-              </span>
-              <span>{stats.currentStreak}-day streak</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1">
-            <span className="material-symbols-outlined !text-base">donut_small</span>
-            <span>{stats.completionsThisWeek}/7 this week</span>
-          </div>
+    <div className="bg-[#192f33] rounded-xl shadow-sm overflow-hidden card-hover">
+      {/* Main row */}
+      <div className="p-4 flex items-start gap-4">
+        {/* Category Icon */}
+        <div className={`flex items-center justify-center w-10 h-10 rounded-full ${categoryConfig.bgColor} flex-shrink-0`}>
+          <span className={`material-symbols-outlined ${categoryConfig.color}`}>
+            {categoryConfig.icon}
+          </span>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={isCompletedToday}
-          onChange={onToggleComplete}
-          className="habit-checkbox"
-          aria-label={`Mark ${habit.name} as ${isCompletedToday ? 'incomplete' : 'complete'}`}
-        />
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
-            aria-label="Edit habit"
-          >
-            <span className="material-symbols-outlined !text-lg">edit</span>
-          </button>
-        )}
-        <div className="relative">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
-            aria-label="More options"
-          >
-            <span className="material-symbols-outlined !text-lg">more_vert</span>
-          </button>
-          {showMenu && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowMenu(false)}
-              />
-              <div className="absolute right-0 top-full mt-1 z-50 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
-                {onEdit && (
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      onEdit();
-                    }}
-                    className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
-                  >
-                    <span className="material-symbols-outlined !text-lg">edit</span>
-                    Edit
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      onDelete();
-                    }}
-                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center gap-2"
-                  >
-                    <span className="material-symbols-outlined !text-lg">delete</span>
-                    Delete
-                  </button>
-                )}
+        {/* Habit Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="text-base font-medium text-white truncate">{habit.name}</p>
+            <PrivacyIndicator visibility={habit.visibility === 'PRIVATE_TO_PEERS' ? 'teacher_only' : habit.visibility === 'PUBLIC_TO_CLASS' ? 'public' : 'private'} />
+          </div>
+
+          {/* Weekly dots + streak */}
+          <div className="flex items-center gap-4 mt-2">
+            <WeeklyDots completions={weeklyCompletions} todayIndex={todayIndex} size="sm" />
+            {currentStreak > 0 && (
+              <div className="flex items-center gap-1 text-xs text-[#92c0c9]">
+                <span className="material-symbols-outlined !text-sm text-[#F5A623]">
+                  local_fire_department
+                </span>
+                <span>{currentStreak}</span>
               </div>
-            </>
+            )}
+          </div>
+
+          {/* Implementation intention (collapsed by default) */}
+          {implementationIntention && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="mt-2 text-left w-full"
+            >
+              {expanded ? (
+                <ImplementationIntention intention={implementationIntention} />
+              ) : (
+                <p className="text-[#92c0c9]/60 text-xs italic truncate hover:text-[#92c0c9]/80 transition-colors">
+                  &ldquo;{implementationIntention.substring(0, 50)}...&rdquo;
+                </p>
+              )}
+            </button>
           )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <input
+            type="checkbox"
+            checked={isCompletedToday}
+            onChange={onToggleComplete}
+            className="habit-checkbox"
+            aria-label={`Mark ${habit.name} as ${isCompletedToday ? 'incomplete' : 'complete'}`}
+          />
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-[#92c0c9] hover:bg-white/10 hover:text-white transition-colors"
+              aria-label="More options"
+            >
+              <span className="material-symbols-outlined !text-lg">more_vert</span>
+            </button>
+            {showMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="absolute right-0 top-full mt-1 z-50 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
+                  {onEdit && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onEdit();
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined !text-lg">edit</span>
+                      Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onDelete();
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined !text-lg">delete</span>
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+// Extended habit type with stats from API
+type HabitWithStats = Habit & {
+  isCompletedToday: boolean;
+  currentStreak: number;
+  completionsThisWeek: number;
+  weeklyCompletions: boolean[];
+  todayIndex: number;
+  implementationIntention?: string;
+};
 
 export default function StudentTodayPage() {
   const { data: session } = useSession();
@@ -138,8 +186,6 @@ export default function StudentTodayPage() {
 
   // Get user info from session
   const userName = session?.user?.name || 'Student';
-  const userLevel = session?.user?.level ?? 1;
-  const userXp = session?.user?.xp ?? 0;
 
   // Loading state for habits
   const [isLoadingHabits, setIsLoadingHabits] = useState(true);
@@ -148,13 +194,6 @@ export default function StudentTodayPage() {
   const [showJoinForm, setShowJoinForm] = useState(false);
   const [joinedGroups, setJoinedGroups] = useState<JoinedGroup[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
-
-  // Extended habit type with stats from API
-  type HabitWithStats = Habit & {
-    isCompletedToday: boolean;
-    currentStreak: number;
-    completionsThisWeek: number;
-  };
 
   // Local state for habits (starts empty, loaded from API)
   const [localHabits, setLocalHabits] = useState<HabitWithStats[]>([]);
@@ -209,38 +248,16 @@ export default function StudentTodayPage() {
     }, ...prev]);
   }, []);
 
-  // Habits with computed stats from API
-  const habitsWithStats = useMemo(() => {
-    return localHabits.map(habit => {
-      // Calculate completion rate based on this week's completions (out of 7 days)
-      const completionRate = Math.round((habit.completionsThisWeek / 7) * 100);
-
-      return {
-        habit,
-        stats: {
-          habitId: habit.id,
-          totalDays: Math.max(1, Math.ceil((Date.now() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))),
-          completedDays: habit.completionsThisWeek,
-          completionRate,
-          currentStreak: habit.currentStreak,
-          longestStreak: habit.currentStreak,
-          completionsThisWeek: habit.completionsThisWeek,
-          completionsThisMonth: 0,
-        } as HabitStats,
-        isCompletedToday: habit.isCompletedToday,
-      };
-    });
-  }, [localHabits]);
-
   // Calculate overall stats
-  const { avgCompletion, completedToday, totalHabits } = useMemo(() => {
-    const stats = habitsWithStats.map(h => h.stats);
-    const avgComp = stats.length > 0
-      ? Math.round(stats.reduce((sum, s) => sum + s.completionRate, 0) / stats.length)
-      : 0;
-    const completed = habitsWithStats.filter(h => h.isCompletedToday).length;
-    return { avgCompletion: avgComp, completedToday: completed, totalHabits: habitsWithStats.length };
-  }, [habitsWithStats]);
+  const { completedToday, totalHabits, totalCompletionsThisWeek } = useMemo(() => {
+    const completed = localHabits.filter(h => h.isCompletedToday).length;
+    const weekTotal = localHabits.reduce((sum, h) => sum + h.completionsThisWeek, 0);
+    return {
+      completedToday: completed,
+      totalHabits: localHabits.length,
+      totalCompletionsThisWeek: weekTotal
+    };
+  }, [localHabits]);
 
   // Toggle habit completion via API
   const toggleHabitCompletion = useCallback(async (habitId: string) => {
@@ -257,6 +274,9 @@ export default function StudentTodayPage() {
             isCompletedToday: !isCurrentlyCompleted,
             currentStreak: !isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
             completionsThisWeek: !isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+            weeklyCompletions: h.weeklyCompletions.map((c, i) =>
+              i === h.todayIndex ? !isCurrentlyCompleted : c
+            ),
           }
         : h
     ));
@@ -275,6 +295,9 @@ export default function StudentTodayPage() {
                 isCompletedToday: isCurrentlyCompleted,
                 currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
                 completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+                weeklyCompletions: h.weeklyCompletions.map((c, i) =>
+                  i === h.todayIndex ? isCurrentlyCompleted : c
+                ),
               }
             : h
         ));
@@ -289,6 +312,9 @@ export default function StudentTodayPage() {
               isCompletedToday: isCurrentlyCompleted,
               currentStreak: isCurrentlyCompleted ? h.currentStreak + 1 : Math.max(0, h.currentStreak - 1),
               completionsThisWeek: isCurrentlyCompleted ? h.completionsThisWeek + 1 : Math.max(0, h.completionsThisWeek - 1),
+              weeklyCompletions: h.weeklyCompletions.map((c, i) =>
+                i === h.todayIndex ? isCurrentlyCompleted : c
+              ),
             }
           : h
       ));
@@ -318,6 +344,8 @@ export default function StudentTodayPage() {
       isCompletedToday: false,
       currentStreak: 0,
       completionsThisWeek: 0,
+      weeklyCompletions: [false, false, false, false, false, false, false],
+      todayIndex: new Date().getDay() === 0 ? 6 : new Date().getDay() - 1,
     }]);
   }, []);
 
@@ -360,167 +388,161 @@ export default function StudentTodayPage() {
 
   return (
     <PageShell>
-      <div className="flex flex-col gap-8">
-        {/* Header */}
-        <div className="flex flex-wrap justify-between items-start gap-3">
-          <div className="flex min-w-72 flex-col gap-2">
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-white">
-              Hello, {userName.split(' ')[0]}!
-            </h1>
-            <p className="text-base text-[#92c0c9]">
-              Let&apos;s strive today. You&apos;re doing great!
-            </p>
-          </div>
+      <div className="flex flex-col gap-8 max-w-3xl mx-auto">
+        {/* Header - Time-based greeting + completion status */}
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-white">
+            {getTimeBasedGreeting()}, {userName.split(' ')[0]}
+          </h1>
+          <p className="text-base text-[#92c0c9]">
+            {getMotivationalMessage(completedToday, totalHabits)}
+          </p>
+          {totalHabits > 0 && (
+            <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold gradient-text">{completedToday}/{totalHabits}</span>
+                <span className="text-sm text-[#92c0c9]">today</span>
+              </div>
+              <div className="w-px h-6 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold text-white">{totalCompletionsThisWeek}</span>
+                <span className="text-sm text-[#92c0c9]">this week</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Habits Column */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h2 className="text-2xl font-bold text-white">Today&apos;s Habits</h2>
-              <div className="hidden sm:flex items-center gap-3">
+        {/* Action buttons */}
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/habits/new"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#13c8ec] text-[#101f22] font-bold hover:bg-[#0ea5c7] transition-colors text-sm"
+          >
+            <span className="material-symbols-outlined !text-lg">auto_awesome</span>
+            Design a Habit
+          </Link>
+          <Button
+            variant="secondary"
+            icon="add"
+            onClick={() => setShowHabitForm(true)}
+          >
+            Quick Add
+          </Button>
+          {!isLoadingGroups && joinedGroups.length === 0 && (
+            <Button
+              variant="secondary"
+              icon="group_add"
+              onClick={() => setShowJoinForm(true)}
+            >
+              Join a Class
+            </Button>
+          )}
+        </div>
+
+        {/* Habits List */}
+        <section className="flex flex-col gap-4">
+          <h2 className="text-lg font-bold text-white">Today&apos;s Habits</h2>
+
+          {isLoadingHabits ? (
+            <div className="bg-[#192f33] rounded-xl p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
+              <p className="text-[#92c0c9]">Loading your habits...</p>
+            </div>
+          ) : localHabits.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {localHabits.map((habit) => (
+                <InteractiveHabitRow
+                  key={habit.id}
+                  habit={habit}
+                  isCompletedToday={habit.isCompletedToday}
+                  currentStreak={habit.currentStreak}
+                  weeklyCompletions={habit.weeklyCompletions}
+                  todayIndex={habit.todayIndex}
+                  implementationIntention={habit.implementationIntention}
+                  onToggleComplete={() => toggleHabitCompletion(habit.id)}
+                  onEdit={() => setEditingHabit(habit.id)}
+                  onDelete={() => handleDeleteHabit(habit.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-[#192f33] rounded-xl p-8 text-center">
+              <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">
+                add_task
+              </span>
+              <p className="text-white font-medium mb-2">No habits yet</p>
+              <p className="text-[#92c0c9] text-sm mb-6">
+                Start building healthy habits by creating your first one.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   href="/habits/new"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#13c8ec]/30 text-[#13c8ec] hover:bg-[#13c8ec]/10 transition-colors text-sm font-medium"
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#13c8ec] text-[#101f22] font-bold hover:bg-[#0ea5c7] transition-colors"
                 >
                   <span className="material-symbols-outlined !text-lg">auto_awesome</span>
-                  Design a Habit
+                  Design a Habit That Sticks
                 </Link>
-                <Button
-                  icon="add_circle"
+                <button
                   onClick={() => setShowHabitForm(true)}
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white hover:bg-white/10 transition-colors"
                 >
+                  <span className="material-symbols-outlined !text-lg">add</span>
                   Quick Add
-                </Button>
+                </button>
               </div>
             </div>
+          )}
+        </section>
 
-            <div className="flex flex-col gap-4">
-              {isLoadingHabits ? (
-                <div className="bg-[#192f33] rounded-xl p-8 text-center">
-                  <div className="animate-spin w-8 h-8 border-2 border-[#13c8ec] border-t-transparent rounded-full mx-auto mb-3" />
-                  <p className="text-[#92c0c9]">Loading your habits...</p>
-                </div>
-              ) : habitsWithStats.length > 0 ? (
-                habitsWithStats.map(({ habit, stats, isCompletedToday }) => (
-                  <InteractiveHabitRow
-                    key={habit.id}
-                    habit={habit}
-                    stats={stats}
-                    isCompletedToday={isCompletedToday}
-                    onToggleComplete={() => toggleHabitCompletion(habit.id)}
-                    onEdit={() => setEditingHabit(habit.id)}
-                    onDelete={() => handleDeleteHabit(habit.id)}
-                  />
-                ))
-              ) : (
-                <div className="bg-[#192f33] rounded-xl p-8 text-center">
-                  <span className="material-symbols-outlined text-4xl text-[#92c0c9] mb-3">
-                    add_task
-                  </span>
-                  <p className="text-white font-medium mb-2">No habits yet</p>
-                  <p className="text-[#92c0c9] text-sm mb-6">
-                    Start building healthy habits by creating your first one.
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <Link
-                      href="/habits/new"
-                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#13c8ec] text-[#101f22] font-bold hover:bg-[#0ea5c7] transition-colors"
-                    >
-                      <span className="material-symbols-outlined !text-lg">auto_awesome</span>
-                      Design a Habit That Sticks
-                    </Link>
-                    <button
-                      onClick={() => setShowHabitForm(true)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white hover:bg-white/10 transition-colors"
-                    >
-                      <span className="material-symbols-outlined !text-lg">add</span>
-                      Quick Add
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <aside className="flex flex-col gap-8">
-            {/* Summary Card */}
-            <SectionCard title="Overall Summary">
-              <div className="space-y-3">
-                <div className="bg-[#101f22] p-4 rounded-lg flex items-center justify-between">
-                  <p className="font-medium text-white">Today&apos;s progress</p>
-                  <p className="text-2xl font-bold gradient-text">
-                    {completedToday}/{totalHabits}
-                  </p>
-                </div>
-                <div className="bg-[#101f22] p-4 rounded-lg flex items-center justify-between">
-                  <p className="font-medium text-white">Consistency this month</p>
-                  <p className="text-2xl font-bold gradient-text">{avgCompletion}%</p>
-                </div>
-              </div>
-              <p className="text-sm text-[#92c0c9] mt-4">
-                {completedToday === totalHabits && totalHabits > 0
-                  ? "🎉 Amazing! You've completed all your habits today!"
-                  : "Keep up the momentum to build lasting habits."}
-              </p>
-            </SectionCard>
-
-            {/* My Groups - only show if user has joined groups */}
-            {!isLoadingGroups && joinedGroups.length > 0 && (
-              <SectionCard title="My Groups">
-                <div className="space-y-2 mb-4">
-                  {joinedGroups.map((group) => (
-                    <div
-                      key={group.id}
-                      className="p-3 bg-[#101f22] rounded-lg hover:bg-[#182a2e] transition-colors"
-                    >
-                      <p className="text-white font-medium text-sm truncate">{group.name}</p>
-                      <p className="text-[#92c0c9] text-xs truncate">
-                        {group.teacherName}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  icon="group_add"
-                  onClick={() => setShowJoinForm(true)}
-                >
-                  Join Another Group
-                </Button>
-              </SectionCard>
-            )}
-
-            {/* XP Progress */}
-            <SectionCard title="Your Progress">
+        {/* Journey Preview Card */}
+        {localHabits.length > 0 && (
+          <Link
+            href="/student/progress"
+            className="bg-[#192f33] rounded-xl p-5 hover:bg-[#1a3538] transition-colors group"
+          >
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#13c8ec] to-[#3b82f6] flex items-center justify-center text-white text-xl font-bold">
-                  {userLevel}
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#13c8ec]/20 to-[#3b82f6]/20 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[#13c8ec]">trending_up</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-white font-medium">Level {userLevel}</p>
-                  <p className="text-sm text-[#92c0c9]">{userXp} XP</p>
-                  <div className="w-full bg-[#325e67] rounded-full h-2 mt-2">
-                    <div
-                      className="bg-[#13c8ec] h-2 rounded-full"
-                      style={{
-                        width: `${(() => {
-                          const nextLevelXp = getXPForNextLevel(userLevel);
-                          const currentLevelXp = userLevel > 1 ? getXPForNextLevel(userLevel - 1) : 0;
-                          return nextLevelXp > currentLevelXp
-                            ? Math.round(((userXp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
-                            : 100;
-                        })()}%`
-                      }}
-                    />
-                  </div>
+                <div>
+                  <p className="text-white font-semibold">View Your Journey</p>
+                  <p className="text-[#92c0c9] text-sm">See your progress and streaks over time</p>
                 </div>
               </div>
-            </SectionCard>
-          </aside>
-        </div>
+              <span className="material-symbols-outlined text-[#92c0c9] group-hover:text-white group-hover:translate-x-1 transition-all">
+                arrow_forward
+              </span>
+            </div>
+          </Link>
+        )}
+
+        {/* Groups Section */}
+        {!isLoadingGroups && joinedGroups.length > 0 && (
+          <section className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white">My Groups</h2>
+              <button
+                onClick={() => setShowJoinForm(true)}
+                className="text-[#13c8ec] hover:text-[#0ea5c7] text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined !text-sm">add</span>
+                Join another
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {joinedGroups.map((group) => (
+                <div
+                  key={group.id}
+                  className="px-4 py-2 bg-[#192f33] rounded-lg border border-white/10"
+                >
+                  <p className="text-white text-sm font-medium">{group.name}</p>
+                  <p className="text-[#92c0c9] text-xs">{group.teacherName}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       {/* Mobile FAB */}

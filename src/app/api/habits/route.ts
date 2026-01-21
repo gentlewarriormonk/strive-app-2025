@@ -148,10 +148,37 @@ export async function GET() {
         }
       }
 
-      // Calculate completions this week
+      // Calculate completions this week (Sunday-based start)
       const startOfWeek = new Date(today);
       startOfWeek.setDate(today.getDate() - today.getDay());
       const completionsThisWeek = completionDates.filter(t => t >= startOfWeek.getTime()).length;
+
+      // Build weekly completion data for dots (Mon-Sun, current week)
+      // Get Monday of current week
+      const dayOfWeek = today.getDay();
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      const monday = new Date(today);
+      monday.setDate(today.getDate() + mondayOffset);
+      monday.setHours(0, 0, 0, 0);
+
+      const weeklyCompletions: boolean[] = [];
+      for (let i = 0; i < 7; i++) {
+        const day = new Date(monday);
+        day.setDate(monday.getDate() + i);
+        weeklyCompletions.push(completionDates.includes(day.getTime()));
+      }
+
+      // Calculate today's index in the week (0 = Monday, 6 = Sunday)
+      const todayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+      // Build implementation intention from parts if not already set
+      let implementationIntention = '';
+      if (habit.cue && habit.location) {
+        implementationIntention = `After ${habit.cue}, I will ${habit.name} at ${habit.location}.`;
+        if (habit.obstacle && habit.backupPlan) {
+          implementationIntention += ` If ${habit.obstacle.toLowerCase()}, I will ${habit.backupPlan}.`;
+        }
+      }
 
       // Remove completions from response to reduce payload
       const { completions, ...habitData } = habit;
@@ -161,6 +188,9 @@ export async function GET() {
         isCompletedToday,
         currentStreak,
         completionsThisWeek,
+        weeklyCompletions,
+        todayIndex,
+        implementationIntention,
       };
     });
 

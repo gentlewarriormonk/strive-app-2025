@@ -83,6 +83,12 @@ export interface Habit {
   endDate?: Date;
   isActive: boolean;
   createdAt: Date;
+  // Implementation intention fields
+  cue?: string;                // Trigger/cue for the habit
+  location?: string;           // Where the habit is performed
+  obstacle?: string;           // Anticipated obstacle
+  backupPlan?: string;         // Backup plan for obstacle
+  implementationIntention?: string; // Full polished statement
 }
 
 export interface HabitCompletion {
