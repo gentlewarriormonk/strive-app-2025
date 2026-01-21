@@ -412,13 +412,13 @@ export default function StudentProgressPage() {
           )}
         </div>
 
-        {/* Back to Today Link */}
+        {/* Back to My Habits Link */}
         <Link
           href="/student/today"
           className="flex items-center justify-center gap-2 py-3 text-[#13c8ec] hover:text-[#0ea5c7] transition-colors"
         >
           <span className="material-symbols-outlined !text-lg">arrow_back</span>
-          Back to Today
+          Back to My Habits
         </Link>
       </div>
     </PageShell>

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { Button } from '@/components/ui/Button';
+import { GroupForm } from '@/components/groups/GroupForm';
 
 interface GroupMember {
   user: {
@@ -49,11 +50,14 @@ export default function StudentGroupPage() {
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [classStats, setClassStats] = useState<ClassStats | null>(null);
 
-  // Join class form state
+  // Join group form state
   const [joinCode, setJoinCode] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [joinSuccess, setJoinSuccess] = useState<string | null>(null);
+
+  // Create group form state
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Fetch group data
   useEffect(() => {
@@ -83,8 +87,8 @@ export default function StudentGroupPage() {
     fetchGroupData();
   }, [selectedGroupId]);
 
-  // Handle join class
-  const handleJoinClass = async (e: React.FormEvent) => {
+  // Handle join group
+  const handleJoinGroup = async (e: React.FormEvent) => {
     e.preventDefault();
     setJoinError(null);
     setJoinSuccess(null);
@@ -118,6 +122,24 @@ export default function StudentGroupPage() {
     }
   };
 
+  // Handle create group
+  const handleCreateGroup = useCallback(async (data: { name: string; description: string }) => {
+    const response = await fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create group');
+    }
+
+    const newGroup = await response.json();
+    // Refresh to show the new group
+    setSelectedGroupId(newGroup.id);
+  }, []);
+
   // Loading state
   if (isLoading) {
     return (
@@ -145,7 +167,7 @@ export default function StudentGroupPage() {
             </p>
 
             {/* Join Form */}
-            <form onSubmit={handleJoinClass} className="space-y-4">
+            <form onSubmit={handleJoinGroup} className="space-y-4">
               <div>
                 <input
                   type="text"
@@ -190,13 +212,34 @@ export default function StudentGroupPage() {
               </Button>
             </form>
 
+            {/* Divider with "or" */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-[#325e67]" />
+              <span className="text-[#92c0c9] text-sm">or</span>
+              <div className="flex-1 h-px bg-[#325e67]" />
+            </div>
+
+            {/* Create Group Option */}
+            <div className="text-center">
+              <p className="text-[#92c0c9] text-sm mb-3">
+                Start a peer accountability group with friends
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => setShowCreateForm(true)}
+              >
+                <span className="material-symbols-outlined !text-lg mr-2">add</span>
+                Create a Group
+              </Button>
+            </div>
+
             <div className="mt-6 pt-6 border-t border-[#325e67]">
               <Link
                 href="/student/today"
                 className="inline-flex items-center gap-2 text-[#92c0c9] hover:text-white transition-colors text-sm"
               >
                 <span className="material-symbols-outlined !text-lg">arrow_back</span>
-                Back to Today
+                Back to My Habits
               </Link>
             </div>
           </div>
@@ -368,6 +411,15 @@ export default function StudentGroupPage() {
           </div>
         </div>
       </div>
+
+      {/* Create Group Modal */}
+      {showCreateForm && (
+        <GroupForm
+          isOpen={showCreateForm}
+          onClose={() => setShowCreateForm(false)}
+          onSubmit={handleCreateGroup}
+        />
+      )}
     </PageShell>
   );
 }
