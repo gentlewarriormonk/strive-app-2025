@@ -94,10 +94,10 @@ function InteractiveHabitRow({
           {showMenu && (
             <>
               <div
-                className="fixed inset-0 z-10"
+                className="fixed inset-0 z-40"
                 onClick={() => setShowMenu(false)}
               />
-              <div className="absolute right-0 top-full mt-1 z-20 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
+              <div className="absolute right-0 top-full mt-1 z-50 bg-[#1a2f33] border border-white/10 rounded-lg shadow-lg py-1 min-w-[140px]">
                 {onEdit && (
                   <button
                     onClick={() => {

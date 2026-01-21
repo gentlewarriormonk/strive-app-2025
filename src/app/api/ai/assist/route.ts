@@ -47,25 +47,26 @@ Return a JSON array of 3 backup plans.`,
   },
   "polish-intention": {
     system:
-      "You create natural, grammatically correct sentences. Return ONLY the two sentences, no numbering, no bullet points, no extra text.",
+      "You synthesize habit planning inputs into natural, supportive sentences for students. You detect redundancy and consolidate overlapping ideas. You never produce content that could encourage harm, self-harm, unhealthy behaviors, or anything inappropriate for young people. Return ONLY the final statement as a short paragraph.",
     user: (i) =>
-      `Create two grammatically correct sentences from these inputs:
+      `Create a natural implementation intention from these inputs:
 
-- Habit: ${i.habit}
-- Trigger: ${i.cue}
-- Location: ${i.location}
-- Obstacle: ${i.obstacle}
-- Backup plan: ${i.backup}
-
-Format:
-Sentence 1: "After I [trigger], I will [habit] at [location]."
-Sentence 2: "If [obstacle], I will [backup]."
+Habit: ${i.habit}
+Trigger/Cue: ${i.cue}
+Location: ${i.location}
+Obstacle: ${i.obstacle}
+Backup plan: ${i.backup}
 
 Rules:
-- Convert uncertain language to certain: "might not be" → "is not", "may be" → "is"
-- The obstacle should be stated as a condition, not a possibility
-- Make both sentences flow naturally
-- Return ONLY the two sentences as a single paragraph, nothing else`,
+1. Start with: "After [trigger], I will [habit] at/in [location]."
+2. Then add: "If [obstacle - in natural language], I will [backup]."
+3. IMPORTANT: If the backup plan overlaps with or repeats the habit, consolidate them intelligently. Don't repeat the same action twice.
+4. Make obstacles conversational: "Forgetting" → "I forget", "Not enough time" → "I'm short on time"
+5. Keep the tone positive, supportive, and appropriate for students aged 12-18.
+6. Never include content related to harm, self-harm, substances, or anything inappropriate.
+7. If inputs seem concerning, reframe positively or produce a gentle, safe alternative.
+
+Return ONLY the implementation intention as 1-2 sentences. No explanation.`,
   },
 };
 

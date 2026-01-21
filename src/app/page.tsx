@@ -82,7 +82,7 @@ export default function LandingPage() {
                   How Strive Works
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
-                  <div className="flex flex-col gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6">
+                  <div className="flex flex-col items-center gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6 text-center">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       1
                     </div>
@@ -93,7 +93,7 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6">
+                  <div className="flex flex-col items-center gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6 text-center">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       2
                     </div>
@@ -104,7 +104,7 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6">
+                  <div className="flex flex-col items-center gap-4 rounded-xl bg-[#192f33] border border-white/10 p-6 text-center">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#13c8ec] text-[#101f22] font-bold text-lg">
                       3
                     </div>

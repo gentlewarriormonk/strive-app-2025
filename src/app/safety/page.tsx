@@ -121,6 +121,13 @@ export default function SafetyPage() {
                   <p className="text-[#92c0c9] text-base leading-relaxed">
                     We use Claude (by Anthropic) for these suggestions. No personal data ever leaves our servers to reach the AI. Only the anonymous habit description text is sent to generate suggestions.
                   </p>
+
+                  <div className="flex flex-col gap-3">
+                    <h3 className="text-white text-base font-semibold">Built-in safety guardrails</h3>
+                    <p className="text-[#92c0c9] text-base leading-relaxed">
+                      Our AI is powered by Claude (Anthropic), which is trained using Constitutional AI — a methodology designed to make AI helpful, harmless, and honest. We add additional prompt-level guidelines to ensure all generated content is positive, supportive, and age-appropriate. The AI will never produce suggestions related to harm, self-harm, or unhealthy behaviors.
+                    </p>
+                  </div>
                 </div>
               </section>
 

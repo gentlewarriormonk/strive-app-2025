@@ -516,14 +516,6 @@ export default function NewHabitPage() {
                 </div>
               )}
             </div>
-            {habitData.obstacle && habitData.backupPlan && (
-              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                <p className="text-[#92c0c9] text-sm">
-                  <span className="text-white font-medium">Your if-then plan: </span>
-                  If {cleanObstacleGrammar(habitData.obstacle.toLowerCase())}, then I will {habitData.backupPlan}.
-                </p>
-              </div>
-            )}
             <button
               onClick={handleNext}
               disabled={!canProceed()}
