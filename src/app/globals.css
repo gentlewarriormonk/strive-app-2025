@@ -148,7 +148,7 @@ body {
   justify-content: center;
   transition:
     transform var(--duration-instant) var(--ease-out),
-    background-color var(--duration-instant) var(--ease-out),
+    background var(--duration-instant) var(--ease-out),
     border-color var(--duration-instant) var(--ease-out);
   background: transparent;
 }
@@ -157,9 +157,10 @@ body {
   transform: scale(0.95);
 }
 
+/* CHECKED STATE: Solid emerald fill with white checkmark */
 .habit-checkbox:checked {
-  background: rgba(19, 200, 236, 0.2);
-  border-color: rgba(19, 200, 236, 0.5);
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
   animation: checkbox-pulse var(--duration-fast) var(--ease-bounce);
 }
 
@@ -174,18 +175,23 @@ body {
   font-family: 'Material Symbols Outlined';
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-primary);
-  animation: checkmark-appear var(--duration-fast) var(--ease-out);
+  color: white;
+  animation: checkmark-draw var(--duration-fast) var(--ease-out);
 }
 
-@keyframes checkmark-appear {
+/* Checkmark draw-in animation */
+@keyframes checkmark-draw {
   0% {
     opacity: 0;
-    transform: scale(0.5);
+    transform: scale(0) rotate(-45deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(0deg);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
 }
 
@@ -199,8 +205,16 @@ body {
   border-color: var(--color-primary);
 }
 
+.habit-checkbox:hover:checked {
+  border-color: #059669;
+}
+
 .habit-checkbox:focus {
   outline: none;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.habit-checkbox:focus:not(:checked) {
   box-shadow: 0 0 0 2px rgba(19, 200, 236, 0.3);
 }
 
