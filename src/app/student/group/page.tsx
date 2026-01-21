@@ -415,7 +415,6 @@ export default function StudentGroupPage() {
       {/* Create Group Modal */}
       {showCreateForm && (
         <GroupForm
-          isOpen={showCreateForm}
           onClose={() => setShowCreateForm(false)}
           onSubmit={handleCreateGroup}
         />
