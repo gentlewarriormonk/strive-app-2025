@@ -162,11 +162,7 @@ export default function SafetyPage() {
               {/* Contact */}
               <section className="flex flex-col gap-4 max-w-3xl">
                 <p className="text-[#92c0c9] text-base leading-relaxed">
-                  Questions about safety or privacy? Contact us at{' '}
-                  <a href="mailto:hello@striveapp.org" className="text-[#13c8ec] hover:text-[#0ea5c7] transition-colors">
-                    hello@striveapp.org
-                  </a>
-                  {' '}or read our full Privacy Policy.
+                  Questions about safety or privacy? Read our full Privacy Policy.
                 </p>
               </section>
 
