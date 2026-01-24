@@ -26,7 +26,7 @@ export default function LandingPage() {
 
             <main className="flex flex-col gap-20 md:gap-32 py-16 md:py-24">
               {/* SECTION 1: Hero */}
-              <section className="flex flex-col gap-12 px-4 lg:flex-row lg:items-center">
+              <section className="flex flex-col gap-8 px-4 lg:flex-row lg:items-center lg:gap-12">
                 <div className="flex flex-col gap-6 text-left lg:w-1/2 lg:gap-8">
                   <div className="flex flex-col gap-4">
                     <h1 className="text-white text-4xl font-black leading-tight tracking-tight md:text-5xl">
@@ -52,14 +52,14 @@ export default function LandingPage() {
                     </button>
                   </div>
                 </div>
-                <div className="w-full lg:w-1/2 flex items-center justify-center">
-                  <div className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 relative">
+                <div className="flex items-center justify-center lg:w-1/2">
+                  <div className="w-48 h-48 sm:w-56 sm:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 relative flex-shrink-0">
                     <Image
                       src="/striveapp-logo.png"
                       alt="Strive app logo"
                       fill
                       className="object-contain"
-                      sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+                      sizes="(max-width: 640px) 192px, (max-width: 1024px) 224px, (max-width: 1280px) 288px, 320px"
                       priority
                     />
                   </div>
