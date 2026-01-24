@@ -53,14 +53,16 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="w-full lg:w-1/2 flex items-center justify-center">
-                  <Image
-                    src="/striveapp-logo.png"
-                    alt="Strive app logo"
-                    width={320}
-                    height={320}
-                    className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 object-contain"
-                    priority
-                  />
+                  <div className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 relative">
+                    <Image
+                      src="/striveapp-logo.png"
+                      alt="Strive app logo"
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+                      priority
+                    />
+                  </div>
                 </div>
               </section>
 
