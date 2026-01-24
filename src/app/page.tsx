@@ -24,7 +24,7 @@ export default function LandingPage() {
           <div className="flex w-full max-w-[1100px] flex-1 flex-col">
             <PublicHeader />
 
-            <main className="flex flex-col gap-20 md:gap-32 py-16 md:py-24">
+            <main className="flex flex-col gap-20 md:gap-32 pt-8 pb-16 md:pt-12 md:pb-24">
               {/* SECTION 1: Hero */}
               <section className="flex flex-col gap-8 px-4 lg:flex-row lg:items-start lg:gap-12">
                 <div className="flex flex-col gap-6 text-left lg:w-1/2 lg:gap-8">
